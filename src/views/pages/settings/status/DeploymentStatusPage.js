@@ -23,8 +23,8 @@ function DeploymentStatusPage(props) {
    const [selectedRecord,setSelectedRecord] = useState([]);
    const [pending, setPending] = useState(false);
    let navigate = useHistory();
-   
- 
+
+
    const toggleFormType = (formType,data) => {
      setCurrentPage('add');
      setFormType(formType);
@@ -34,38 +34,38 @@ function DeploymentStatusPage(props) {
        setSelectedRecord(data);
      }
    };
- 
+
    const populateList = (newData)=>{
      setDeploymentStatus([...deploymentstatus,newData]);
- 
+
    }
 
- 
- 
+
+
    const updateListRecord = (updatedRecord)=>{
-     
+
      const index = deploymentstatus.findIndex((item) => item?.id === updatedRecord.id);
      setDeploymentStatus((prevList) => prevList.map((item, i) => i === index ? updatedRecord : item));
- 
+
    }
- 
+
    const updateListRecordDelete = (id)=>{
-     
+
        const newdata= deploymentstatus.filter((item)=>item.id!==id);
              setDeploymentStatus(newdata);
              setCurrentPage('list');
- 
+
    }
    useEffect(() => {
      let deployment = localStorage.getItem('deployment');
      if (deployment && deployment !== undefined) {
        getDeploymentStatusData(JSON.parse(deployment).id);
        setDeploymentId(JSON.parse(deployment).id);
- 
+
      }
-    
+
    }, [props.show]);
- 
+
    const getDeploymentStatusData = async (deployment_id) => {
      setPending(true);
      setDeploymentStatus([]);
@@ -80,14 +80,14 @@ function DeploymentStatusPage(props) {
          }
        );
        // console.log(response)
- 
+
        // console.log(JSON.stringify(response?.data));
        setPending(false);
        if (response?.data) {
          let dData = response?.data?.statuses;
          setDeploymentStatus(dData);
          // console.log(dData);
- 
+
        }
      } catch (err) {
        setPending(false);
@@ -101,21 +101,21 @@ function DeploymentStatusPage(props) {
          dispatch(toggleToaster({ isOpen: true, toasterData: { type: "error", msg: "Loading Failed, Check your internet and try again" } }));
        }
      }
- 
+
    }
 
- 
+
 
   return (
     <>
       {/* Launch Button */}
-     
+
 
       {/* Modal Backdrop and Content */}
       <AnimatePresence>
         {
           <motion.div
-           
+
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -123,7 +123,7 @@ function DeploymentStatusPage(props) {
             // onClick={() => {setDeploymentStatus([]);props.setShow(false);}} // Close modal when clicking outside
           >
             <motion.div
-              className="bg-white rounded-lg  p-8 overflow-y-auto  "
+              className=" overflow-y-auto  "
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
@@ -131,7 +131,7 @@ function DeploymentStatusPage(props) {
               onClick={(e) => e.stopPropagation()} // Prevent click inside modal from closing it
             >
               {/* Modal Header */}
-             
+
               {/* Modal Body */}
               {currentPage == 'list' &&
      <DeploymentStatusList deploymentId={deploymentId}  toggleFormType={toggleFormType} pending={pending} setPending={setPending} deploymentstatus={deploymentstatus} currentPage={currentPage} setCurrentPage={setCurrentPage} />

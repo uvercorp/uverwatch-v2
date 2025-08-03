@@ -20,9 +20,12 @@ import Spinner from 'react-bootstrap/Spinner';
 import { toggleLoadingBar, selectLoadingBar, toggleToaster, selectToasterData, selectToasterStatus } from 'provider/features/helperSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import axiosInstance from "services/axios";
+import AssignedTask from "./task/AssignedTask";
+import Security from "./Security"
+import SubmissionPage from "./submissions/SubmissionPage"
 
 const UserProfilePage = () => {
-  const [activeTab, setActiveTab] = useState('permissions');
+  const [activeTab, setActiveTab] = useState('assigned tasks');
   const [password, setPassword] = useState({ current: '', new: '', confirm: '' });
   const [passwordValidations, setPasswordValidations] = useState({
     length: false,
@@ -42,6 +45,7 @@ const UserProfilePage = () => {
   const [pending, setPending] = useState(false);
   const dispatch = useDispatch();
   const [teams, setTeams] = useState([]);
+  const [userPosts, setUserPosts] = useState([]);
   const [newImage, setNewImage] = useState('');
   const [user, setUser] = useState();
   const [permissions, setPermissions] = useState();
@@ -94,6 +98,7 @@ const UserProfilePage = () => {
         // console.log(uData);
         setUser(uData?.user[0]);
         setTeams(uData?.teams);
+        setUserPosts(uData?.user_assigned_posts);
 
         // setFormData(response?.data?.deployment_data?.deployment, response?.data?.deployment_data?.settings);
         // setDeploymentData(dData);
@@ -123,13 +128,40 @@ const UserProfilePage = () => {
   }
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onloadend = () => {
+    //     setNewImage(reader.result);
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+
+      // if (event.target.files && event.target.files[0]) {
+          let fileSize =file.size; // in bytes
+          let maxSize = "1500000";
+          if(fileSize>maxSize){
+            alert('Sorry You Cannot Upload an image size more than ' + parseInt(maxSize)/1000000 + ' MB');
+            setTimeout(()=>{
+              // this.imageUrl = this.defaultImageUrl;
+              setNewImage("");
+            }, 500);
+            return false;
+          }else{
+              const reader = new FileReader();
+
+              reader.onload = (e) => {
+                setNewImage(e.target.result);
+                // setSelectedImage(e.target.result); // Base64 data URL
+                // handleImageChange(e.target.result); // Pass to parent component
+                uploadPicture(e.target.result);
+              };
+
+              reader.readAsDataURL(file);
+          }
+
+
+  }
   };
 
   const handleTeamAction = (teamId, action) => {
@@ -138,9 +170,97 @@ const UserProfilePage = () => {
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
+    changePassword();
     // Add password change logic here
   };
+  const changePassword= async () => {
+    setPending(true);
+    try {
+      const results = await axiosInstance.post(
+        "updatePassword",
+        JSON.stringify(password),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+          },
+        }
+      );
+      if (results?.data?.status === "success") {
+        let newData = results?.data?.team;
+        dispatch(
+          toggleToaster({
+            isOpen: true,
+            toasterData: { type: "success", msg: results?.data?.message },
+          })
+        );
+        setPending(false);
+        updateListRecord(newData);
+        setPassword({ current: '', new: '', confirm: '' })
+        setPasswordValidations({
+          length: false,
+          upperLower: false,
+          number: false,
+          specialChar: false
+        });
 
+      }
+      if (results?.data?.status === "error") {
+        let newData = results?.data?.user;
+        dispatch(
+          toggleToaster({
+            isOpen: true,
+            toasterData: { type: "error", msg: results?.data?.message },
+          })
+        );
+        setPending(false);
+        // updateListRecord(newData);
+      }
+      setPassword({ current: '', new: '', confirm: '' })
+      setPasswordValidations({
+        length: false,
+        upperLower: false,
+        number: false,
+        specialChar: false
+      });
+    } catch (error) {
+      console.error("Error deleting survey:", error);
+      setPending(false);
+    }
+    setPending(false);
+  };
+
+  const uploadPicture= async (base64) => {
+    setPending(true);
+    try {
+      const results = await axiosInstance.post(
+        "uploadProfileImage",
+        JSON.stringify({ profile_image: base64 }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+          },
+        }
+      );
+      if (results?.data?.status === "success") {
+        let newData = results?.data?.user;
+        dispatch(
+          toggleToaster({
+            isOpen: true,
+            toasterData: { type: "success", msg: results?.data?.message },
+          })
+        );
+        setPending(false);
+        updateListRecord(newData);
+      }
+
+    } catch (error) {
+      console.error("Error deleting survey:", error);
+      setPending(false);
+    }
+    setPending(false);
+  };
   const handleAccept = (record_id, value, text) => {
     swal({
       title: "Confirm " + text,
@@ -189,6 +309,12 @@ const UserProfilePage = () => {
     setTeams((prevList) => prevList.map((item, i) => i === index ? updatedRecord : item));
 
   }
+  const updateListRecordPost = (updatedRecord) => {
+
+    const index = userPosts.findIndex((item) => item?.id === updatedRecord.id);
+    setUserPosts((prevList) => prevList.map((item, i) => i === index ? updatedRecord : item));
+
+  }
   return (
      <>
       <style>{`
@@ -200,11 +326,12 @@ const UserProfilePage = () => {
 }
       `}</style>
     <div className="min-h-lvh flex items-start justify-center py-1 px-1">
-      <div className="md:min-w-[80%] md:min-h-[80%]  bg-white rounded-lg  overflow-hidden">
+      {/* <div className="md:min-w-[80%] md:min-h-[80%]  my-gradient-bg   overflow-hidden"> */}
+      <div className="md:min-w-[100%] md:min-h-[80%]  my-gradient-bg   overflow-hidden">
 
         {/* Profile Header */}
 
-        <div className="bg-gradient-to-r from-[#4e5054] to-[#e9d4fc] p-6">
+        <div className="bg-gradient-to-r from-[#2e2f30] to-[#2a2033] p-6">
           <div className="flex items-center space-x-6">
             <div className="relative">
               <div className="w-24 h-24 rounded-full border-4 border-white bg-gray-200 flex items-center justify-center overflow-hidden">
@@ -250,16 +377,16 @@ const UserProfilePage = () => {
           transition={{ duration: 0.75 }}
           className=' md:min-h-[500px]'
         >
-          <div className="border-b border-gray-200">
+          <div className="border-b border-black">
             <nav className="flex space-x-8 px-6">
               {/* {['permissions', 'teams', 'collections', 'posts', 'security'].map((tab) => ( */}
-              {['permissions', 'teams', 'security'].map((tab) => (
+              {['assigned tasks','my submissions','teams', 'security','permissions' ].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`py-4 px-1 font-medium capitalize ${activeTab === tab
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                  className={`py-4 px-1 my-font-family-overpass-mono font-medium capitalize ${activeTab === tab
+                    ? 'text-blue-500 border-b-2 border-blue-500'
+                    : 'text-gray-400 hover:text-gray-300'
                     }`}
                 >
                   {tab}
@@ -269,10 +396,27 @@ const UserProfilePage = () => {
           </div>
 
           {/* Tab Content */}
-          <div className="p-6">
+          <div className="p-6 my-gradient-bg">
+          {activeTab === 'assigned tasks' && (
+
+                <AssignedTask
+                posts = {userPosts}
+                updateListRecordPost = {updateListRecordPost}
+                />
+
+            )}
+
+{activeTab === 'my submissions' && (
+
+<SubmissionPage
+posts = {userPosts}
+/>
+
+)}
+
             {activeTab === 'permissions' && (
               <div>
-                <h3 className="text-lg font-semibold mb-4">User Permissions</h3>
+                <h3 className="text-lg font-semibold mb-4 text-white">User Permissions</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {permissions?.map((permission) => (
                     <div key={permission} className="bg-gray-50 px-4 py-2 rounded-md capitalize">
@@ -285,10 +429,10 @@ const UserProfilePage = () => {
 
             {activeTab === 'teams' && (
               <div>
-                <h3 className="text-lg font-semibold mb-4">Team Invitations</h3>
+                <h3 className="text-lg font-semibold mb-4 text-white">Team Invitations</h3>
                 <div className="space-y-4">
                   {teams?.map((team) => (
-                    <div key={team.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={team.id} className="flex items-center justify-between p-3   my-label" style={{border: "1px solid #2e2c2b"}}>
                       <div>
                         <h4 className="font-medium capitalize">{team.team_name}</h4>
                         <p>{team.team_description}</p>
@@ -337,22 +481,31 @@ const UserProfilePage = () => {
             )}
 
                        {activeTab === 'security' && (
-              <form onSubmit={handlePasswordChange} className="max-w-md space-y-4">
-                {/* Current Password Input */}
+                        <>
+                        <Security
+                        handlePasswordChange ={handlePasswordChange}
+                        password = {password}
+                        setPassword = {setPassword}
+                        validatePassword={validatePassword}
+                        passwordValidations = {passwordValidations}
+
+                        />
+              {/* <form onSubmit={handlePasswordChange} className="max-w-md space-y-4">
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Current Password</label>
+                  <label className="block text-sm font-medium my-label">Current Password</label>
                   <input
                     type="password"
                     value={password.current}
                     onChange={(e) => setPassword({ ...password, current: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full my-input2"
                     required
                   />
                 </div>
 
-                {/* New Password Input with Validation */}
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">New Password</label>
+                  <label className="block text-sm font-medium my-label">New Password</label>
                   <input
                     type="password"
                     value={password.new}
@@ -360,7 +513,7 @@ const UserProfilePage = () => {
                       setPassword({ ...password, new: e.target.value });
                       validatePassword(e.target.value);
                     }}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full my-input2"
                     required
                   />
                   <div className="mt-2 text-sm">
@@ -383,14 +536,14 @@ const UserProfilePage = () => {
                   </div>
                 </div>
 
-                {/* Confirm Password Input */}
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                  <label className="block text-sm font-medium my-label">Confirm New Password</label>
                   <input
                     type="password"
                     value={password.confirm}
                     onChange={(e) => setPassword({ ...password, confirm: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    className="mt-1 block w-full my-input2"
                     required
                   />
                   {password.confirm && (password.new !== password.confirm) && (
@@ -398,7 +551,9 @@ const UserProfilePage = () => {
                   )}
                 </div>
 
-                {/* Submit Button */}
+
+                <div className='flex items-start justify-between'>
+                  <span>{" "}</span>
                 <button
                   type="submit"
                   disabled={
@@ -406,11 +561,13 @@ const UserProfilePage = () => {
                     !Object.values(passwordValidations).every(v => v) ||
                     password.new !== password.confirm
                   }
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center px-4 py-2 bg-green-600 text-white  hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Update Password
                 </button>
-              </form>
+                </div>
+              </form> */}
+              </>
             )}
             {/* Add similar sections for Collections and Posts */}
           </div>

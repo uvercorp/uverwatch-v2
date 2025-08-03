@@ -45,8 +45,8 @@ function GeneralSettingsPage(props) {
       description: '',
       full_address: '',
       formatted_address: '',
-      
-      
+
+
       logo: '',
       enable_user_signup: '',
       deployment_type: '',
@@ -93,11 +93,11 @@ function GeneralSettingsPage(props) {
       getDeploymentData(JSON.parse(deployment).id);
 
     }
-   
+
     if (deployment && deployment !== undefined) {
-    
+
     }else{
-    
+
       window.location.replace('/pages/login');
     }
 
@@ -163,7 +163,7 @@ function GeneralSettingsPage(props) {
     });
   }
 
-  
+
   const getAddress = async (lat,lng) => {
     // alert('here')
     try {
@@ -177,14 +177,14 @@ function GeneralSettingsPage(props) {
         );
         // alert('is read')
         const data = await response.json();
-        
+
         // Extract town and country from address components
         const fullAddress = data.display_name || 'Address not available';
         const address = data.address || {};
         const town = address.town || address.village || address.city || address.county || '';
         const country = address.country || '';
 
-        
+
         // Format as "Town, Country" or fallbacks
         const formattedAddress = [town, country].filter(Boolean).join(', ') || 'Unknown location';
         // alert(formattedAddress);
@@ -272,7 +272,7 @@ function GeneralSettingsPage(props) {
       setPending(false);
       // props.updateListRecord(results?.data?.data);
       setFormData(results?.data?.data?.deployment, results?.data?.data?.settings);
-     
+
       localStorage.setItem('deployment',JSON.stringify(results?.data.data.deployment))
       localStorage.setItem('settings',JSON.stringify(results?.data.data.settings))
     }
@@ -281,23 +281,26 @@ function GeneralSettingsPage(props) {
   return (
     <>
 
-      <Card>
+<Card className="my-gradient-bg shadow-xl text-white " style={{border: "1px solid #2e2c2b"}}>
         <Card.Header>
           <Card.Title as="h4" className="flex items-start justify-between">
-            <span>General</span>
+            <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">General:</span>
             {pending && (<div className="flex items-center justify-center">
               <Spinner animation="grow" variant="warning" />
             </div>)}
           </Card.Title>
         </Card.Header>
+        <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
         <Card.Body>
 
           <div className="relative">
             <Row>
               <Col className="pr-1" md="12">
                 <Form.Group className="pr-2">
-                  <label>Deployment Name </label>
-                  <Form.Control
+                  <label className="my-label">Deployment Name </label>
+                  <input
                     defaultValue="deployment."
                     disabled
                     placeholder="Deployment Name"
@@ -305,7 +308,8 @@ function GeneralSettingsPage(props) {
                     name="name"
                     value={formValue?.name}
                     onChange={handleChange}
-                  ></Form.Control>
+                    className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
 
@@ -314,8 +318,8 @@ function GeneralSettingsPage(props) {
             <Row>
               <Col md="12">
                 <Form.Group>
-                  <label>About </label>
-                  <Form.Control
+                  <label className="my-label">About </label>
+                  <input
                     cols="80"
 
                     placeholder="Describe Your Site Or Deployment"
@@ -325,68 +329,71 @@ function GeneralSettingsPage(props) {
                     onChange={handleChange}
                     name="about"
                     id="about"
-                  >
+                    className="w-full my-input"
 
-                  </Form.Control>
+                 />
                 </Form.Group>
               </Col>
             </Row>
-            
+
             <Row className="mt-3">
               <Col className="pr-1" md="6">
                 <Form.Group>
-                  <label>Display Name</label>
-                  <Form.Control
+                  <label className="my-label">Display Name</label>
+                  <input
 
                     placeholder="Display Name"
                     type="text"
                     value={formValue?.display_name}
                     name="display_name"
                     onChange={handleChange}
-                  ></Form.Control>
+                    className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
 
               <Col className="pl-1" md="6">
                 <Form.Group>
-                  <label htmlFor="exampleInputEmail1">
+                  <label className="my-label" htmlFor="exampleInputEmail1">
                     Contact Email address
                   </label>
-                  <Form.Control
+                  <input
                     placeholder="Email"
                     type="email"
                     disabled
                     value={formValue?.email}
                     onChange={handleChange}
-                  ></Form.Control>
+                    className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
             </Row>
-            
+
             {/* <br/> */}
             <Row className="mt-3">
               <Col className="pr-1" md="6">
-                <label>Logo</label>
+                <label className="my-label">Logo</label>
                 <div className=" h-[250px] md:max-w-[400px] text-center items-center shawdow rounded-sm border border-1">
 
                   <ImageInput handleImageChange={handleImageChange} currentImage={formValue?.logo} />
                 </div>
                 {/* <Form.Group controlId="formFileSm" className="mb-3">
                   <Form.Label>Logo</Form.Label>
-                  <Form.Control type="file" size="sm" />
+                  <input type="file" size="sm" />
                 </Form.Group> */}
               </Col>
               <Col className="pr-1" md="6">
                 <Form.Group className="pr-1">
-                  <label>Organization Name</label>
-                  <Form.Control
+                  <label className="my-label">Organization Name</label>
+                  <input
 
                     placeholder="Name of organization"
                     type="text"
                     value={formValue?.organization_name}
                     onChange={handleChange}
                     name="organization_name"
-                  ></Form.Control>
+                    className="w-full my-input"
+                 />
                 </Form.Group>
               </Col>
             </Row>
@@ -394,10 +401,10 @@ function GeneralSettingsPage(props) {
 
               <Col className="pr-1" md="6">
                 <Form.Group className="pr-2">
-                  <label>Organization Size</label>
+                  <label className="my-label">Organization Size</label>
 
                   <br />
-                  <Form.Select aria-label="Default select example" style={{ width: "100%" }} className="border border-gray-200 rounded-lg min-h-[2.5em]" required onChange={handleChange} value={formValue?.size_of_organization} name="size_of_organization">
+                  <Form.Select aria-label="Default select example" style={{ width: "100%" }} className=" min-h-[2.5em] my-input" required onChange={handleChange} value={formValue?.size_of_organization} name="size_of_organization">
                     <option>Select Size</option>
                     {props?.organizationSizes?.map((record, index) => (
                       <option key={index} value={record?.size}>{record?.size}</option>
@@ -409,9 +416,9 @@ function GeneralSettingsPage(props) {
               </Col>
               <Col className="pr-1" md="6">
                 <Form.Group className="pr-2">
-                  <label>You are using Uverwatch for</label>
+                  <label className="my-label">You are using Uverwatch for</label>
 
-                  <Form.Select aria-label="Default select example" style={{ width: "100%" }} className="border border-gray-200 rounded-lg min-h-[2.5em] " required onChange={handleChange} value={formValue?.deployment_category} name="deployment_category">
+                  <Form.Select aria-label="Default select example" style={{ width: "100%" }} className=" min-h-[2.5em] my-input" required onChange={handleChange} value={formValue?.deployment_category} name="deployment_category">
                     <option>Select Category</option>
                     {props?.deploymentCategories?.map((record, index) => (
                       <option key={index} value={record?.id}>{record?.name}</option>
@@ -424,9 +431,9 @@ function GeneralSettingsPage(props) {
             <Row>
               <Col className="pr-1" md="12">
                 <Form.Group className="pr-2 pt-3">
-                  <label style={{ color: "#000" }}>Private Settings</label>
+                  <label className="my-label" style={{ color: "#f5f5f5" }}>Private Settings</label>
                 </Form.Group>
-                <hr />
+                <hr className="border-[#2e2c2b]"/>
               </Col>
             </Row>
             <Row>
@@ -444,13 +451,14 @@ function GeneralSettingsPage(props) {
                       setFormValue({ ...formValue, deployment_type: newValue });
                     }}
                     style={{ height: '16px', width: '16px' }}
+
                   />
-                  <label htmlFor="deployment_type" className="ml-2 lowercase text-gray-800">
+                  <label htmlFor="deployment_type" className="ml-2 lowercase my-label">
                     Make this deployment private
                   </label>
                   <br />
                 </Form.Group>
-                <p className="text-[0.8em]">
+                <p className="text-[0.8em] my-label">
                   Enabling this option makes your deployment and its data only accessible to registered users with the correct privileges, who must sign in for access.
                 </p>
               </Col>
@@ -470,8 +478,9 @@ function GeneralSettingsPage(props) {
                       setFormValue({ ...formValue, enable_user_signup: newValue });
                     }}
                     style={{ height: '16px', width: '16px' }}
+                    className="w-full my-input"
                   />
-                  <label htmlFor="enable_user_signup" className="ml-2 lowercase text-gray-800">
+                  <label htmlFor="enable_user_signup" className="ml-2 lowercase my-label">
                     Disable user sign up?
                   </label>
                   <br />
@@ -484,44 +493,47 @@ function GeneralSettingsPage(props) {
             <Row className="mt-3">
               <Col className="pr-1" md="4">
                 <Form.Group>
-                  <label>Access Level  [1-3,1-5,1-10]</label>
-                  <Form.Control
+                  <label className="my-label">Access Level  [1-3,1-5,1-10]</label>
+                  <input
 
                     placeholder="access level"
                     type="number"
                     value={formValue?.access_level}
                     name="access_level"
                     onChange={handleChange}
-                  ></Form.Control>
+                    className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
 
               <Col className="pl-1" md="4">
                 <Form.Group>
-                  <label htmlFor="priority_level">
+                  <label htmlFor="priority_level" className="my-label">
                     Priority Level  [1-3,1-5,1-10]
                   </label>
-                  <Form.Control
+                  <input
                     placeholder="Priority Level"
                     type="number"
                     name="priority_level"
                     value={formValue?.priority_level}
                     onChange={handleChange}
-                  ></Form.Control>
+                    className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
               <Col className="pl-1" md="4">
                 <Form.Group>
-                  <label htmlFor="impact_level">
+                  <label htmlFor="impact_level" className="my-label">
                     Impact Level [1-3,1-5,1-10]
                   </label>
-                  <Form.Control
+                  <input
                     placeholder="Impact Level"
                     type="number"
                    name="impact_level"
                     value={formValue?.impact_level}
                     onChange={handleChange}
-                  ></Form.Control>
+                    className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
 
@@ -530,13 +542,13 @@ function GeneralSettingsPage(props) {
             <Row>
               <Col className="pr-1" md="12">
                 <Form.Group className="mr-2">
-                  <label>Location : <span className="itali">{formValue?.full_address}</span></label>
-                  <Form.Control
+                  <label className="my-label">Location : <span className="itali">{formValue?.full_address}</span></label>
+                  <input
 
                     placeholder="Pick Location from map below"
                     type="text"
-
-                  ></Form.Control>
+className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
             </Row>
@@ -551,8 +563,8 @@ function GeneralSettingsPage(props) {
             <Row>
               <Col className="pr-1" md="6">
                 <Form.Group >
-                  <label>Latitude </label>
-                  <Form.Control
+                  <label className="my-label">Latitude </label>
+                  <input
 
                     placeholder="latitude from map"
                     type="text"
@@ -560,23 +572,25 @@ function GeneralSettingsPage(props) {
                     name="latitude"
                     value={formValue?.latitude}
                     onChange={handleChange}
-                  ></Form.Control>
+                    className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
 
               <Col className="pl-1" md="6">
                 <Form.Group>
-                  <label htmlFor="exampleInputEmail1">
+                  <label htmlFor="exampleInputEmail1" className="my-label">
                     Longitude
                   </label>
-                  <Form.Control
+                  <input
                     placeholder="longitude from map"
                     type="text"
                     disabled
                     name="longitude"
                     value={formValue.longitude}
                     onChange={handleChange}
-                  ></Form.Control>
+                    className="w-full my-input"
+                  />
                 </Form.Group>
               </Col>
             </Row>
@@ -605,7 +619,7 @@ function GeneralSettingsPage(props) {
                   onClick={handleUpdate}
                   disabled={pending}
                 >
-                  
+
                   {pending ? "Saving..." : "Save Changes"}
                 </Button>
               </div>

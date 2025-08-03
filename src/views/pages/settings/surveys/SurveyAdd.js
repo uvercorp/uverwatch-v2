@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from 'framer-motion';
 import swal from "sweetalert";
 import { CiEdit } from "react-icons/ci";
 import {
@@ -19,14 +19,17 @@ import LoadingIcon from "others/icons/LoadingIcon";
 import axiosInstance from "services/axios";
 import Spinner from "react-bootstrap/Spinner";
 import CustomModal from "./custom_input/CustomModal";
+import CsvImporter from "./CsvImporter";
 
 function SurveyAdd(props) {
   const [surveys, setSurveys] = useState([]);
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
   const [customFields, setCustomFields] = useState([]);
+  const [surverFields, setSurveyFields] = useState(['title','description']);
   const [selectedUpdateRecord, setSelectedUpdateRecord] = useState();
   const [show, setShow] = useState(false);
+  const [showCsv, setShowCsv] = useState(false);
   const [customFieldView, setCustomFieldView] = useState('list');
   const [formValue, setFormValue] = useState({
     id: "",
@@ -39,6 +42,9 @@ function SurveyAdd(props) {
     if (props.record && props.formType === "update") {
       setFormValue(props.record);
       setCustomFields(props.record.custom_fields || []);
+      props.record.custom_fields.forEach(element => {
+        surverFields.push(element.field_name);
+      });
     } else {
       setFormValue({
         id: "",
@@ -241,22 +247,23 @@ function SurveyAdd(props) {
 
   return (
     <>
-      <Card>
+      <Card className="my-gradient-bg shadow-xl " >
         <Card.Header>
           <Card.Title as="h4">
             <div className="flex items-start justify-between">
-              <span>
-                Surveys |{" "}
+              <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">
+                Taskings: {" "}
                 <span className="text-[0.6em] capitalize"> {props?.formType} </span>{" "}
               </span>
-              <Button variant="default" onClick={() => props?.setCurrentPage("list")}>
-                Cancel
-              </Button>
+              <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button>
             </div>
           </Card.Title>
         </Card.Header>
+         <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
         <Card.Body className="relative h-[calc(100vh-200px)] overflow-hidden">
-          <hr />
+
           {pending && (
             <div className="flex items-center justify-center mb-4">
               <Spinner animation="grow" variant="warning" />
@@ -274,7 +281,7 @@ function SurveyAdd(props) {
                 <div className="mb-6">
                   <label
                     htmlFor="survey_name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 my-label"
                   >
                     Survey Name
                   </label>
@@ -284,7 +291,7 @@ function SurveyAdd(props) {
                     name="survey_name"
                     value={formValue.survey_name}
                     id="survey_name"
-                    className="focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="w-full my-input"
                     placeholder="Name of Survey"
                     required
                   />
@@ -293,7 +300,7 @@ function SurveyAdd(props) {
                 <div className="mb-6">
                   <label
                     htmlFor="survey_description"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 my-label"
                   >
                     Describe the survey
                   </label>
@@ -303,27 +310,27 @@ function SurveyAdd(props) {
                     name="survey_description"
                     value={formValue.survey_description}
                     rows="3"
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300  dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white  focus:bg-white"
+                    className="block p-2.5 w-full my-input"
                     placeholder="Survey Description..."
                   ></textarea>
                 </div>
                 <div>
-                  <div className="flex items-start justify-between">
-                    <span>Fields </span>
-                    <Button
-                      className="nav-link border flex items-start justify-between gap-1 hover:bg-gray-400 hover:border-red-500"
+                  <div className="flex items-start justify-between my-label">
+                    <span >Fields </span>
+                    <button
+                      className="nav-link border flex items-start justify-between gap-1 bg-gray-400 hover:bg-gray-500 hover:border-red-500"
                       style={{ border: "2px solid red" }}
                       variant="default"
                       onClick={() => {setCustomFieldView('list'); setShow(true);}}
                     >
                       <span className="text-black mr-2">Add Field</span>
                       <i className="nc-icon nc-simple-add text-black" />
-                    </Button>
+                    </button>
                   </div>
                   <hr />
 
                   <div className="grid grid-cols-1">
-                    <div className="bg-gray-100 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
+                    <div className="bg-gray-300 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
                       <div className="flex items-start gap-4">
                         <i className="nc-icon nc-grid-45" />
                         <div className="p-0">Title</div>
@@ -332,8 +339,8 @@ function SurveyAdd(props) {
                         {/* <CiEdit className="h-5 w-5 cursor-pointer" /> */}
                       </div>
                     </div>
-                    
-                    <div className="bg-gray-100 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
+
+                    <div className="bg-gray-300 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
                       <div className="flex items-start gap-4">
                         <i className="nc-icon nc-grid-45" />
                         <div className="p-0">Description</div>
@@ -344,7 +351,7 @@ function SurveyAdd(props) {
                     </div>
                     <hr />
                     {customFields?.map((record, index) => (
-                      <div key={index} className="bg-gray-100 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
+                      <div key={index} className="bg-gray-300 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
                         <div className="flex items-start gap-4">
                           <i className="nc-icon nc-grid-45" />
                           <div className="p-0 font-bold">{record.field_name}</div>
@@ -370,24 +377,34 @@ function SurveyAdd(props) {
           {/* action_buttons fixed at the bottom of the Card.Body */}
           <div
             id="action_buttons"
-            className="absolute bottom-0 left-0 right-0 bg-white p-4 shadow-lg z-50"
+            className="absolute bottom-0 left-0 right-0 my-gradient-bg p-4 shadow-lg z-50"
           >
             <div className="flex items-start justify-between">
               {props.formType === "add" ? (
                 <span>.</span>
               ) : (
+                <div>
                 <a
                   onClick={() => handleDelete(formValue?.id)}
                   className="cursor-pointer text-red-600 hover:text-red-700"
                 >
                   Delete
                 </a>
+                <a
+                   onClick={() => setShowCsv(true)}
+                  className="cursor-pointer text-green-600 hover:text-green-700 ml-3"
+                >
+                  Csv Importer
+                </a>
+
+                </div>
               )}
+
               {props.formType === "add" ? (
                 <button
                   type="submit"
                   onClick={handleSubmit}
-                  className="text-white bg-yellow-500 hover:bg-yellow-600  font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center "
+                  className="text-white bg-yellow-500 hover:bg-yellow-600  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center "
                 >
                   Add New
                 </button>
@@ -403,6 +420,34 @@ function SurveyAdd(props) {
             </div>
           </div>
           <CustomModal show={show} setShow={setShow} addCustomField={addCustomField} customFieldView={customFieldView} handleCustomFieldChange={handleCustomFieldChange } setCustomFieldView={setCustomFieldView} selectedUpdateRecord={selectedUpdateRecord}/>
+          <AnimatePresence>
+        {showCsv && (
+          <motion.div
+            className="fixed inset-0 my-gradient-bg bg-opacity-50 z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            // onClick={() => setShowCsv(false)}
+          >
+            {/* Modal Container */}
+            <motion.div
+              className="my-gradient-bg shadow-lg p-4 overflow-y-auto  max-h-[90vh] mx-auto mt-4
+                         w-[90%] sm:w-[80%] lg:w-[75%] xl:w-[60%] 2xl:w-[70%]"
+              initial={{ y: -100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -100, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              style={{border: "1px solid #2e2c2b"}}
+            >
+              {/* Modal Header */}
+
+
+              <CsvImporter surveyFields={surverFields} survey={props?.record} setShowCsv ={setShowCsv}/>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
         </Card.Body>
       </Card>
     </>

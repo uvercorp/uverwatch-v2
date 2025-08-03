@@ -23,8 +23,8 @@ function GoefencePage(props) {
    const [selectedRecord,setSelectedRecord] = useState([]);
    const [pending, setPending] = useState(false);
    let navigate = useHistory();
-   
- 
+
+
    const toggleFormType = (formType,data) => {
      setCurrentPage('add');
      setFormType(formType);
@@ -34,38 +34,38 @@ function GoefencePage(props) {
        setSelectedRecord(data);
      }
    };
- 
+
    const populateList = (newData)=>{
      setGoefence([...geofence,newData]);
- 
+
    }
 
- 
- 
+
+
    const updateListRecord = (updatedRecord)=>{
-     
+
      const index = geofence.findIndex((item) => item?.id === updatedRecord.id);
      setGoefence((prevList) => prevList.map((item, i) => i === index ? updatedRecord : item));
- 
+
    }
- 
+
    const updateListRecordDelete = (id)=>{
-     
+
        const newdata= geofence.filter((item)=>item.id!==id);
              setGoefence(newdata);
              setCurrentPage('list');
- 
+
    }
    useEffect(() => {
      let deployment = localStorage.getItem('deployment');
      if (deployment && deployment !== undefined) {
        getGoefenceData(JSON.parse(deployment).id);
        setDeploymentId(JSON.parse(deployment).id);
- 
+
      }
-    
+
    }, [props.show]);
- 
+
    const getGoefenceData = async (deployment_id) => {
      setPending(true);
      setGoefence([]);
@@ -80,7 +80,7 @@ function GoefencePage(props) {
          }
        );
        // console.log(response)
- 
+
        // console.log(JSON.stringify(response?.data));
        setPending(false);
        if (response?.data) {
@@ -88,7 +88,7 @@ function GoefencePage(props) {
          let dData = response?.data?.fences;
          setGoefence(response?.data?.fences);
          console.log(dData);
- 
+
        }
      } catch (err) {
        setPending(false);
@@ -102,21 +102,21 @@ function GoefencePage(props) {
          dispatch(toggleToaster({ isOpen: true, toasterData: { type: "error", msg: "Loading Failed, Check your internet and try again" } }));
        }
      }
- 
+
    }
 
- 
+
 
   return (
     <>
       {/* Launch Button */}
-     
+
 
       {/* Modal Backdrop and Content */}
       <AnimatePresence>
         {
           <motion.div
-           
+
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -124,7 +124,7 @@ function GoefencePage(props) {
             // onClick={() => {setGoefence([]);props.setShow(false);}} // Close modal when clicking outside
           >
             <motion.div
-              className="bg-white rounded-lg  p-8 overflow-y-auto  "
+              className="overflow-y-auto  "
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
@@ -132,7 +132,7 @@ function GoefencePage(props) {
               onClick={(e) => e.stopPropagation()} // Prevent click inside modal from closing it
             >
               {/* Modal Header */}
-             
+
               {/* Modal Body */}
               {currentPage == 'list' &&
      <GoefenceList deploymentId={deploymentId}  toggleFormType={toggleFormType} pending={pending} setPending={setPending} geofence={geofence} currentPage={currentPage} setCurrentPage={setCurrentPage} />

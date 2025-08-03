@@ -14,6 +14,7 @@ function AssignmentUser(props) {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [currentUsers, setCurrentUsers] = useState([]);
+  const [assignedTask, setassignedTask] = useState('');
 
   // Fetch data on component mount
   useEffect(() => {
@@ -52,17 +53,17 @@ function AssignmentUser(props) {
           },
         }
       );
-  
+
       setPending(false);
-      if (response?.data) {     
+      if (response?.data) {
         let dData = response?.data;
-        
+
         // Filter out users who are already in the post
         const currentUserIds = dData?.post_users?.map(user => user.user) || [];
-        const filteredAvailableUsers = dData?.users?.filter(user => 
+        const filteredAvailableUsers = dData?.users?.filter(user =>
           !currentUserIds.includes(user.id)
         ) || [];
-        
+
         setAvailableUsers(filteredAvailableUsers);
         setFilteredUsers(filteredAvailableUsers);
         setCurrentUsers(dData?.post_users || []);
@@ -94,6 +95,7 @@ function AssignmentUser(props) {
   };
 
   const saveUsersToPost = async () => {
+
     if (selectedUsers?.length === 0) {
       dispatch(
         toggleToaster({
@@ -107,12 +109,26 @@ function AssignmentUser(props) {
       return;
     }
 
+    if (assignedTask === "") {
+      dispatch(
+        toggleToaster({
+          isOpen: true,
+          toasterData: {
+            type: "warning",
+            msg: "Please Enter The Task",
+          },
+        })
+      );
+      return;
+    }
+
     setPending(true);
     try {
       const response = await axiosInstance.post(
         "assignPostToUsers",
         {
           post_id: props.postId,
+          task: assignedTask,
           user_ids: selectedUsers?.map((user) => user.id),
         },
         {
@@ -137,6 +153,7 @@ function AssignmentUser(props) {
       setSelectedUsers([]);
       let deployment = localStorage.getItem('deployment');
       fetchPostUserLookup(JSON.parse(deployment).id, props.postId);
+      setassignedTask("");
     } catch (error) {
       console.error("Error saving users:", error);
       dispatch(
@@ -209,10 +226,10 @@ function AssignmentUser(props) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-lg">
+    <div className="max-w-6xl mx-auto my-gradient-bg ">
       <h3 className="text-lg font-semibold mb-3">
                   <i className="fas fa-list-ul mr-2"></i>
-                  Currently Assigned Post
+                  Currently Assigned Report
                 </h3>
 
       {pending && (
@@ -225,20 +242,20 @@ function AssignmentUser(props) {
       <div className="mb-8">
         {/* <h3 className="text-lg font-semibold mb-4">Current Users</h3> */}
         {currentUsers?.length === 0 ? (
-          <p className="text-gray-500">No users in this post yet</p>
+          <p className="text-gray-400">No users in this post yet</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentUsers?.map((user) => (
               <div
                 key={user.id}
-                className="border rounded-lg p-2 flex justify-between items-center"
+                className="border  p-2 flex justify-between items-center"
               >
                 <div>
                   <h5 className="font-medium">{user.name}</h5>
-                  <p className="text-sm text-gray-600">{user.email}</p>
+                  <p className="text-sm text-gray-400">{user.email}</p>
                   {user.role && (
-                    <span className="inline-block mt-1 px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-800 rounded">
-                      {user.role}   
+                    <span className="inline-block mt-1 px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-800 ">
+                      {user.role}
                     </span>
                   )}
                 </div>
@@ -257,8 +274,8 @@ function AssignmentUser(props) {
 
       {/* Add Users Section */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-4">Assign Post to Users</h3>
-        
+        <h3 className="text-lg font-semibold mb-4">Assign Report to User(s)</h3>
+
         {/* Search Form */}
         <div className="mb-4">
           <div className="relative">
@@ -267,7 +284,7 @@ function AssignmentUser(props) {
               placeholder="Search users by name, email or role..."
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 my-input"
             />
             <FiSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
@@ -275,7 +292,7 @@ function AssignmentUser(props) {
 
         {/* Available Users List */}
         {filteredUsers?.length === 0 ? (
-          <p className="text-gray-500">
+          <p className="text-gray-400">
             {availableUsers?.length === 0 ? "No users available" : "No matching users found"}
           </p>
         ) : (
@@ -284,19 +301,19 @@ function AssignmentUser(props) {
               <div
                 key={user.id}
                 onClick={() => handleUserSelect(user)}
-                className={`border rounded-lg p-2 cursor-pointer transition-colors ${
+                className={`border  p-2 cursor-pointer transition-colors ${
                   selectedUsers.some((u) => u.id === user.id)
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:bg-gray-50"
+                  ? "border-blue-500 bg-[#3F1F2F]"
+                    : "border-gray-200 bg-[#1F2F3F]"
                 }`}
               >
                 <div className="flex justify-between items-center">
                   <div>
                     <h5 className="font-medium">{user.name}</h5>
-                    <p className="text-sm text-gray-600">{user.email}</p>
+                    <p className="text-sm text-gray-400">{user.email}</p>
                     {user.role && (
-                      <span className="inline-block mt-1 px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-800 rounded">
-                        {user.role} 
+                      <span className="inline-block mt-1 px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-800 ">
+                        {user.role}
                       </span>
                     )}
                   </div>
@@ -321,7 +338,7 @@ function AssignmentUser(props) {
               {selectedUsers?.map((user) => (
                 <div
                   key={user.id}
-                  className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center"
+                  className="bg-blue-100 text-blue-800 px-3 py-1  flex items-center"
                 >
                   <span>{user.name}</span>
                   <button
@@ -341,18 +358,34 @@ function AssignmentUser(props) {
         )}
 
         <hr/>
-        <div className="flex justify-end">
+        <div className="grid grid-cols-1 md:flex md:items-start md:justify-between gap-2">
+        <div className="md:w-[73%]">
+                  <label className="block text-sm font-medium my-label">Task / Action</label>
+                  <input
+                    type="assignedTask"
+                    value={assignedTask}
+                    onChange={(e) => {
+                      setassignedTask(e.target.value);
+                      // validateassignedTask(e.target.value);
+                    }}
+                    className="mt-1 block w-full my-input"
+                    required
+                  />
+                  </div>
+                  <div className="md:w-[27%]">
+                  <label className="block text-sm font-medium my-label text-black">.</label>
           <button
             onClick={saveUsersToPost}
             disabled={pending || selectedUsers?.length === 0}
-            className={`px-4 py-2 rounded-md text-white ${
+            className={`px-4 py-2  text-white ${
               pending || selectedUsers?.length === 0
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"
+                : "bg-green-500 hover:bg-green-600"
             }`}
           >
-            {pending ? "Assigning..." : "Assign Post Selected Users"}
+            {pending ? "Assigning..." : "Assign To Users"}
           </button>
+        </div>
         </div>
       </div>
     </div>

@@ -41,7 +41,7 @@ function TagAdd(props) {
         if (deployment) {
           getTagData(JSON.parse(deployment).id);
         }
-       
+
     }, []);
 
      const getTagData = async (deployment_id) => {
@@ -180,35 +180,38 @@ function TagAdd(props) {
 
     return (
         <>
-            <Card>
+           <Card className="my-gradient-bg shadow-xl " >
                 <Card.Header>
                     <Card.Title as="h4">
                         <div className="flex items-start justify-between">
-                            <span>Tags | <span className="text-[0.6em] capitalize">{props?.formType}</span></span>
-                            <Button variant="default" onClick={() => props.setCurrentPage('list')}>Cancel</Button>
+                            <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">Tags : <span className="text-[0.6em] capitalize">{props?.formType}</span></span>
+                            <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button>
                         </div>
                     </Card.Title>
                 </Card.Header>
+                <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
                 <Card.Body>
-                    <hr />
+
                     {pending && <div className="flex items-center justify-center mb-4"><Spinner animation="grow" variant="warning" /></div>}
                     {invalidFields && <p className="bg-red-700 shadow text-left p-3 rounded-xl text-white mb-4">{invalidFields}</p>}
                     <motion.div initial={{ y: 25, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.75 }}>
                         <div className="md:min-h-[450px] relative">
                             <div className="mb-6">
-                                <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                                <input type="text" name="name" id="name" value={formValue.name} onChange={handleChange} className="focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Name of Tag" required />
+                                <label htmlFor="name" className="block mb-2 my-label">Name</label>
+                                <input type="text" name="name" id="name" value={formValue.name} onChange={handleChange} className="my-input block w-full p-2.5" placeholder="Name of Tag" required />
                             </div>
                             <div className="mb-6">
-                                <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Describe the Tag</label>
-                                <textarea id="description" name="description" rows="3" value={formValue.description} onChange={handleChange} className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:bg-white" placeholder="Tag Description..."></textarea>
+                                <label htmlFor="description" className="block mb-2 my-label">Describe the Tag</label>
+                                <textarea id="description" name="description" rows="3" value={formValue.description} onChange={handleChange} className="block p-2.5 w-full my-input" placeholder="Tag Description..."></textarea>
                             </div>
                             {/* Icon Field */}
                             <div className="grid gap-6 md:grid-cols-2 ">
                                                                 <div className="mb-6">
                                                                     <label
                                                                         htmlFor="survey_description"
-                                                                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                                                        className="block mb-2 my-label"
                                                                     >
                                                                         Pick An Icon And Color
                                                                     </label>
@@ -217,11 +220,11 @@ function TagAdd(props) {
                                                                         initialColor={formValue.color}
                                                                     />
                                                                 </div>
-                           
+
                             {/* Parent Tag Dropdown */}
                             <div className="mb-6">
-                                <label htmlFor="parent_id" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parent Tag (optional)</label>
-                                <select name="parent_id" id="parent_id" value={formValue.parent_id} onChange={handleChange} className="block bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5">
+                                <label htmlFor="parent_id" className="block mb-2 my-label">Parent Tag (optional)</label>
+                                <select name="parent_id" id="parent_id" value={formValue.parent_id} onChange={handleChange} className="block my-input w-full p-2.5">
                                     <option value="">-- Top Level --</option>
                                     {tags.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                                 </select>

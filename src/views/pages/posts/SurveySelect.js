@@ -37,7 +37,7 @@ function SurveySelect(props) {
                     <div className="min-w-[95%] mt-[1%] md:min-w-[45%] md:min-h-[45%] md:mt-[10%] border-[#23201e]">
                         <div className="strpied-tabled-with-hover my-black-bg shadow-lg" style={{border:"1px solid #23201e"}}>
                             <Card.Header>
-                                <Card.Title as="h4" className="font-bold px-2 my-sidebar-link border-b py-2 text-white my-font-family-courier-prime text-[1.2em]">Choose A Survey</Card.Title>
+                                <Card.Title as="h4" className="font-bold px-2 my-sidebar-link border-b py-2 text-white my-font-family-courier-prime text-[1.2em]">Choose A Tasking</Card.Title>
 
                             </Card.Header>
                             <div className="table-full-width table-responsive px-0">
@@ -48,11 +48,11 @@ function SurveySelect(props) {
                                     {props?.pending && (<div className="flex items-center justify-center mb-4">
                                         <Spinner animation="grow" variant="warning" />
                                     </div>)}
-                                   
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-x-4">
 
                                         {props?.surveys?.map((record, index) => (
-                                            <div style={{border:"1px solid #23201e",textDecoration:"none"}} key={index} className="rounded-lg bg-[#0e0b0a] hover:bg-[#261f1b]  p-3 cursor-pointer py-3 hover:underline capitalize hover:text-white my-sidebar-link" onClick={() => props?.toggleFormType('add', record)}>{record.survey_name}</div>
+                                            <div style={{border:"1px solid #23201e",textDecoration:"none"}} key={index} className=" bg-[#0e0b0a] hover:bg-[#261f1b]  p-3 cursor-pointer py-3 hover:underline capitalize hover:text-white my-sidebar-link" onClick={() => props?.toggleFormType('add', record)}>{record.survey_name}</div>
                                         ))}
 
                                     </div>

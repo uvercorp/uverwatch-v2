@@ -125,7 +125,7 @@ function SinglePostListCard(props) {
                             <MdOutlineDelete /> <span>Delete</span>
                           </div>
                         </Dropdown.Item>
-                        
+
                         {/* Show Remove only in collection mode + valid ID */}
                         {collectionOn && !isNaN(parseInt(collectionId)) && collectionId !== 0 && (
                           <Dropdown.Item href="#action6">
@@ -139,7 +139,7 @@ function SinglePostListCard(props) {
                         )}
                       </>
                     )}
-                 
+
                 </Dropdown.Menu>
 
               </Dropdown>

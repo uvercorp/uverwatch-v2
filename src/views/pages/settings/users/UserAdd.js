@@ -131,16 +131,16 @@ function UserAdd(props) {
     if (props.formType == "add" && !formData.password) {
       invalidFields.push('Password');
     }
-    
+
     if (props.formType == "update") {
       // if(!formValue.password){
-       
+
         // invalidFields.push('Password');
       //   setFormValue({
       //     ...formValue,
       //     password_changed:'false'
       //  });
-       
+
       // }else{
        if(formValue.password !== initialPassword){
         setFormValue({
@@ -153,11 +153,11 @@ function UserAdd(props) {
           password_changed:'f'
        });
        }
-      
+
       // }
-     
+
     }
-    
+
 
 
     if (invalidFields.length > 0) {
@@ -193,7 +193,7 @@ function UserAdd(props) {
   }
 
   const updateRecordInstance = async (data) => {
-    
+
     setPending(true);
     const results = await axiosInstance.post('updateDeploymentUser',
       JSON.stringify(data),
@@ -262,19 +262,22 @@ function UserAdd(props) {
   }
   return (
     <>
-      <Card>
+      <Card className="my-gradient-bg shadow-xl " >
         <Card.Header>
           <Card.Title as="h4">
 
             <div className="flex items-start justify-between">
-              <span>Users | <span className="text-[0.6em] capitalize"> {props?.formType} </span> </span>
-              <Button variant="default" onClick={() => props?.setCurrentPage('list')}>Cancel</Button>
+              <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">Users | <span className="text-[0.6em] capitalize"> {props?.formType} </span> </span>
+              <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button>
 
             </div>
           </Card.Title>
         </Card.Header>
+        <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
         <Card.Body >
-          <hr />
+
           {pending && (<div className="flex items-center justify-center mb-4">
             <Spinner animation="grow" variant="warning" />
           </div>)}
@@ -291,38 +294,38 @@ function UserAdd(props) {
 
               <div>
                 <div className="mb-6">
-                  <label for="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>
-                  <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name of User" required />
+                  <label for="name" className="block my-label">Full Name</label>
+                  <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className="w-full my-input" placeholder="Name of User" required />
                 </div>
 
                 <div className="mb-6">
-                  <label for="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                  <input type="email" onChange={handleChange} name="email" value={formValue.email} id="email" className=" focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="User Login Email" required />
+                  <label for="email" className="block my-label">Email</label>
+                  <input type="email" onChange={handleChange} name="email" value={formValue.email} id="email" className="w-full my-input" placeholder="User Login Email" required />
 
                 </div>
                 <div className="mb-6">
-                  <label for="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                  <input type="text" onChange={handleChange} id="password" name="password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="•••••••••" required />
-                  <p className="text-gray-400 text-sm pt-2">
+                  <label for="password" className="block my-label">Password</label>
+                  <input type="text" onChange={handleChange} id="password" name="password" className="w-full my-input" placeholder="•••••••••" required />
+                  <p className="text-gray-400 text-sm pt-2 my-label">
                     If you leave the field blank your password will not change
                   </p>
                 </div>
                 <div className="grid gap-6 md:grid-cols-2 pt-4">
                 <div className="mb-6">
-                  <label for="deployment_role" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
-                  <select id="deployment_role" onChange={handleChange} name="deployment_role" value={formValue.deployment_role} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <label for="deployment_role" className="block my-label">Role</label>
+                  <select id="deployment_role" onChange={handleChange} name="deployment_role" value={formValue.deployment_role} className="w-full my-input">
                     <option selected>Choose a Role</option>
-                  
+
                     {props?.roles?.map((record, index) => (
                       <option key={index} value={record?.id}>{record?.name}</option>
                     ))}
                   </select>
                 </div>
                 <div className="mb-6">
-                  <label for="access_level" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Access Level</label>
-                  <select id="access_level" onChange={handleChange} name="access_level" value={formValue.access_level} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <label for="access_level" className="block my-label">Access Level</label>
+                  <select id="access_level" onChange={handleChange} name="access_level" value={formValue.access_level} className="w-full my-input">
                     <option selected>Choose an Access Level</option>
-                  
+
                     {props?.accessLevels?.map((record, index) => (
                       <option key={index} value={record?.level}>Level {record?.level} - ({record?.name})</option>
                     ))}

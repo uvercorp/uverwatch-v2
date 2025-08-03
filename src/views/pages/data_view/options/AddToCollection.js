@@ -111,7 +111,7 @@ function AddToCollection(props) {
             onClick={() => { setCollections([]); props.setShow(false); }} // Close modal when clicking outside
           >
             <motion.div
-              className="bg-white rounded-lg shadow-lg md:w-[50%] max-w-[1200px] p-8 overflow-y-auto max-h-[90vh] z-[1201]"
+              className="bg-gradient-to-b from-[#1c1b1a] to-[#080808]  shadow-lg md:w-[50%] max-w-[1200px] p-8 overflow-y-auto max-h-[90vh] z-[1201]"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
@@ -140,7 +140,7 @@ function AddToCollection(props) {
                     {/* Search Input */}
                     <input
                       type="text"
-                      className="pl-10 pr-4 py-2 w-64 md:w-80 lg:w-96 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="pl-10 pr-4 py-2 w-64 md:w-80 lg:w-96 border-2 my-input"
                       placeholder="Search..."
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
@@ -157,7 +157,7 @@ function AddToCollection(props) {
                 )}
                 <div className="grid grid-cols-2 gap-2">
                   {filteredCollections.map((collection) => (
-                    <div key={collection.id} className="bg-[#f5f5f5] p-2 cursor-pointer flex items-center">
+                    <div key={collection.id} className="bg-[#1c1b1a] hover:bg-[#3b3229] text-gray-200 p-2 cursor-pointer flex items-center">
                       <input
                         type="checkbox"
                         checked={checkedCollections.includes(collection.id)}
@@ -173,7 +173,7 @@ function AddToCollection(props) {
               <div className="flex justify-end mt-4">
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
+                  className="px-6 py-2 bg-green-500 text-white  hover:bg-green-600 transition duration-200"
                   disabled={pending}
                 >
                   {pending ? "Submitting..." : "Submit"}

@@ -28,6 +28,7 @@ import SettingsPage from "views/pages/settings/SettingsPage";
 import ActivityPage from "views/pages/activity/ActivityPage";
 import DashboardPage from "views/pages/dashboard/DashboardPage";
 import DataViewPage from "views/pages/data_view/DataViewPage";
+import IncomingPage from "views/pages/whatsapp/IncomingPage";
 import UserProfilePage from "views/pages/user_profile/UserProfilePage";
 import CollectionPage from "views/pages/collection/CollectionPage";
 import HelpPage from "views/pages/help/HelpPage";
@@ -39,85 +40,106 @@ import PostPage from "views/pages/posts/PostPage";
 import MapLocationDetection from "views/pages/settings/general/MapLocationDetection";
 import EntityPage from "views/pages/entities/EntityPage";
 import DetailedSingleData from "views/pages/data_view/options/DetailedSingleData";
+import AdminNotFound from "views/pages/notfound/AdminNotFound";
+import MobileNotAllowed from "views/pages/mobile-not-allowed/MobileNotAllowed";
+import PagesNotFound from "views/pages_client/notfound/PagesNotFound";
 
 const dashboardRoutes = [
- 
   {
     path: "/map_view",
     name: "Map View",
     icon: "nc-icon nc-pin-3",
     component: MapPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   {
     path: "/post",
     name: "Reports",
     icon: "nc-icon nc-pin-3",
     component: PostPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: false,
   },
   {
     path: "/post/add",
     name: "Add New Report",
     icon: "nc-icon nc-pin-3",
     component: PostPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: false,
   },
   {
     path: "/data_view",
     name: "Data View",
     icon: "nc-icon nc-layers-3",
     component: DataViewPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: false,
+  },
+  {
+    path: "/incoming",
+    name: "Whatsapp Incoming Report",
+    icon: "nc-icon nc-layers-3",
+    component: IncomingPage,
+    layout: "/deployment",
+    mobileRestricted: false,
   },
   {
     path: "/entity",
     name: "Entities",
     icon: "nc-icon nc-pin-3",
     component: EntityPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: false,
   },
   {
     path: "/entity/add",
     name: "Add New Entity",
     icon: "nc-icon nc-pin-3",
     component: EntityPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: false,
   },
   {
     path: "/activity",
     name: "Activity",
     icon: "nc-icon nc-bullet-list-67",
     component: ActivityPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   {
     path: "/settings",
     name: "Settings",
     icon: "nc-icon nc-settings-gear-64",
     component: SettingsPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   {
     path: "/dashboard",
     name: "Dashboard",
     icon: "nc-icon nc-settings-gear-64",
     component: DashboardPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: false,
   },
   {
     path: "/collections",
     name: "Collections",
     icon: "nc-icon nc-circle-09",
     component: CollectionPage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: false,
   },
   {
     path: "/detailed",
-    name: "Single",
+    name: "Detailed View",
     icon: "nc-icon nc-circle-09",
     component: DetailedSingleData,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: false,
   },
   // {
   //   path: "/help",
@@ -131,42 +153,48 @@ const dashboardRoutes = [
     name: "User Profile",
     icon: "nc-icon nc-circle-09",
     component: UserProfilePage,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   {
     path: "/maps",
     name: "Map View",
     icon: "nc-icon nc-pin-3",
     component: Maps,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   {
     path: "/table",
     name: "Table List",
     icon: "nc-icon nc-notes",
     component: TableList,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   {
     path: "/typography",
     name: "Typography",
     icon: "nc-icon nc-paper-2",
     component: Typography,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   {
     path: "/icons",
     name: "Icons",
     icon: "nc-icon nc-atom",
     component: Icons,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   {
     path: "/notifications",
     name: "Notifications",
     icon: "nc-icon nc-bell-55",
     component: Notifications,
-    layout: "/deployment"
+    layout: "/deployment",
+    mobileRestricted: true,
   },
   // {
   //   path: "",
@@ -180,22 +208,44 @@ const dashboardRoutes = [
     name: "Welcome",
     icon: "nc-icon nc-bell-55",
     component: WelcomePage,
-    layout: "/pages"
+    layout: "/pages",
   },
   {
     path: "/create",
     name: "Create Deployment",
     icon: "nc-icon nc-bell-55",
     component: CreateDeploymentPage,
-    layout: "/pages"
+    layout: "/pages",
   },
   {
     path: "/login",
     name: "Login",
     icon: "nc-icon nc-bell-55",
     component: LoginPage,
-    layout: "/pages"
+    layout: "/pages",
   },
+  {
+    path: "/mobile-not-allowed",
+    name: "Mobile Restricted",
+    component: MobileNotAllowed,
+    layout: "/deployment"
+  },
+  {
+    path: "*",
+    name: "Not Found",
+    icon: "nc-icon nc-bell-55",
+    component: AdminNotFound,
+    layout: "/deployment",
+    mobileRestricted: false,
+  },
+  {
+    path: "*",
+    name: "Not Found",
+    icon: "nc-icon nc-bell-55",
+    component: PagesNotFound,
+    layout: "/pages",
+  }
+
   // {
   //   path: "/maptest",
   //   name: "MapTest",

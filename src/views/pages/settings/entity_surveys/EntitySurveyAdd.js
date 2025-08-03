@@ -63,13 +63,13 @@ function EntitySurveyAdd(props) {
   };
 
   const handleIconSelection = ({iconClass,color}) => {
-    
+
     setFormValue({
       ...formValue,
       icon: iconClass,
       color: color,
     });
-    
+
   };
 
   const handleCustomFieldChange = (index, field, value) => {
@@ -256,22 +256,23 @@ function EntitySurveyAdd(props) {
 
   return (
     <>
-      <Card>
+      <Card className="my-gradient-bg shadow-xl " >
         <Card.Header>
           <Card.Title as="h4">
             <div className="flex items-start justify-between">
-              <span>
-                Entity Layer |{" "}
+              <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">
+                Entity Layer :{" "}
                 <span className="text-[0.6em] capitalize"> {props?.formType} </span>{" "}
               </span>
-              <Button variant="default" onClick={() => props?.setCurrentPage("list")}>
-                Cancel
-              </Button>
+              <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button>
             </div>
           </Card.Title>
         </Card.Header>
+        <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
         <Card.Body className="relative h-[calc(100vh-200px)] overflow-hidden">
-          <hr />
+
           {pending && (
             <div className="flex items-center justify-center mb-4">
               <Spinner animation="grow" variant="warning" />
@@ -289,7 +290,7 @@ function EntitySurveyAdd(props) {
               <div className="mb-6">
                   <label
                     htmlFor="survey_description"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 my-label"
                   >
                     Pick An Icon And Color
                   </label>
@@ -298,7 +299,7 @@ function EntitySurveyAdd(props) {
                 <div className="mb-6">
                   <label
                     htmlFor="survey_name"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 my-label"
                   >
                      Name
                   </label>
@@ -308,18 +309,18 @@ function EntitySurveyAdd(props) {
                     name="survey_name"
                     value={formValue.survey_name}
                     id="survey_name"
-                    className="focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="w-full my-input"
                     placeholder="Name "
                     required
                   />
-                   
-                    
+
+
                 </div>
 
                 <div className="mb-6">
                   <label
                     htmlFor="survey_description"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 my-label"
                   >
                     Describe the Layer
                   </label>
@@ -329,28 +330,28 @@ function EntitySurveyAdd(props) {
                     name="survey_description"
                     value={formValue.survey_description}
                     rows="3"
-                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300  dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white  focus:bg-white"
+                    className="block p-2.5 w-full my-input"
                     placeholder="Survey Description..."
                   ></textarea>
                 </div>
-                
+
                 <div>
                   <div className="flex items-start justify-between">
-                    <span>Fields </span>
-                    <Button
-                      className="nav-link border flex items-start justify-between gap-1 hover:bg-gray-400 hover:border-red-500"
+                    <span className="my-label">Fields </span>
+                    <button
+                      className="nav-link border flex items-start justify-between gap-1 bg-gray-400 hover:bg-gray-500 hover:border-red-500"
                       style={{ border: "2px solid red" }}
                       variant="default"
                       onClick={() => {setCustomFieldView('list'); setShow(true);}}
                     >
                       <span className="text-black mr-2">Add Field</span>
                       <i className="nc-icon nc-simple-add text-black" />
-                    </Button>
+                    </button>
                   </div>
                   <hr />
 
                   <div className="grid grid-cols-1">
-                    <div className="bg-gray-100 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
+                    <div className="bg-gray-300 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
                       <div className="flex items-start gap-4">
                         <i className="nc-icon nc-grid-45" />
                         <div className="p-0">Name</div>
@@ -359,8 +360,8 @@ function EntitySurveyAdd(props) {
                         {/* <CiEdit className="h-5 w-5 cursor-pointer" /> */}
                       </div>
                     </div>
-                    
-                    <div className="bg-gray-100 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
+
+                    <div className="bg-gray-300 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
                       <div className="flex items-start gap-4">
                         <i className="nc-icon nc-grid-45" />
                         <div className="p-0">Description</div>
@@ -371,7 +372,7 @@ function EntitySurveyAdd(props) {
                     </div>
                     <hr />
                     {customFields?.map((record, index) => (
-                      <div key={index} className="bg-gray-100 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
+                      <div key={index} className="bg-gray-300 p-2  px-4 rounded-sm text-gray-700 mb-2 hover:text-black focus:text-black flex items-start justify-between">
                         <div className="flex items-start gap-4">
                           <i className="nc-icon nc-grid-45" />
                           <div className="p-0 font-bold">{record.field_name}</div>
@@ -397,7 +398,7 @@ function EntitySurveyAdd(props) {
           {/* action_buttons fixed at the bottom of the Card.Body */}
           <div
             id="action_buttons"
-            className="absolute bottom-0 left-0 right-0 bg-white p-4 shadow-lg z-50"
+            className="absolute my-gradient-bg bottom-0 left-0 right-0 bg-white p-4 shadow-lg z-50"
           >
             <div className="flex items-start justify-between">
               {props.formType === "add" ? (

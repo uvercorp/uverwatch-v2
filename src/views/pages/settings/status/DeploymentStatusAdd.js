@@ -237,19 +237,22 @@ function DeploymentStatusAdd(props) {
     }
     return (
         <>
-            <Card>
+           <Card className="my-gradient-bg shadow-xl " >
                 <Card.Header>
                     <Card.Title as="h4">
 
                         <div className="flex items-start justify-between">
-                            <span> Statuses | <span className="text-[0.6em] capitalize"> {props?.formType} </span> </span>
-                            <Button variant="default" onClick={() => props?.setCurrentPage('list')}>Cancel</Button>
+                            <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]"> Statuses | <span className="text-[0.6em] capitalize"> {props?.formType} </span> </span>
+                            <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button>
 
                         </div>
                     </Card.Title>
                 </Card.Header>
+                <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
                 <Card.Body >
-                    <hr />
+
                     {pending && (<div className="flex items-center justify-center mb-4">
                         <Spinner animation="grow" variant="warning" />
                     </div>)}
@@ -265,11 +268,11 @@ function DeploymentStatusAdd(props) {
                         <div className="md:min-h-[450px] relative">
 
                             <div>
-                                
-                                    <div className="mb-6">
+
+                                    <div className="mb-4">
                                         <label
                                             htmlFor="survey_description"
-                                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                                            className="block mb-2 my-label"
                                         >
                                             Pick An Icon And Color
                                         </label>
@@ -278,16 +281,16 @@ function DeploymentStatusAdd(props) {
                                             initialColor={formValue.color}
                                         />
                                     </div>
-                                   
-                               
-                                <div className="mb-6">
-                                    <label for="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Status Name</label>
-                                    <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name of Deployment Status" required />
+
+
+                                <div className="mb-4">
+                                    <label for="name" className="block mb-2 my-label"> Status Name</label>
+                                    <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" block w-full my-input" placeholder="Name of Deployment Status" required />
                                 </div>
 
-                                <div className="mb-6">
-                                    <label for="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Describe the Status</label>
-                                    <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300  dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white  focus:bg-white" placeholder="Deployment Status Description..."></textarea>
+                                <div className="mb-4">
+                                    <label for="description" className="block mb-2 my-label">Describe the Status</label>
+                                    <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="3" class="block p-2.5 w-full my-input" placeholder="Deployment Status Description..."></textarea>
 
                                 </div>
                                 <div>

@@ -24,7 +24,7 @@ import { login, logout, selectUser } from 'provider/features/userSlice';
 import Spinner from 'react-bootstrap/Spinner';
 import { addCollections, removeCollections } from 'provider/features/collectionSlice';
 import { toggleSearchValue } from "provider/features/globalSearchSlice"
-
+import { selectedSingleData, setSelectedSingleData } from 'provider/features/helperSlice';
 
 import { CiEdit } from "react-icons/ci";
 import { FaShare } from "react-icons/fa";
@@ -63,6 +63,11 @@ function MapPage() {
   let navigate = useHistory();
   const handleSelect = (eventKey) => alert(`selected ${eventKey}`);
 
+  const handleReadMore = (record) => {
+    dispatch(setSelectedSingleData({ record }));
+    navigate.push('/deployment/detailed?type=' + (record.is_entity === "true" ? "entity" : "post") + "&id=" + record.id);
+
+  }
   useEffect(() => {
     let deployment = localStorage.getItem('deployment');
     if (deployment && deployment !== undefined) {
@@ -180,6 +185,7 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
   // Inside DataViewPage component
   const [selectedPosters, setSelectedPosters] = useState([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [selectedSubtags, setSelectedSubtags] = useState([]);
   const [selectedPriorityLevels, setSelectedPriorityLevels] = useState([]);
   const [selectedAccessLevels, setSelectedAccessLevels] = useState([]);
@@ -200,6 +206,15 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
   const uniquePriorityLevels = [...new Set(posts.map(post => post.priority_level))];
   const uniqueAccessLevels = [...new Set(posts.map(post => post.access_level))];
   const uniqueSubcategories = [...new Set(posts.map(post => post.sub_category_name))];
+  const uniqueTags = [
+    ...new Set(
+      posts.flatMap(post =>
+        post.tags
+          ? post.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
+          : []
+      )
+    )
+  ];
   const uniqueSubtags = [...new Set(posts.map(post => post.sub_tag))];
 
   // State for filtered posts
@@ -237,12 +252,18 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
       // Filter by categories
       const categoryMatch =
         selectedCategories.length === 0 ||
-        selectedCategories.includes(post.category_name);
+        selectedCategories.includes(post.category_name) ||
+        selectedCategories.includes(post.entity_type_name);
+
+        const tagMatch =
+  selectedTags.length === 0 ||
+  selectedTags.some(tag => post.tags?.split(',').map(t => t.trim()).includes(tag));
 
       // Filter by statuses
       const statusMatch =
-        selectedStatuses.length === 0 || selectedStatuses.includes(post.status);
-
+      selectedStatuses.length === 0 ||
+      selectedStatuses.includes(post.status) ||
+      selectedStatuses.includes(post.post_status_name);
       // Filter by date range
       const postDate = new Date(post.created_at).setHours(0, 0, 0, 0);
       const startDate = dateRange[0]
@@ -379,16 +400,17 @@ const dayMatch =
         subcategoryMatch &&
         subtagMatch &&
         priorityMatch &&
+        tagMatch &&
         accessMatch
 
       );
     });
 
-   
+
 
 
     setFilteredPosts(filtered);
-  }, [selectedSurveys, selectedCategories, selectedStatuses, dateRange, locationFilter, selectedPosters, selectedSubcategories, selectedSubtags, selectedPriorityLevels,
+  }, [selectedSurveys, selectedCategories,selectedTags, selectedStatuses, dateRange, locationFilter, selectedPosters, selectedSubcategories, selectedSubtags, selectedPriorityLevels,
     selectedAccessLevels, posts, searchEmpty, searchValue, advancedFilters]);
   // Handle checkbox changes
   const handleSurveyChange = (survey) => {
@@ -412,6 +434,14 @@ const dayMatch =
       prev.includes(category)
         ? prev.filter((c) => c !== category) // Uncheck
         : [...prev, category] // Check
+    );
+  };
+
+  const handleTagChange = (tag) => {
+    setSelectedTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
     );
   };
 
@@ -468,8 +498,8 @@ const dayMatch =
 
     setSelectedSurveys([]);
     setSelectedCategories([]);
+    setSelectedTags([]);
     setSelectedStatuses([]);
-
     setDateRange([null, null]);
     setLocationFilter({ latitude: null, longitude: null, range: null });
     dispatch(removeCollections({ name: '', collectionId: '' }));
@@ -498,8 +528,15 @@ const dayMatch =
         .map((post) => post.name_of_survey)
     ),
   ];
-  const uniqueCategories = [...new Set(posts.map((post) => post.category_name))];
-  const uniqueStatuses = [...new Set(posts.map((post) => post.status))];
+  // const uniqueCategories = [...new Set(posts.map((post) => post.category_name))];
+  const uniqueCategories = [...new Set(
+    posts.flatMap(post => [post.category_name, post.entity_type_name])
+        .filter(value => value) // Keeps only truthy (non-empty) values
+)];
+
+  const uniqueStatuses = [...new Set(
+    posts.flatMap(post => [post.status, post.post_status_name])
+  )];
 
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -605,6 +642,9 @@ const dayMatch =
           selectedCategories={selectedCategories}
           uniqueCategories={uniqueCategories}
           handleCategoryChange={handleCategoryChange}
+          selectedTags={selectedTags}
+          uniqueTags={uniqueTags}
+          handleTagChange={handleTagChange}
           selectedStatuses={selectedStatuses}
           uniqueStatuses={uniqueStatuses}
           handleStatusChange={handleStatusChange}
@@ -614,7 +654,7 @@ const dayMatch =
           locationFilter={locationFilter}
           handleRangeSelect={handleRangeSelect}
           dateRange={dateRange}
-          
+
           exportToCSV={doExportToCSV}
           filteredPosts={filteredPosts}
           selectedPosters={selectedPosters}
@@ -636,10 +676,12 @@ const dayMatch =
           sortConfig={sortConfig}
           setShowAdvancedSearch={setShowAdvancedSearch}
           addToCollectionBulk={handleAdditionToCollectionBulk}
+          rightOpen={rightOpen}
+          setRightOpen = {setRightOpen}
               />
               </div>
-              
-              
+
+
 
 <div className="flex-1 flex relative my-black-bg ">
       {/* Left Column */}
@@ -649,7 +691,7 @@ const dayMatch =
           {/* <h3 className="text-lg font-bold mb-4">Left Panel</h3> */}
           {/* Left column content */}
           {(collectionOn && collectionIdNew !== 0) && (
-                  <p className="flex items-start justify-between text-[0.65em]">
+                  <p className="flex items-start justify-between text-[0.65em] text-white pl-4">
                     <span>Collection "{collectionName}"</span>
                     <span
                       className="cursor-pointer underline text-red-600"
@@ -665,11 +707,17 @@ const dayMatch =
           <LeftFilterPanel handleSurveyChange={handleSurveyChange} handleEntityChange={handleEntityChange} selectedSurveys={selectedSurveys} selectedEntities={selectedEntities} uniqueEntities={uniqueEntities} uniqueSurveys={uniqueSurveys}/>
           {/* <LeftF */}
           </div>
-        
+
       </div>
 
       {/* Middle Column */}
-      <div className="flex-1 lg:w-3/5 relative my-black-bg ">
+      <div
+    className={`relative my-black-bg transition-all duration-300 ${
+      !leftOpen && !rightOpen ? "w-full" :
+      leftOpen && rightOpen ? "lg:w-3/5" :
+      "lg:w-4/5"
+    }`}
+  >
         <div className=" h-full">
           {/* Toggle Buttons Container */}
           {/* <div className="lg:hidden flex justify-between items-center mb-4">
@@ -707,14 +755,14 @@ const dayMatch =
               )}
               {/* <CardView/> */}
               {/* <MapView/> */}
-              {/* <MapDisplay 
+              {/* <MapDisplay
                 posts={sortedPosts}
                 pending={pending}
                 deletePost={handleDelete}
                 removeFromCollection={handleRemove}
                 updatePostStatus={handlePostUpdateStatus}
               /> */}
-              <MapDisplay posts={filteredPosts} pending={pending} className="mt-4" deployment_id={deploymentId} />
+              <MapDisplay posts={filteredPosts} pending={pending} className="mt-4" deployment_id={deploymentId} handleReadMore={handleReadMore}/>
         </div>
         {/* Overlay for mobile */}
         {(leftOpen || rightOpen) && (
@@ -729,10 +777,13 @@ const dayMatch =
       </div>
 
       {/* Right Column */}
-      <div className={`fixed inset-y-0 right-0 w-full max-w-[300px] my-black-bg z-40 shadow-xl transform transition-transform duration-300 lg:translate-x-0 lg:relative lg:block lg:w-1/5 ${rightOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}>
-        
-        <RightFilterPanel 
+      <div
+    className={`fixed inset-y-0 right-0 w-full max-w-[300px] my-black-bg z-40 shadow-xl transform transition-transform duration-300 lg:relative lg:w-1/5 ${
+      rightOpen ? "translate-x-0" : "translate-x-full lg:w-0 lg:max-w-0"
+    }`}
+  >
+
+        <RightFilterPanel
          exportToCSV={doExportToCSV}
          addToCollectionBulk={handleAdditionToCollectionBulk}
          filters={advancedFilters}
@@ -748,9 +799,9 @@ const dayMatch =
     <AddToCollectionBulkModal
   show={showAddToCollectionBulk}
   onClose={() => setAddToCollectionBulk(false)}
-  
+
   filteredPosts={filteredPosts}
-  
+
 />
   </>);
 }

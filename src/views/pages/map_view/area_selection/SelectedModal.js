@@ -31,23 +31,23 @@ function SelectedModal(props) {
     }else{
       setCurrentPage('display');
     }
-    
+
     // setFormType(formType);
     if(type == "entity"){
       let toFilter = props.posts
-      const entityPosts = toFilter.filter(post => 
+      const entityPosts = toFilter.filter(post =>
         post.hasOwnProperty('is_entity') && post.is_entity === 'true'
       );
       setFilteredPosts(entityPosts);
     }else{
       let toFilter = props.posts
-      const entityPosts = toFilter.filter(post => 
+      const entityPosts = toFilter.filter(post =>
         post.hasOwnProperty('is_entity') && post.is_entity === 'false'
       );
       setFilteredPosts(entityPosts);
     }
   };
- 
+
 
   return (
     <>
@@ -63,48 +63,52 @@ function SelectedModal(props) {
             onClick={() => { setCollections([]); props.onClose(); props.onClearSelection(); setCurrentPage('choose')}} // Close modal when clicking outside
           >
             <motion.div
-              className="bg-gradient-to-b from-[#1c1b1a] to-[#080808] rounded-lg shadow-lg md:w-[50%] max-w-[1200px] p-8 overflow-y-auto max-h-[90vh] z-[1201]"
+              className="bg-gradient-to-b from-[#1c1b1a] to-[#080808] rounded-lg shadow-lg md:w-[50%] max-w-[1200px] p-8  max-h-[90vh] z-[1201]"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               onClick={(e) => e.stopPropagation()} // Prevent click inside modal from closing it
+              style={{border: "1px solid #2e2c2b"}}
             >
-             
+
               {currentPage == 'choose' && <>
                 <div className="flex items-start justify-between">
                 <span className="text-[1.4em] font-bold">Filter By</span>
                 <div className="flex items-center justify-center">
                   <div className="relative">
                    Area Results [{props.posts.length}]
-                   
+
                   </div>
                 </div>
               </div>
-              <hr />
-                <div className="md:min-h-[70vh] ">
+              <div className="px-0">
+        <hr className="border-[#454240] mt-4 pt-0 " />
+      </div>
+                <div className="md:min-h-[72vh] ">
 
 
 
 
 <div className="grid grid-cols-2 gap-3 gap-x-4">
 
-    
-        <div className="bg-[#f5f5f5] h-[100px] text-lg  font-bold text-center p-3 cursor-pointer rounded-sm py-3 hover:underline capitalize" onClick={() => toggleRecordType('post')}>Posts</div>
-        <div className="bg-[#f5f5f5] h-[100px] text-lg font-bold text-center p-3 cursor-pointer rounded-sm py-3 hover:underline capitalize" onClick={() => toggleRecordType('entity')}> Entities</div>
-       
+
+        <div className="my-gradient-bg h-[90px] text-lg  font-bold text-center p-3 cursor-pointer  py-3 hover:underline capitalize" onClick={() => toggleRecordType('post')} style={{ border: "1px solid #f5f5f5" }}>Posts</div>
+        <div className="my-gradient-bg h-[90px] text-lg font-bold text-center p-3 cursor-pointer  py-3 hover:underline capitalize" onClick={() => toggleRecordType('entity')} style={{ border: "1px solid #f5f5f5" }}> Entities</div>
+
 
 </div>
-<br/>
 
-<hr/>
-<br/>
+<div className="px-0">
+        <hr className="border-[#454240] mt-4  pt-0 " />
+      </div>
+{/* <br/> */}
 <div className="grid grid-cols-2 gap-3 gap-x-4">
 
-    
+
              {/* <div className="bg-[#f5f5f5] h-[100px] text-lg font-bold text-center p-3 cursor-pointer rounded-sm py-3 hover:underline capitalize" onClick={() => toggleRecordType('create_entity')}> Create Entity</div> */}
-        <div className="bg-[#f5f5f5] h-[100px] text-lg font-bold text-center p-3 cursor-pointer rounded-sm py-3 hover:underline capitalize" onClick={() => toggleRecordType('geofence')}> Create Geo Fence</div>
-    
+        <div className="my-gradient-bg h-[90px] text-lg font-bold text-center p-3 cursor-pointer rounded-sm py-3 hover:underline capitalize" onClick={() => toggleRecordType('geofence')} style={{ border: "1px solid #f5f5f5" }}> Create Geo Fence</div>
+
 
 </div>
 </div>
@@ -112,11 +116,11 @@ function SelectedModal(props) {
     }
     {currentPage == 'collection' &&
     <SaveToCollection  selectedRecord={selectedRecord}/>
-    
+
     }
     {currentPage == 'display' &&
     <DisplayResult  posts={filteredPosts} selectedType={selectedType} setCurrentPage={setCurrentPage}/>
-    
+
     }
 
 {currentPage == 'geofence' &&
@@ -128,7 +132,7 @@ function SelectedModal(props) {
     onSaveGeoFence={props.onSaveGeoFence}
     selectedType={selectedType} setCurrentPage={setCurrentPage}
      />
-    
+
     }
 
             </motion.div>

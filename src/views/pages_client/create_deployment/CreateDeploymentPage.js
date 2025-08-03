@@ -1,6 +1,6 @@
 import { React, useState,useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link,NavLink } from "react-router-dom";
 import { FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import { useLocation, useHistory } from "react-router-dom";
 import { toggleLoadingBar, selectLoadingBar, toggleToaster, selectToasterData, selectToasterStatus } from 'provider/features/helperSlice';
@@ -42,17 +42,17 @@ function CreateDeploymentPage(props) {
               "Authorization": `Bearer ${localStorage.getItem('access')}`
           },
         }
-  
+
         );
-        
+
     //    console.log(results?.data);
          if(results?.data){
           setLookup(results?.data?.deployment_data);
-  
+
          }
       }
       useEffect(()=>{
-  
+
           getDeploymentLookup();
       }, []);
 
@@ -192,68 +192,31 @@ function CreateDeploymentPage(props) {
                 }}
                 className="nav-bar"
             >
-                <main>
-                    <div className="relative pt-16 pb-32 flex content-center items-center justify-center min-h-screen-75">
-                        <div
-                            className="absolute top-0 w-full h-full bg-center bg-cover"
-                            style={{
-                                backgroundImage:
-                                    "url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1267&q=80')",
-                            }}
-                        >
-                            <span
-                                id="blackOverlay"
-                                className="w-full h-full absolute opacity-75 bg-black"
-                            ></span>
-                        </div>
-                        <div className="container relative mx-auto">
-                            <div className="items-center flex flex-wrap">
-                                <div className="w-full lg:w-6/12 px-4 ml-auto mr-auto text-center">
-                                    <div className="pr-12">
-                                        <h1 className="text-white font-semibold text-5xl">
-                                            Deployment Creation.
-                                        </h1>
-                                        <p className="mt-4 text-lg text-gray-200">
-                                            Create Your Own Deployment
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div
-                            className="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-70-px"
-                            style={{ transform: "translateZ(0)" }}
-                        >
-                            <svg
-                                className="absolute bottom-0 overflow-hidden"
-                                xmlns="http://www.w3.org/2000/svg"
-                                preserveAspectRatio="none"
-                                version="1.1"
-                                viewBox="0 0 2560 100"
-                                x="0"
-                                y="0"
-                            >
-                                <polygon
-                                    className="text-blueGray-200 fill-current"
-                                    points="2560 0 2560 100 0 100"
-                                ></polygon>
-                            </svg>
-                        </div>
-                    </div>
-                    <section className="pb-5 bg-gray-200 -mt-24">
+                <main className="bg-[#080808] min-h-screen ">
+
+                    <section >
+                    <div className="flex flex-col items-center justify-center text-white pt-16">
+                    <div className="mb-4">
+            <img src="../../logo.jpg" className='h-[90px]' />
+          </div>
+
+          {/* Log In Text */}
+          <h1 className="text-[1em]  mb-6 text-center my-font-family-evogria">CREATE DEPLOYMENT</h1>
+          </div>
                         <div className="container mx-auto px-2 md:px-4">
                             <div className="flex flex-wrap">
-                                <div className="lg:pt-12 pt-2 md:pt-6 w-full md:w-12/12 px-0 md:px-4 text-center">
-                                    <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-8 shadow-md rounded-md">
+                                <div className="lg:pt-12 pt-2 md:pt-6 w-full md:w-12/12 px-0 md:px-8 text-center">
+                                    <div className="relative flex flex-col min-w-0 break-words bg-[#080808] w-full mb-4 shadow-md rounded-md">
                                         <div className="p-2 md:p-4">
 
                                             <div className="grid grid-cols-1 md:flex md:items-start md:justify-between p-2 gap-2">
                                                 {/* #3B404C,bg-blue-500 */}
-                                                <div className="md:min-h-[480px] w-full md:w-4/12 bg-[#3B404C] shadow-md rounded-md p-2">
+                                                <div className="md:min-h-[480px] w-full md:w-1/12 bg-[#080808] shadow-md p-2"></div>
+                                                <div className="md:min-h-[500px] w-full md:w-4/12 my-gradient-bg shadow-md p-2">
                                                     <div className="p-4 grid grid-cols-4 gap-2 md:grid-cols-1">
                                                         <div className="flex items-start justify-start mb-3">
 
-                                                            <div className={`border-1 border-white rounded-full text-white p-[4px] h-[35px] w-[35px] ${parseInt(currentPage) > 0 ? 'bg-blue-300' : ''
+                                                            <div className={`border-1 border-white rounded-full text-white p-[4px] h-[35px] w-[35px] ${parseInt(currentPage) > 0 ? 'bg-[#1b543a]' : ''
                                                                 }`} style={{ border: "1px solid white" }}>1</div>
                                                             <div className=" grid-cols-1 pl-4 hidden md:block">
                                                                 <div className="text-left font-bold text-gray-400">STEP 1</div>
@@ -262,7 +225,7 @@ function CreateDeploymentPage(props) {
                                                         </div>
                                                         <div className="flex items-start justify-start mb-3">
 
-                                                            <div className={`border-1 border-white rounded-full text-white p-[4px] h-[35px] w-[35px] ${parseInt(currentPage) > 1 ? 'bg-blue-300' : ''
+                                                            <div className={`border-1 border-white rounded-full text-white p-[4px] h-[35px] w-[35px] ${parseInt(currentPage) > 1 ? 'bg-[#1b543a]' : ''
                                                                 }`} style={{ border: "1px solid white" }}>2</div>
                                                             <div className="hidden grid-cols-1 pl-4 items-start justify-start md:block">
                                                                 <div className="text-left font-bold text-gray-400 uppercase">Step 2</div>
@@ -271,7 +234,7 @@ function CreateDeploymentPage(props) {
                                                         </div>
                                                         <div className="flex items-start justify-start mb-3">
 
-                                                            <div className={`border-1 border-white rounded-full text-white p-[4px] h-[35px] w-[35px] ${parseInt(currentPage) > 2 ? 'bg-blue-300' : ''
+                                                            <div className={`border-1 border-white rounded-full text-white p-[4px] h-[35px] w-[35px] ${parseInt(currentPage) > 2 ? 'bg-[#1b543a]' : ''
                                                                 }`} style={{ border: "1px solid white" }}>3</div>
                                                             <div className="hidden grid-cols-1 pl-4 md:block">
                                                                 <div className="text-left font-bold text-gray-400 uppercase">Step 3</div>
@@ -280,7 +243,7 @@ function CreateDeploymentPage(props) {
                                                         </div>
                                                         <div className="flex items-start justify-start">
 
-                                                            <div className={`border-1 border-white rounded-full text-white p-[4px] h-[35px] w-[35px] ${parseInt(currentPage) > 3 ? 'bg-blue-300' : ''
+                                                            <div className={`border-1 border-white rounded-full text-white p-[4px] h-[35px] w-[35px] ${parseInt(currentPage) > 3 ? 'bg-[#1b543a]' : ''
                                                                 }`} style={{ border: "1px solid white" }}>4</div>
                                                             <div className="hidden grid-cols-1 pl-4 md:block">
                                                                 <div className="text-left font-bold text-gray-400 uppercase">Step 4</div>
@@ -289,9 +252,21 @@ function CreateDeploymentPage(props) {
                                                         </div>
                                                     </div>
 
-
+                                                    <div className="hidden md:flex md:items-center md:justify-center pt-20 w-full max-w-md text-center ">
+              <a
+                href="#"
+                className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
+              >
+                Already have an account?
+                <NavLink
+          key=''
+          to='login'>
+            <span className="underline text-white">Login</span>
+            </NavLink>
+              </a>
+            </div>
                                                 </div>
-                                                <div className="md:min-h-[150px] w-full md:w-8/12 bg-white md:pl-5 md:p-3">
+                                                <div className="md:min-h-[150px] w-full md:w-7/12 my-gradient-bg md:pl-5 md:p-3">
                                                     {parseInt(currentPage) == 1 &&
                                                         <DeploymentInfo formValue={formValue} setFormValue={setFormValue} handleChange={handleChange} />
                                                     }
@@ -314,8 +289,8 @@ function CreateDeploymentPage(props) {
                                                         {parseInt(currentPage) > 1 &&
 
                                                             <a onClick={() => toggleCurrentPage('substract')}
-                                                                className="bg-white btn text-black active:bg-blueGray-50 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
-                                                                type="button" variant="warning"
+                                                                className="my-btn-green btn text-white  text-xs font-bold uppercase px-4 py-2 shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
+                                                                style={{backgroundColor:'#1b543a'}}
                                                             >
                                                                 <i className="fas fa-arrow-alt-circle-left"></i> Back
                                                             </a>
@@ -323,22 +298,22 @@ function CreateDeploymentPage(props) {
                                                         {parseInt(currentPage) == 1 &&
                                                             <a></a>
                                                         }
-                                                        {parseInt(currentPage) < 4 && <> 
+                                                        {parseInt(currentPage) < 4 && <>
 
-                                                        {(parseInt(currentPage) == 3 && isPasswordValidated) ? 
+                                                        {(parseInt(currentPage) == 3 && isPasswordValidated) ?
                                                             <a onClick={() => toggleCurrentPage('add')}
-                                                                className="bg-white btn text-black active:bg-blueGray-50 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
-                                                                type="button" variant="warning"
+                                                                className="my-btn-green btn text-white  text-xs font-bold uppercase px-4 py-2 shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
+                                                                style={{backgroundColor:'#1b543a'}}
                                                             >
                                                                 Next  <i className="fas fa-arrow-alt-circle-right"></i>
                                                             </a>
                                                             :""}
 
-                                                        
+
                                                         {parseInt(currentPage) !== 3 && (
                                                             <a onClick={() => toggleCurrentPage('add')}
-                                                                className="bg-white btn text-black active:bg-blueGray-50 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
-                                                                type="button" variant="warning"
+                                                                className="my-btn-green  btn text-white  text-xs font-bold uppercase px-4 py-2 shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
+                                                                style={{backgroundColor:'#1b543a'}}
                                                             >
                                                                 Next  <i className="fas fa-arrow-alt-circle-right"></i>
                                                             </a>)
@@ -347,16 +322,16 @@ function CreateDeploymentPage(props) {
                                                         </>}
                                                         {parseInt(currentPage) == 4 &&
                                                             <>
-                                                               
 
-                                                                {pending ? <button className="btn bg-blue-500 text-black hover:bg-blue-700" disabled={true}><LoadingIcon /> processing..</button> : <>
+
+                                                                {pending ? <button className="btn bg-blue-500 text-white hover:bg-blue-700" disabled={true}  style={{backgroundColor:'#1b543a'}}><LoadingIcon /> processing..</button> : <>
                                                                     {/* <a onClick={handleSubmit} className="btn bg-blue-500 text-black hover:bg-blue-700">Submit </a>  */}
                                                                     <button
                                                                         //  onClick={() => toggleCurrentPage('add')}
                                                                         onClick={handleSubmit}
                                                                         // to="/deployment/map_view"
-                                                                        className="bg-blue-700 btn text-black active:bg-blueGray-50 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
-                                                                        type="button" variant="warning"
+                                                                        className="bg-green-700 btn text-white  text-xs font-bold uppercase px-4 py-2 shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 ml-3 mb-3 ease-linear transition-all duration-150"
+                                                                        style={{backgroundColor:'#1b543a'}}
                                                                     >
                                                                         Submit  <i className="fas fa-arrow-alt-circle-ok"></i>
                                                                     </button>

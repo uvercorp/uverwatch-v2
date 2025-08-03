@@ -130,7 +130,7 @@ function GoefenceAdd(props) {
         return true; // Valid data
     }
 
-  
+
     const updateRecordInstance = async (data) => {
 
         setPending(true);
@@ -210,19 +210,23 @@ function GoefenceAdd(props) {
     }
     return (
         <>
-            <Card>
+            <Card className="my-gradient-bg shadow-xl ">
+
                 <Card.Header>
                     <Card.Title as="h4">
 
                         <div className="flex items-start justify-between">
-                            <span> Geofence | <span className="text-[0.6em] capitalize"> {props?.formType} </span> </span>
-                            <Button variant="default" onClick={() => props?.setCurrentPage('list')}>Cancel</Button>
+                            <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">Geofence : <span className="text-[0.6em] capitalize"> {props?.formType} </span> </span>
+                            <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button>
 
                         </div>
                     </Card.Title>
                 </Card.Header>
+                <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
                 <Card.Body >
-                    <hr />
+
                     {pending && (<div className="flex items-center justify-center mb-4">
                         <Spinner animation="grow" variant="warning" />
                     </div>)}
@@ -238,7 +242,7 @@ function GoefenceAdd(props) {
                         <div className="md:min-h-[450px] relative">
 
                             <div>
-                                
+
                                     {/* <div className="mb-6">
                                         <label
                                             htmlFor="survey_description"
@@ -251,21 +255,21 @@ function GoefenceAdd(props) {
                                             initialColor={formValue.color}
                                         />
                                     </div> */}
-                                   
-                               
+
+
                                 <div className="mb-6">
-                                    <label for="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Name</label>
-                                    <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name of Deployment Status" required />
+                                    <label for="name" className="block mb-2 text-sm font-medium my-label"> Name</label>
+                                    <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className="  block w-full p-2.5 my-input" placeholder="Name of Deployment Status" required />
                                 </div>
 
                                 <div className="mb-6">
-                                    <label for="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Describe the Goefence</label>
-                                    <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300  dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white  focus:bg-white" placeholder=" Description..."></textarea>
+                                    <label for="description" className="block mb-2 text-sm my-label">Describe the Goefence</label>
+                                    <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="3" class="block p-2.5 w-full my-input" placeholder=" Description..."></textarea>
 
                                 </div>
                                 <div className="mb-6">
-                                    <label for="coordinates" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Goefence Polygon</label>
-                                    <input type="text"  name="coordinates" value={formValue.coordinates} id="coordinates" disabled className=" focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Polygon Drawn" required />
+                                    <label for="coordinates" className="block mb-2 text-sm font-medium my-label"> Goefence Polygon</label>
+                                    <input type="text"  name="coordinates" value={formValue.coordinates} id="coordinates" disabled className="  block w-full p-2.5 my-input" placeholder="Polygon Drawn" required />
                                 </div>
                                 <div>
                                     {invalidFields !== "" && (<p className='bg-red-700 shadow text-left p-3 rounded-xl text-white'>{invalidFields}</p>)}

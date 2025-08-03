@@ -51,13 +51,13 @@ export default function RightFilterPanel(props) {
         </div>
 
         {/* Time Zone */}
-        <div>
+        {/* <div>
           <label className="block mb-0">Time Zone</label>
           <select className="w-full bg-transparent border border-gray-500 px-2 py-1">
             <option>UTC +1</option>
           </select>
           <p className="text-xs text-gray-500 italic mt-0">e.g UTC+00 = GMT</p>
-        </div>
+        </div> */}
 
         {/* Date Range */}
 
@@ -85,7 +85,7 @@ export default function RightFilterPanel(props) {
         </div>
 
         {/* Time Range */}
-       
+
         <div>
   <label className="block mb-0">Time Range</label>
   <div className="flex gap-2">
@@ -106,7 +106,7 @@ export default function RightFilterPanel(props) {
 </div>
 
         {/* Days of the Week */}
-        
+
         <div>
   <label className="block mb-0">Days of the Week</label>
   <div className="flex gap-1 flex-wrap">
@@ -132,24 +132,24 @@ export default function RightFilterPanel(props) {
   </div>
 </div>
 
-        
+
         {/* Area Filter */}
         <div ref={areaFilterRef} className="relative">
           <div className="flex items-center border border-gray-500 mt-2">
-            <input 
-              type="text" 
-              className="flex-grow bg-transparent px-2 py-1" 
-              placeholder="Area Filter..." 
+            <input
+              type="text"
+              className="flex-grow bg-transparent px-2 py-1"
+              placeholder="Area Filter..."
               onClick={() => setShowAreaFilterDropdown(true)}
             />
-            <button 
+            <button
               className="px-2 text-gray-300"
               onClick={() => setShowAreaFilterDropdown(!showAreaFilterDropdown)}
             >
               ⋮
             </button>
           </div>
-          
+
           {showAreaFilterDropdown && (
             <div className="absolute z-10 mt-1 w-full bg-[#0f0f0f] border border-gray-500 p-3 shadow-lg">
               <div className="text-right text-red-500 underline cursor-pointer" onClick={clearFilters}>

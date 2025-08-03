@@ -24,7 +24,7 @@ export const IconPicker = ({ onSelection, initialIconClass, initialColor }) => {
   }, [initialColor]);
 
   // Filter icons based on search query
-  const filteredIcons = useMemo(() => 
+  const filteredIcons = useMemo(() =>
     ICON_LIBRARY.filter(icon =>
       icon.name.toLowerCase().includes(searchQuery.toLowerCase())
     ), [searchQuery]);
@@ -39,44 +39,44 @@ export const IconPicker = ({ onSelection, initialIconClass, initialColor }) => {
   return React.createElement('div', { className: 'relative my-4' },
     React.createElement('button', {
       type: 'button',
-      className: 'px-4 py-2 border rounded bg-white hover:bg-gray-50 flex items-center gap-2',
+      className: 'px-4 py-2 border bg-gray-200 text-black hover:bg-gray-50 flex items-center gap-2',
       onClick: () => setIsOpen(!isOpen)
     },
-      selectedIcon 
-        ? React.createElement(DynamicIcon, { 
-            iconClass: selectedIcon.class, 
-            color: selectedColor 
+      selectedIcon
+        ? React.createElement(DynamicIcon, {
+            iconClass: selectedIcon.class,
+            color: selectedColor
           })
         : 'Select Icon + Color'
     ),
 
-    isOpen && React.createElement('div', { 
-      className: 'absolute top-full left-0 z-50 bg-white border rounded-lg shadow-lg p-4 mt-2 w-96' 
+    isOpen && React.createElement('div', {
+      className: 'absolute top-full left-0 z-50 bg-white border  shadow-lg p-4 mt-2 w-96'
     },
       // Search Input
       React.createElement('div', { className: 'mb-4' },
         React.createElement('input', {
           type: 'text',
           placeholder: 'Search icons...',
-          className: 'w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500',
+          className: 'w-full px-3 py-2 border  focus:outline-none focus:ring-2 focus:ring-blue-500',
           value: searchQuery,
           onChange: (e) => setSearchQuery(e.target.value),
           'aria-label': 'Search icons'
         })
       ),
 
-    
+
 
       // Icons Grid
-      React.createElement('div', { 
+      React.createElement('div', {
         className: 'grid grid-cols-5 gap-3 max-h-64 overflow-y-auto'
       },
         filteredIcons.length > 0 ? (
-          filteredIcons.map(icon => 
+          filteredIcons.map(icon =>
             React.createElement('button', {
               key: icon.class,
               type: 'button',
-              className: 'p-2 border rounded hover:bg-gray-100 flex justify-center items-center',
+              className: 'p-2 border  hover:bg-gray-100 text-black flex justify-center items-center',
               onClick: () => handleSelect(icon),
               'aria-label': `Select ${icon.name} icon`
             },
@@ -84,7 +84,7 @@ export const IconPicker = ({ onSelection, initialIconClass, initialColor }) => {
             )
           )
         ) : (
-          React.createElement('div', { 
+          React.createElement('div', {
             className: 'col-span-5 text-center text-gray-500 py-4'
           },
             'No icons found matching your search'
@@ -98,9 +98,9 @@ export const IconPicker = ({ onSelection, initialIconClass, initialColor }) => {
             onChange: (color) => {
               setSelectedColor(color.hex);
               if (selectedIcon) {
-                onSelection({ 
-                  iconClass: selectedIcon.class, 
-                  color: color.hex 
+                onSelection({
+                  iconClass: selectedIcon.class,
+                  color: color.hex
                 });
               }
             },

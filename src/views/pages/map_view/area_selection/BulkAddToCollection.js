@@ -116,7 +116,7 @@ function BulkAddToCollection({ selectedPosts, setCurrentPage, selectedType, clos
         ) : (
           <div className="grid grid-cols-2 gap-2">
             {filteredCollections.map(collection => (
-              <div key={collection.id} className="bg-[#1c1b1a] hover:bg-[#3b3229] text-gray-200 transition-colors flex items-center p-2 rounded">
+              <div key={collection.id} className="bg-[#1c1b1a] hover:bg-[#3b3229] text-gray-200 transition-colors flex items-center p-2 ">
                 <input
                   type="checkbox"
                   checked={checkedCollections.includes(collection.id)}

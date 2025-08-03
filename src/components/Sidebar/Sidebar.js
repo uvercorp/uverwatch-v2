@@ -37,17 +37,17 @@ function Sidebar({isOpen, toggleSidebar, color, image, routes,deployment,user,is
     useEffect(() => {
   let deployment = localStorage.getItem('deployment');
     if (deployment && deployment !== undefined) {
-    
+
     }else{
-     
+
       window.location.replace('/pages/login');
     }
   }, [location]);
- 
+
   return (<>
     <div className={`fixed inset-y-0 left-0 w-64 z-[1800] my-black-bg text-white transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out `} style={{borderRight: "1px solid gray"}}>
     {/* <div className={`fixed inset-y-0 left-0 w-64 my-black-bg text-white transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out z-[800]`}> */}
-      
+
       <div className=' border-b border-gray-700 grid grid-col-1 pl-2'>
         <div className="flex items-center justify-between p-2 mt-3 ">
           <div className='flex item-start'>
@@ -78,7 +78,7 @@ function Sidebar({isOpen, toggleSidebar, color, image, routes,deployment,user,is
           className={`
             ${activeRoute('deployment/post')}
           group mt-3 hidden md:flex items-start border-gray-700 px-3 py-2 text-gray-200 hover:my-red-bg hover:no-underline"`}
-          
+
           onClick={toggleSidebar}
           style={{border:"1px solid #25201a", textDecoration:"none"}}
         >
@@ -90,7 +90,7 @@ function Sidebar({isOpen, toggleSidebar, color, image, routes,deployment,user,is
           <span className='my-sidebar-link group-hover:text-[#f5f5f5] transition-colors my-font-family-overpass-mono '>
             Add Report
           </span>
-          
+
         </NavLink>
         <NavLink
           key=''
@@ -191,8 +191,27 @@ function Sidebar({isOpen, toggleSidebar, color, image, routes,deployment,user,is
           </span>
 
         </NavLink>
-        {isLogin == 'yes' && 
-          
+        <NavLink
+          key=''
+          to='incoming'
+          className={`
+            ${activeRoute('deployment/incoming')}
+          group mt-3 hidden md:flex items-start border-gray-700 px-3 py-2 text-gray-200 hover:my-red-bg hover:no-underline"`}
+          onClick={toggleSidebar}
+          style={{border:"1px solid #25201a", textDecoration:"none"}}
+        >
+          <div className="[&_path]:fill-[#858c8e] group-hover:[&_path]:fill-[#f5f5f5] mr-2 transition-colors">
+            <DashboardIcon
+              className=" h-7 w-7"
+            />
+          </div>
+          <span className='my-sidebar-link group-hover:text-[#f5f5f5] transition-colors my-font-family-overpass-mono '>
+             Whatsapp Report
+          </span>
+
+        </NavLink>
+        {isLogin == 'yes' &&
+
         <NavLink
           key=''
           to='settings'
@@ -212,6 +231,7 @@ function Sidebar({isOpen, toggleSidebar, color, image, routes,deployment,user,is
           </span>
 
         </NavLink>
+
         }
         {/* <nav className="mt-4">
           {navItems.map((item) => (
@@ -226,7 +246,7 @@ function Sidebar({isOpen, toggleSidebar, color, image, routes,deployment,user,is
           ))}
         </nav> */}
       </div>
-     
+
     </div>
     <CollectionPage show={show} setShow={setShow}/>
     <HelpPage showHelp={showHelp} setShowHelp={setShowHelp}/>

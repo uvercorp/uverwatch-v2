@@ -14,6 +14,7 @@ function AssignmentTeam(props) {
   const [filteredTeams, setFilteredTeams] = useState([]);
   const [selectedTeams, setSelectedTeams] = useState([]);
   const [currentTeams, setCurrentTeams] = useState([]);
+  const [assignedTask, setassignedTask] = useState('');
 
   // Fetch data on component mount
   useEffect(() => {
@@ -51,17 +52,17 @@ function AssignmentTeam(props) {
           },
         }
       );
-  
+
       setPending(false);
-      if (response?.data) {     
+      if (response?.data) {
         let dData = response?.data;
-        
+
         // Filter out teams that are already in the post
         const currentTeamIds = dData?.post_teams?.map(team => team.team) || [];
-        const filteredAvailableTeams = dData?.teams?.filter(team => 
+        const filteredAvailableTeams = dData?.teams?.filter(team =>
           !currentTeamIds.includes(team.id)
         ) || [];
-        
+
         setAvailableTeams(filteredAvailableTeams);
         setFilteredTeams(filteredAvailableTeams);
         setCurrentTeams(dData?.post_teams || []);
@@ -105,6 +106,18 @@ function AssignmentTeam(props) {
       );
       return;
     }
+    if (assignedTask === "") {
+      dispatch(
+        toggleToaster({
+          isOpen: true,
+          toasterData: {
+            type: "warning",
+            msg: "Please Enter The Task",
+          },
+        })
+      );
+      return;
+    }
 
     setPending(true);
     try {
@@ -112,6 +125,7 @@ function AssignmentTeam(props) {
         "assignPostToTeams",
         {
           post_id: props.postId,
+          task: assignedTask,
           team_ids: selectedTeams?.map((team) => team.id),
         },
         {
@@ -136,6 +150,7 @@ function AssignmentTeam(props) {
       setSelectedTeams([]);
       let deployment = localStorage.getItem('deployment');
       fetchPostTeamLookup(JSON.parse(deployment).id, props.postId);
+      setassignedTask("");
     } catch (error) {
       console.error("Error saving teams:", error);
       dispatch(
@@ -208,7 +223,7 @@ function AssignmentTeam(props) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-lg">
+    <div className="max-w-6xl mx-auto my-gradient-bg ">
        <h3 className="text-lg font-semibold mb-3">
                   <i className="fas fa-list-ul mr-2"></i>
                   Currently Assigned Teams
@@ -222,24 +237,24 @@ function AssignmentTeam(props) {
 
       {/* Current Teams Section */}
       <div className="mb-8">
-        
+
         {currentTeams?.length === 0 ? (
-          <p className="text-gray-500">No teams in this post yet</p>
+          <p className="text-gray-400">No teams in this post yet</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentTeams?.map((team) => (
               <div
                 key={team.id}
-                className="border rounded-lg p-2 flex justify-between items-center"
+                className="border  p-2 flex justify-between items-center bg-[#3F1F2F]"
               >
                 <div>
                   <h5 className="font-medium">{team.name}</h5>
-                  <p className="text-sm text-gray-600">{team.description}</p>
+                  <p className="text-sm text-gray-400">{team.description}</p>
                 </div>
                 <button
                   onClick={() => removeTeamFromPost(team.team_id)}
                   className="text-red-500 hover:text-red-700 p-2"
-                  title="Remove from post"  
+                  title="Remove from post"
                 >
                   <FiTrash2 />
                 </button>
@@ -251,8 +266,8 @@ function AssignmentTeam(props) {
 
       {/* Add Teams Section */}
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-4">Add Teams to Post</h3>
-        
+        <h3 className="text-lg font-semibold mb-4">Add Teams to A Report</h3>
+
         {/* Search Form */}
         <div className="mb-4">
           <div className="relative">
@@ -261,7 +276,7 @@ function AssignmentTeam(props) {
               placeholder="Search teams..."
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 my-input"
             />
             <FiSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
@@ -269,7 +284,7 @@ function AssignmentTeam(props) {
 
         {/* Available Teams List */}
         {filteredTeams?.length === 0 ? (
-          <p className="text-gray-500">
+          <p className="text-gray-400">
             {availableTeams?.length === 0 ? "No teams available" : "No matching teams found"}
           </p>
         ) : (
@@ -278,16 +293,17 @@ function AssignmentTeam(props) {
               <div
                 key={team.id}
                 onClick={() => handleTeamSelect(team)}
-                className={`border rounded-lg p-2 cursor-pointer transition-colors ${
+                className={`border  p-2 cursor-pointer transition-colors ${
                   selectedTeams.some((t) => t.id === team.id)
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:bg-gray-50"
+                    ? "border-blue-500 bg-[#3F1F2F]"
+                    : "border-gray-200 bg-[#1F2F3F]"
                 }`}
               >
+
                 <div className="flex justify-between items-center">
                   <div>
                     <h5 className="font-medium">{team.name}</h5>
-                    <p className="text-sm text-gray-600">{team.description}</p>
+                    <p className="text-sm text-gray-400">{team.description}</p>
                   </div>
                   {selectedTeams.some((t) => t.id === team.id) ? (
                     <FiCheck className="text-blue-500" />
@@ -310,7 +326,7 @@ function AssignmentTeam(props) {
               {selectedTeams?.map((team) => (
                 <div
                   key={team.id}
-                  className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center"
+                  className="bg-blue-100 text-blue-800 px-3 py-1  flex items-center"
                 >
                   <span>{team.name}</span>
                   <button
@@ -330,18 +346,34 @@ function AssignmentTeam(props) {
         )}
 
         <hr/>
-        <div className="flex justify-end">
+        <div className="grid grid-cols-1 md:flex md:items-start md:justify-between gap-2">
+        <div className="md:w-[73%]">
+                  <label className="block text-sm font-medium my-label">Task / Action</label>
+                  <input
+                    type="assignedTask"
+                    value={assignedTask}
+                    onChange={(e) => {
+                      setassignedTask(e.target.value);
+                      // validateassignedTask(e.target.value);
+                    }}
+                    className="mt-1 block w-full my-input"
+                    required
+                  />
+                  </div>
+        <div className="md:w-[27%]">
+        <label className="block text-sm font-medium my-label text-black">.</label>
           <button
             onClick={saveTeamsToPost}
             disabled={pending || selectedTeams?.length === 0}
-            className={`px-4 py-2 rounded-md text-white ${
+            className={`px-4 py-2  text-white ${
               pending || selectedTeams?.length === 0
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600"
+                : "bg-green-500 hover:bg-green-600"
             }`}
           >
-            {pending ? "Assigning..." : "Assign Post To Selected Teams"}
+            {pending ? "Assigning..." : "Assign To Teams"}
           </button>
+        </div>
         </div>
       </div>
     </div>

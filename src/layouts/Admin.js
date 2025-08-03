@@ -22,6 +22,7 @@ import AdminNavbar from "../components/Navbars/AdminNavbar";
 import Footer from "../components/Footer/Footer";
 import Sidebar from "../components/Sidebar/Sidebar";
 import NavBottom from "../components/NavBottom/NavBottom";
+import { MobileRestrictedRoute } from '../components/MobileRestrictedRoute';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
@@ -38,7 +39,7 @@ function Admin() {
   const [hasImage, setHasImage] = React.useState(true);
   const location = useLocation();
   const mainPanel = React.useRef(null);
-  const getRoutes = (routes) => {
+  const getRoutesold = (routes) => {
     return routes.map((prop, key) => {
       if (prop.layout === "/deployment") {
         return (
@@ -53,6 +54,33 @@ function Admin() {
       }
     });
   };
+
+
+// Modify the getRoutes function in your Admin component
+const getRoutes = (routes) => {
+  return routes.map((prop, key) => {
+    if (prop.layout === "/deployment") {
+      const Component = prop.component;
+      return (
+        <Route
+          path={prop.layout + prop.path}
+          render={(props) => (
+            prop.mobileRestricted ? (
+              <MobileRestrictedRoute>
+                <Component {...props} />
+              </MobileRestrictedRoute>
+            ) : (
+              <Component {...props} />
+            )
+          )}
+          key={key}
+        />
+      );
+    } else {
+      return null;
+    }
+  });
+};
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -184,7 +212,7 @@ function Admin() {
             </div>
             {/* <div>.</div> */}
             <AdminNavbar user={user} isLogin={userLogin}/>
-           
+
           </div>
           {/* <div className="flex-1 p-6 bg-gray-100 min-h-screen"> */}
           {/* <div className="flex-1 p-6 bg-gray-100 h-full"> */}

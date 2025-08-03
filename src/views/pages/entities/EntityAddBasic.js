@@ -32,6 +32,7 @@ function EntityAddBasic(props) {
     const [impactLevel, setImpactLevel] = useState([]);
     const [priorityLevel, setPriorityLevel] = useState([]);
     const [statuses, setStatus] = useState([]);
+    const [tagsList, setTagsList] = useState([]);
     const dispatch = useDispatch();
     const [pending, setPending] = useState(false);
     let navigate = useHistory();
@@ -39,7 +40,7 @@ function EntityAddBasic(props) {
     const [formValue, setFormValue] = useState(
         {
             id: '',
-            deployment: '',
+            deployment: props?.deploymentId,
             title: '',
             description: '',
             latitude: '',
@@ -53,6 +54,8 @@ function EntityAddBasic(props) {
             impact_level: "",
             priority_level: "",
             post_status: "",
+            full_address: '',
+      formatted_address: '',
             user_type: props?.userId == null ? 'anonymous' : 'member',
             deployment_user: props?.userId,
         }
@@ -79,6 +82,8 @@ function EntityAddBasic(props) {
                 impact_level: "",
                 priority_level: "",
                 post_status: "",
+                full_address: '',
+      formatted_address: '',
                 user_type: props?.userId == null ? 'anonymous' : 'member',
                 deployment_user: props?.userId,
             })
@@ -102,13 +107,15 @@ function EntityAddBasic(props) {
         console.log(formValue)
     };
 
-    const handleLocationChange = (lat, long) => {
+    const handleLocationChange = (lat, long,fullAddress,formattedAddress) => {
         setFormValue({
-            ...formValue,
-            longitude: long,
-            latitude: lat,
+          ...formValue,
+          longitude: long,
+          latitude: lat,
+          full_address: fullAddress,
+          formatted_address: formattedAddress,
         });
-    }
+      }
 
 
     const handleSubmit = () => {
@@ -291,7 +298,7 @@ function EntityAddBasic(props) {
     const getCategoryData = async (deployment_id) => {
         setPending(true);
         try {
-            const response = await axiosInstance.get('getPostLookups/' + deployment_id,
+            const response = await axiosInstance.get('getEntityLookups/' + deployment_id,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -303,12 +310,13 @@ function EntityAddBasic(props) {
 
             setPending(false);
             if (response?.data) {
-                let dData = response?.data?.post_lookups;
+                let dData = response?.data?.deployment_data;
                 setCategories(dData?.categories);
                 setImpactLevel(dData?.impact_levels);
                 setAccessLevel(dData?.access_levels);
                 setPriorityLevel(dData?.priority_levels);
                 setStatus(dData?.statuses);
+                setTagsList(dData?.tags || []); // Add this line
                 // console.log(dData);
 
             }
@@ -332,14 +340,17 @@ function EntityAddBasic(props) {
                             <Card.Title as="h4">
 
                                 <div className="flex items-start justify-between">
-                                    <span>Entity | <span className="text-[0.6em] capitalize"> {props?.formType} </span> <span className="text-[0.6em] capitalize font-bold">{props?.record.survey_name}</span></span>
+                                    <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]" >Entity : <span className="text-[0.6em] capitalize"> {props?.formType} </span> <span className="text-[0.6em] capitalize font-bold">{props?.record.survey_name}</span></span>
                                     {/* <Button variant="default" onClick={() => props?.setCurrentPage('list')}>Cancel</Button> */}
 
                                 </div>
                             </Card.Title>
                         </Card.Header>
+                        <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
                         <Card.Body >
-                            <hr />
+
                             {pending && (<div className="flex items-center justify-center mb-4">
                                 <Spinner animation="grow" variant="warning" />
                             </div>)}
@@ -357,6 +368,7 @@ function EntityAddBasic(props) {
                                     <div>
                                         <Row>
                                             <Col className="pr-1" md="12">
+                                            <label className="my-label">Location : <span className="itali">{formValue?.full_address}</span></label>
                                                 <div className="min-h-[250px] text-center bg-blue-100 border border-1 mr-2">
 
                                                     <MapPositionSelectEntity mapHeight={'250px'} onLocationChange={handleLocationChange} latitude={formValue?.latitude} longitude={formValue?.longitude} />
@@ -387,7 +399,7 @@ function EntityAddBasic(props) {
                                                 />
                                             </div>
                                             <div className="mb-6">
-                                                <label htmlFor="entity_type" className="block mb-2 text-sm font-medium my-label">Entity Type</label>
+                                                <label htmlFor="entity_type" className="block mb-2 text-sm font-medium my-label">Entity Type  : {categories?.length}</label>
 
                                                 <select style={{ width: "100%" }} className="border my-input  min-h-[2.5em]" value={formValue.entity_type} required onChange={handleChange} name="entity_type">
                                                     <option>Select Type</option>

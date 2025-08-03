@@ -23,6 +23,7 @@ function EntityAdd(props) {
       const [impactLevel, setImpactLevel] = useState([]);
       const [priorityLevel, setPriorityLevel] = useState([]);
       const [statuses, setStatus] = useState([]);
+      const [tagsList, setTagsList] = useState([]);
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
   const history = useHistory();
@@ -30,7 +31,7 @@ function EntityAdd(props) {
   const [customFiledsForUpdate, setCustomFieldForUpdate] = useState(null);
   const [formValue, setFormValue] = useState({
     id: "",
-    deployment: "",
+    deployment: props?.deploymentId,
     title: "",
     description: "",
     latitude: '',
@@ -45,6 +46,8 @@ function EntityAdd(props) {
     impact_level: "",
     priority_level: "",
     post_status: "",
+    full_address: '',
+      formatted_address: '',
     user_type: props?.userId == null ? "anonymous" : "member",
     deployment_user: props?.userId || "",
   });
@@ -73,6 +76,8 @@ function EntityAdd(props) {
         impact_level: "",
         priority_level: "",
         post_status: "",
+        full_address: '',
+      formatted_address: '',
         deployment_survey: props?.record?.id || "",
         survey_fields: props?.record?.custom_fields || [], // Ensure survey_fields is defined
         entity_type: null,
@@ -100,11 +105,13 @@ function EntityAdd(props) {
       [event.target.name]: event.target.value,
     });
   };
-  const handleLocationChange = (lat, long) => {
+  const handleLocationChange = (lat, long,fullAddress,formattedAddress) => {
     setFormValue({
       ...formValue,
       longitude: long,
       latitude: lat,
+      full_address: fullAddress,
+      formatted_address: formattedAddress,
     });
   }
 
@@ -115,18 +122,20 @@ function EntityAdd(props) {
   //   });
   // };
 
-  const handleCustomFieldChange = (fieldName, value) => {
+  const handleCustomFieldChange = (fieldName, value,type="") => {
     if (value instanceof File) {
       // Handle image file upload
       setCustomFieldValues({
         ...customFieldValues,
         [fieldName]: value,
+        // ['field_type']: type,
       });
     } else {
       // Handle other field types
       setCustomFieldValues({
         ...customFieldValues,
         [fieldName]: value,
+        // ['field_type']: type,
       });
     }
   };
@@ -310,7 +319,7 @@ function EntityAdd(props) {
   const getCategoryData = async (deployment_id) => {
          setPending(true);
          try {
-             const response = await axiosInstance.get('getPostLookups/' + deployment_id,
+             const response = await axiosInstance.get('getEntityLookups/' + deployment_id,
                  {
                      headers: {
                          'Content-Type': 'application/json',
@@ -319,28 +328,29 @@ function EntityAdd(props) {
                      //   withCredentials: true
                  }
              );
- 
+
              setPending(false);
              if (response?.data) {
-                 let dData = response?.data?.post_lookups;
+              let dData = response?.data?.deployment_data;
                  setCategories(dData?.categories);
                  setImpactLevel(dData?.impact_levels);
                  setAccessLevel(dData?.access_levels);
                  setPriorityLevel(dData?.priority_levels);
                  setStatus(dData?.statuses);
+                 setTagsList(dData?.tags || []); // Add this line
                  // console.log(dData);
- 
+
              }
          } catch (err) {
              setPending(false);
- 
- 
+
+
          }
- 
- 
- 
+
+
+
      }
- 
+
   const getSurvey = async (survey_id) => {
     // alert('am here getsurvey')
     // setPending(true);
@@ -404,7 +414,7 @@ function EntityAdd(props) {
               <input
                 type="text"
                 value={customFieldValues[field.field_name] || ""}
-                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value)}
+                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value,field.field_type)}
                 className="my-input block w-full p-2.5 "
                 placeholder={field.field_name}
                 required={field.required}
@@ -414,14 +424,14 @@ function EntityAdd(props) {
         case "text_area":
           return (
             <div key={index} className="mb-6">
-              <label htmlFor={field.field_name} className="block mb-2 text-sm font-medium my-input">
+              <label htmlFor={field.field_name} className="block mb-2 text-sm font-medium my-label">
                 {field.field_name}
               </label>
               <textarea
                 type="text"
                 value={customFieldValues[field.field_name] || ""}
-                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value)}
-                className=" ny-input block w-full p-2.5"
+                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value,field.field_type)}
+                className=" my-input block w-full p-2.5"
                 placeholder={field.field_name}
                 required={field.required}
                 rows="2"
@@ -437,7 +447,7 @@ function EntityAdd(props) {
               <input
                 type="number"
                 value={customFieldValues[field.field_name] || ""}
-                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value)}
+                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value,field.field_type)}
                 className=" my-input block w-full p-2.5 "
                 placeholder={field.field_name}
                 required={field.required}
@@ -452,7 +462,7 @@ function EntityAdd(props) {
               </label>
               <select
                 value={customFieldValues[field.field_name] || ""}
-                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value)}
+                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value,field.field_type)}
                 className="  block w-full p-2.5 my-input"
                 required={field.required}
               >
@@ -474,7 +484,7 @@ function EntityAdd(props) {
               <input
                 type="date"
                 value={customFieldValues[field.field_name] || ""}
-                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value)}
+                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.value,field.field_type)}
                 className="  block w-full p-2.5 my-input"
                 required={field.required}
               />
@@ -489,7 +499,7 @@ function EntityAdd(props) {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.files[0])}
+                onChange={(e) => handleCustomFieldChange(field.field_name, e.target.files[0],field.field_type)}
                 className=" block w-full p-2.5 my-input"
                 required={field.required}
               />
@@ -508,15 +518,18 @@ function EntityAdd(props) {
           <Card.Header>
             <Card.Title as="h4">
               <div className="flex items-start justify-between">
-                <span>
-                  Entity | <span className="text-[0.6em] capitalize"> {props?.formType} </span>{" "}
+                <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">
+                  Entity : <span className="text-[0.6em] capitalize"> {props?.formType} </span>{" "}
                   <span className="text-[0.6em] capitalize font-bold">{props?.record?.survey_name}</span>
                 </span>
               </div>
             </Card.Title>
           </Card.Header>
+          <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
           <Card.Body>
-            <hr />
+
             {pending && (
               <div className="flex items-center justify-center mb-4">
                 <Spinner animation="grow" variant="warning" />
@@ -526,12 +539,13 @@ function EntityAdd(props) {
               initial={{ y: 25, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.75 }}
-             
+
             >
               <div className="my-gradient-bg md:min-h-[450px] relative md:px-10">
                 <div>
                   <Row>
                     <Col className="pr-1" md="12">
+                    <label className="my-label">Location : <span className="itali">{formValue?.full_address}</span></label>
                       <div className="min-h-[250px] text-center bg-blue-100 border border-1 mr-2">
 
                         <MapPositionSelectEntity mapHeight={'250px'} onLocationChange={handleLocationChange} latitude={formValue?.latitude} longitude={formValue?.longitude} />
@@ -556,9 +570,9 @@ function EntityAdd(props) {
                       >
                         Pick An Icon And Color
                       </label>
-                      <IconPicker onSelection={handleIconSelection}  
-                                                                                initialIconClass={formValue.icon} 
-                                                                                  initialColor={formValue.color} 
+                      <IconPicker onSelection={handleIconSelection}
+                                                                                initialIconClass={formValue.icon}
+                                                                                  initialColor={formValue.color}
                                                                                   />
                     </div>
                     <div className="mb-6">

@@ -20,9 +20,9 @@ function CustomModal(props) {
    const [deploymentId,setDeploymentId] = useState(null);
    const [selectedRecord,setSelectedRecord] = useState([]);
    const [pending, setPending] = useState(false);
- 
+
    const toggleFormType = (formType,data) => {
-     
+
      setFormType(formType);
      if(formType == "add"){
        props.setCustomFieldView('add');
@@ -32,11 +32,11 @@ function CustomModal(props) {
       setSelectedRecord(props.selectedUpdateRecord);
      }
    };
- 
-   
- 
-  
- 
+
+
+
+
+
    useEffect(() => {
     console.log('selectedUpdateRecord');
     console.log(props.selectedUpdateRecord);
@@ -49,11 +49,11 @@ function CustomModal(props) {
      if (deployment && deployment !== undefined) {
        getCustomInputData(JSON.parse(deployment).id);
        setDeploymentId(JSON.parse(deployment).id);
- 
+
      }
- 
+
    }, []);
- 
+
    const getCustomInputData = async (deployment_id) => {
      setPending(true);
      try {
@@ -67,26 +67,26 @@ function CustomModal(props) {
          }
        );
        // console.log(response)
- 
+
        // console.log(JSON.stringify(response?.data));
        setPending(false);
        if (response?.data) {
          let dData = response?.data?.custom_inputs;
          setCustomInput(dData);
          // console.log(dData);
- 
+
        }
      } catch (err) {
        setPending(false);
-      
+
      }
- 
+
    }
 
   return (
     <>
       {/* Launch Button */}
-      
+
 
       {/* Modal Backdrop and Content */}
       <AnimatePresence>
@@ -101,22 +101,25 @@ function CustomModal(props) {
          >
             {/* Modal Container */}
             <motion.div
-               className="bg-white rounded-lg shadow-lg p-8 overflow-y-auto max-h-[90vh] mx-auto mt-8
+              className="my-gradient-bg  shadow-lg p-8 overflow-y-auto max-h-[90vh] mx-auto mt-8
                          w-[90%] sm:w-[80%] lg:w-[60%] xl:w-[50%] 2xl:w-[40%]"
               initial={{ y: -100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -100, opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               onClick={(e) => e.stopPropagation()} // Prevent click inside modal from closing it
+              style={{border: "1px solid #2e2c2b"}}
             >
-               <div className="font-bold text-[1.2em]">Add Field</div>
-               <hr/>
+               <div className="font-bold text-[1.2em] text-gray-100">Add Field</div>
+               <hr className="border-[#2e2c2b] mb-6" />
               {/* Modal Header */}
-              
+
               {props.customFieldView == 'list' &&
     <div className="grid grid-cols-2 gap-3">
     {customInputs?.map((record, index) => (
-      <div key={index}  onClick={()=>toggleFormType('add',record)} className="bg-gray-100 p-2 rounded-sm text-gray-700 cursor-pointer  hover:text-black focus:text-black">
+      <div key={index}  onClick={()=>toggleFormType('add',record)} className="bg-[#1c1b1a] hover:bg-[#3b3229] p-2  text-gray-200 cursor-pointer  hover:text-gray-100 focus:text-gray-100">
+
+      {/* <div key={index}  onClick={()=>toggleFormType('add',record)} className="bg-gray-100 p-2 rounded-sm text-gray-700 cursor-pointer  hover:text-black focus:text-black"> */}
       <div className="">{record.name}</div>
       <div className="text-[0.8em]">{record.description}</div>
 
@@ -132,7 +135,7 @@ function CustomModal(props) {
 
 
               {/* Close Button */}
-             
+
             </motion.div>
           </motion.div>
         )}

@@ -143,17 +143,17 @@ function Add(props) {
             <div className="md:min-h-[450px] relative">
                 <div>
                     <div className="mb-6">
-                        <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                        <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className="focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name of CustomInput" required />
+                        <label htmlFor="name" className="block mb-2 text-sm font-medium my-label">Name</label>
+                        <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" block w-full p-2.5 my-input" placeholder="Name of CustomInput" required />
                     </div>
 
                     <div className="mb-6">
-                        <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add field description (optional)</label>
-                        <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="1" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white focus:bg-white" placeholder="CustomInput Description..."></textarea>
+                        <label htmlFor="description" className="block mb-2 text-sm font-medium my-label">Add field description (optional)</label>
+                        <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="1" className="block p-2.5 w-full my-input" placeholder="CustomInput Description..."></textarea>
                     </div>
 
                     <div className="mb-6">
-                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        <label className="block mb-2 text-sm font-medium my-label">
                             <input type="checkbox" checked={formCustomInput.required} onChange={handleRequiredChange} className="mr-2" />
                             Required
                         </label>
@@ -161,7 +161,7 @@ function Add(props) {
 
                     {props.record.type === 'enum' && (
                         <div className="mb-6">
-                            <label className=" mb-2 text-sm font-medium text-gray-900 dark:text-white flex items-start justify-between pb-2" style={{borderBottom:"1px solid grey"}}><span>Options</span> 
+                            <label className=" mb-2 text-sm font-medium my-label flex items-start justify-between pb-2" style={{borderBottom:"1px solid grey"}}><span>Options</span>
                             <button type="button" onClick={addOption} className="text-black btn-sm bg-[#f5f5f5] font-medium rounded-lg text-sm px-2 py-2.5 text-center">Add Option</button>
                             </label>
                             <div className="max-h-[100px] overflow-y-auto">
@@ -171,27 +171,27 @@ function Add(props) {
                                         type="text"
                                         value={option}
                                         onChange={(e) => handleOptionChange(index, e)}
-                                        className="focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        className=" block w-full p-2.5 my-input"
                                         placeholder="Option"
                                     />
                                     <button type="button" onClick={() => removeOption(index)} className="ml-2 text-red-500 hover:text-red-700 sm">Remove</button>
                                 </div>
                             ))}
                             </div>
-                            
+
                         </div>
                     )}
 
                     <div className="absolute bottom-0 left-0 right-0 p-2">
                         <div className="flex items-start justify-between">
-                            <Button variant="default" onClick={() => props?.setCustomFieldView('list')}>Cancel</Button>
+                            <Button variant="default" onClick={() => props?.setCustomFieldView('list')}><span className="text-gray-100">Cancel</span></Button>
                             {props.customFieldView == "add" ?
                                 <span>.</span> :
                                 <span></span>
                             }
                             {props.customFieldView == "add" ?
-                                <button type="submit" onClick={HandleAdd} className="text-black bg-yellow-500 hover:bg-yellow-600 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Add New</button> :
-                                <button type="submit" onClick={handleUpdate} className="text-black bg-green-500 hover:bg-green-600 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Save</button>
+                                <button type="submit" onClick={HandleAdd} className="text-black bg-yellow-500 hover:bg-yellow-600 font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center">Add New</button> :
+                                <button type="submit" onClick={handleUpdate} className="text-black bg-green-500 hover:bg-green-600 font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center">Save</button>
                             }
                         </div>
                     </div>

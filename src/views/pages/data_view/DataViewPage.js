@@ -26,7 +26,10 @@ import LoadingIcon from "others/icons/LoadingIcon";
 import axiosInstance from "services/axios";
 import { login, logout, selectUser } from "provider/features/userSlice";
 import Spinner from "react-bootstrap/Spinner";
-import { addCollections, removeCollections } from "provider/features/collectionSlice";
+import {
+  addCollections,
+  removeCollections,
+} from "provider/features/collectionSlice";
 import { toggleSearchValue } from "provider/features/globalSearchSlice";
 import { CiEdit } from "react-icons/ci";
 import { FaShare } from "react-icons/fa";
@@ -39,18 +42,19 @@ import AutocompleteLocationSearch from "./AutocompleteLocationSearch";
 import useCSVExport from "hooks/useCSVExport";
 import AdvancedSearchOverlay from "./options/AdvancedSearchOverlay";
 import AddToCollectionBulkModal from "./options/AddToCollectionBulkModal";
-import MapView from "./MapView"
-import LeftFilterPanel from "./filter/LeftFilterPanel"
-import RightFilterPanel from "./filter/RightFilterPanel"
-
-
+import MapView from "./MapView";
+import LeftFilterPanel from "./filter/LeftFilterPanel";
+import RightFilterPanel from "./filter/RightFilterPanel";
 
 const Section = ({ title, items }) => (
   <div className="mb-6">
     <h3 className="text-sm font-semibold text-gray-500 mb-2">{title}</h3>
     <ul className="space-y-1">
       {items.map((item) => (
-        <li key={item} className="text-gray-700 hover:bg-gray-50 px-2 py-1 rounded">
+        <li
+          key={item}
+          className="text-gray-700 hover:bg-gray-50 px-2 py-1 rounded"
+        >
           {item}
         </li>
       ))}
@@ -60,27 +64,41 @@ const Section = ({ title, items }) => (
 
 const AdvancedFilter = () => (
   <div className="mb-6">
-    <h3 className="text-sm font-semibold text-gray-500 mb-2">Advanced Filter</h3>
+    <h3 className="text-sm font-semibold text-gray-500 mb-2">
+      Advanced Filter
+    </h3>
     <div className="space-y-4">
-      <input type="text" placeholder="Search" className="w-full px-2 py-1 border rounded-md" />
+      <input
+        type="text"
+        placeholder="Search"
+        className="w-full px-2 py-1 border rounded-md"
+      />
 
       <div className="grid grid-cols-2 gap-2 text-sm">
         <span>Time Zone</span>
         <span>UTC +1</span>
-        <span className="col-span-2 text-xs text-gray-400">@@ UPC000 = ONE</span>
+        <span className="col-span-2 text-xs text-gray-400">
+          @@ UPC000 = ONE
+        </span>
 
         <span>Date Range</span>
         <span>28.02.25 - 31.12.25</span>
-        <span className="col-span-2 text-xs text-gray-400">@@ 24.01.18 to 24.01.25</span>
+        <span className="col-span-2 text-xs text-gray-400">
+          @@ 24.01.18 to 24.01.25
+        </span>
 
         <span>Time Range</span>
         <span>0809HRS - 2359HRS</span>
-        <span className="col-span-2 text-xs text-gray-400">@@ 1500HRS to 2300HRS</span>
+        <span className="col-span-2 text-xs text-gray-400">
+          @@ 1500HRS to 2300HRS
+        </span>
       </div>
 
       <div className="text-sm">
         <p>Days of the Week</p>
-        <p className="text-xs text-gray-500 mt-1">SERV MORE YOUR NEED THUS TALK SAFE</p>
+        <p className="text-xs text-gray-500 mt-1">
+          SERV MORE YOUR NEED THUS TALK SAFE
+        </p>
       </div>
     </div>
   </div>
@@ -116,18 +134,29 @@ const SavePresets = () => (
   </div>
 );
 
-
-const MyCard = ({ title, date, time, summary, location, tags, status, bgColor, hoverBgColor }) => {
+const MyCard = ({
+  title,
+  date,
+  time,
+  summary,
+  location,
+  tags,
+  status,
+  bgColor,
+  hoverBgColor,
+}) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <div
       className={`relative p-3  mb-4  text-white transition-colors duration-300 bg-[#1F2F3F] hover:bg-[#3F1F2F]`}
-    // className={`relative p-3  mb-4  text-white transition-colors duration-300 #1F2F3F ${bgColor} hover:${hoverBgColor}`}
+      // className={`relative p-3  mb-4  text-white transition-colors duration-300 #1F2F3F ${bgColor} hover:${hoverBgColor}`}
     >
       {/* Title & Menu */}
       <div className="flex justify-between items-start">
-        <h2 className="text-xl font-extrabold my-font-family-courier-prime uppercase tracking-wide p-0 ">{title}</h2>
+        <h2 className="text-xl font-extrabold my-font-family-courier-prime uppercase tracking-wide p-0 ">
+          {title}
+        </h2>
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -137,9 +166,15 @@ const MyCard = ({ title, date, time, summary, location, tags, status, bgColor, h
           </button>
           {menuOpen && (
             <div className="absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-600 text-sm z-10 rounded shadow">
-              <button className="block w-full text-left px-4 py-2 hover:bg-gray-700">View</button>
-              <button className="block w-full text-left px-4 py-2 hover:bg-gray-700">Edit</button>
-              <button className="block w-full text-left px-4 py-2 hover:bg-gray-700">Delete</button>
+              <button className="block w-full text-left px-4 py-2 hover:bg-gray-700">
+                View
+              </button>
+              <button className="block w-full text-left px-4 py-2 hover:bg-gray-700">
+                Edit
+              </button>
+              <button className="block w-full text-left px-4 py-2 hover:bg-gray-700">
+                Delete
+              </button>
             </div>
           )}
         </div>
@@ -161,27 +196,32 @@ const MyCard = ({ title, date, time, summary, location, tags, status, bgColor, h
       {/* Status */}
       <div className="text-xs mb-1">
         {status.map((item, index) => (
-          <span key={index} className="mr-2 font-semibold">{item}</span>
+          <span key={index} className="mr-2 font-semibold">
+            {item}
+          </span>
         ))}
       </div>
 
       {/* Tags */}
-      <div className="text-xs text-gray-400">
-        Tagged: {tags.join(', ')}
-      </div>
+      <div className="text-xs text-gray-400">Tagged: {tags.join(", ")}</div>
     </div>
   );
 };
-
 
 const CardView = () => {
   return (
     <div className="px-4 pb-2 pt-1 bg-black min-h-screen font-mono text-white">
       <div className="flex justify-between items-center mb-2 pr-0">
-        <h1 className="text-2xl tracking-widest my-font-family-ailerons text-[1.7em]">CARD VIEW</h1>
+        <h1 className="text-2xl tracking-widest my-font-family-ailerons text-[1.7em]">
+          CARD VIEW
+        </h1>
         <div className="pt-0">
-          <button className="px-3 pt-0 py-2 border bg-gray-400 border-gray-500 text-black mr-2 text-sm hover:bg-gray-300">Load Presets:</button>
-          <button className="px-3 pt-0 py-2 border  bg-gray-400 border-gray-500 text-black mr-2 text-sm hover:bg-gray-300">Reports [271]</button>
+          <button className="px-3 pt-0 py-2 border bg-gray-400 border-gray-500 text-black mr-2 text-sm hover:bg-gray-300">
+            Load Presets:
+          </button>
+          <button className="px-3 pt-0 py-2 border  bg-gray-400 border-gray-500 text-black mr-2 text-sm hover:bg-gray-300">
+            Reports [271]
+          </button>
         </div>
       </div>
       <div className="max-h-[90vh] overflow-y-auto space-y-4 pr-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
@@ -191,8 +231,8 @@ const CardView = () => {
           time="0800"
           summary="This is where the detailed summary is supposed to go lorem ipsum dolor set amet ramulus piiple a uma law crimun astoria um. lorem ipsum dolor set amet."
           location="Tamale, 2.338646 6.451776, -2.333154 5.872868"
-          status={['★ High', '☣ Severe', '⚡ Active']}
-          tags={['Cool', 'Gym', 'Crossfit', 'Idea']}
+          status={["★ High", "☣ Severe", "⚡ Active"]}
+          tags={["Cool", "Gym", "Crossfit", "Idea"]}
           bgColor="bg-[#1F2F3F]"
           hoverBgColor="bg-[#1f2f3c]"
         />
@@ -203,28 +243,15 @@ const CardView = () => {
           time="0800"
           summary="This is where the detailed summary is supposed to go lorem ipsum dolor set amet ramulus piiple a uma law crimun astoria um. lorem ipsum dolor set amet."
           location="Tamale, 2.338646 6.451776, -2.333154 5.872868"
-          status={['★ High', '☣ Severe', '⚡ Active']}
-          tags={['Cool', 'Gym', 'Crossfit', 'Idea']}
+          status={["★ High", "☣ Severe", "⚡ Active"]}
+          tags={["Cool", "Gym", "Crossfit", "Idea"]}
           bgColor="bg-[#3F1F2F]"
           hoverBgColor="bg-[#3F1F2F]"
         />
-
       </div>
     </div>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 function DataViewPage() {
   const [leftOpen, setLeftOpen] = useState(false);
@@ -236,8 +263,12 @@ function DataViewPage() {
   const [posts, setPost] = useState([]);
   const collectionOn = useSelector((state) => state.collection.collectionOn);
   const collectionIdNew = useSelector((state) => state.collection.collectionId);
-  const collectionName = useSelector((state) => state.collection.collectionName);
-  const searchEmpty = useSelector((state) => state.globalSearch.searchValueEmpty);
+  const collectionName = useSelector(
+    (state) => state.collection.collectionName
+  );
+  const searchEmpty = useSelector(
+    (state) => state.globalSearch.searchValueEmpty
+  );
   const searchValue = useSelector((state) => state.globalSearch.searchValue);
   const searchParams = new URLSearchParams(urlLocation.search);
   const collectionId = searchParams.get("collection") || "0";
@@ -247,11 +278,12 @@ function DataViewPage() {
   const [selectedSurveys, setSelectedSurveys] = useState([]);
   const [selectedEntities, setSelectedEntities] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [dateRange, setDateRange] = useState([null, null]);
-  const [timeRange, setTimeRange] = useState(['', '']);
+  const [timeRange, setTimeRange] = useState(["", ""]);
   // const [timeRange, setTimeRange] = useState(['0800', '2359']);
-const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
+  const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
   const [locationFilter, setLocationFilter] = useState({
     latitude: null,
     longitude: null,
@@ -268,29 +300,54 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState({
     dateTime: null,
-    year: '',
-    month: '',
-    day: '',
-    time: '',
-    keyword: ''
+    year: "",
+    month: "",
+    day: "",
+    time: "",
+    keyword: "",
   });
 
+  const uniquePosters = [...new Set(posts.map((post) => post.created_by_name))];
+  const uniquePriorityLevels = [
+    ...new Set(posts.map((post) => post.priority_level)),
+  ];
+  const uniqueAccessLevels = [
+    ...new Set(posts.map((post) => post.access_level)),
+  ];
+  const uniqueSubcategories = [
+    ...new Set(posts.map((post) => post.sub_category_name)),
+  ];
 
-  const uniquePosters = [...new Set(posts.map(post => post.created_by_name))];
-  const uniquePriorityLevels = [...new Set(posts.map(post => post.priority_level))];
-  const uniqueAccessLevels = [...new Set(posts.map(post => post.access_level))];
-  const uniqueSubcategories = [...new Set(posts.map(post => post.sub_category_name))];
-  const uniqueSubtags = [...new Set(posts.map(post => post.sub_tag))];
+ // Helper function for proper capitalization (optional)
+ function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+  const uniqueTags = [
+    ...new Set(
+      posts.flatMap(post =>
+        post.tags
+          ? post.tags
+              .split(',')
+              .map(tag => tag.trim().toLowerCase()) // Normalize to lowercase
+              .filter(tag => tag)
+          : []
+      )
+    )
+  ].map(tag => capitalizeFirstLetter(tag)); // Optional: restore capitalization
+
+
+
+  const uniqueSubtags = [...new Set(posts.map((post) => post.sub_tag))];
 
   const [filteredPosts, setFilteredPosts] = useState(posts);
   // Sorting state
   const [sortConfig, setSortConfig] = useState({
     key: null,
-    direction: 'asc'
+    direction: "asc",
   });
 
   const doExportToCSV = () => {
-    exportToCSV(filteredPosts, 'data.csv');
+    exportToCSV(filteredPosts, "data.csv");
   };
 
   // Sorting logic
@@ -299,45 +356,44 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
 
     return [...filteredPosts].sort((a, b) => {
       const safeCompare = (valA, valB) => {
-        const aVal = valA || '';
-        const bVal = valB || '';
+        const aVal = valA || "";
+        const bVal = valB || "";
         return aVal.localeCompare(bVal);
       };
 
       switch (sortConfig.key) {
-        case 'created_at':
+        case "created_at":
           const dateA = new Date(a.created_at);
           const dateB = new Date(b.created_at);
-          return sortConfig.direction === 'asc' ? dateA - dateB : dateB - dateA;
+          return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
 
-        case 'alphabetical':
-          return sortConfig.direction === 'asc'
+        case "alphabetical":
+          return sortConfig.direction === "asc"
             ? a.title.localeCompare(b.title)
             : b.title.localeCompare(a.title);
 
-        case 'created_by_name':
-          return sortConfig.direction === 'asc'
+        case "created_by_name":
+          return sortConfig.direction === "asc"
             ? safeCompare(a.created_by_name, b.created_by_name)
             : safeCompare(b.created_by_name, a.created_by_name);
 
-        case 'category':
+        case "category":
           const categoryCompare = safeCompare(a.category_name, b.category_name);
           if (categoryCompare !== 0) return categoryCompare;
           return safeCompare(a.sub_category_name, b.sub_category_name);
 
-        case 'tags':
+        case "tags":
           const tagCompare = safeCompare(a.tag, b.tag);
           if (tagCompare !== 0) return tagCompare;
           return safeCompare(a.sub_tag, b.sub_tag);
 
-
-        case 'priority_level':
-          return sortConfig.direction === 'asc'
+        case "priority_level":
+          return sortConfig.direction === "asc"
             ? (a.priority_level || 0) - (b.priority_level || 0)
             : (b.priority_level || 0) - (a.priority_level || 0);
 
-        case 'assignment_person_name':
-          return sortConfig.direction === 'asc'
+        case "assignment_person_name":
+          return sortConfig.direction === "asc"
             ? safeCompare(a.assignment_person_name, b.assignment_person_name)
             : safeCompare(b.assignment_person_name, a.assignment_person_name);
 
@@ -348,12 +404,12 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
   }, [filteredPosts, sortConfig]);
 
   const handleSort = (key) => {
-    let direction = 'asc';
+    let direction = "asc";
     if (sortConfig.key === key) {
-      direction = sortConfig.direction === 'asc' ? 'desc' : 'asc';
+      direction = sortConfig.direction === "asc" ? "desc" : "asc";
     } else {
-      if (['created_at', 'priority_level'].includes(key)) {
-        direction = 'desc';
+      if (["created_at", "priority_level"].includes(key)) {
+        direction = "desc";
       }
     }
     setSortConfig({ key, direction });
@@ -424,8 +480,6 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
     }
   };
 
-
-
   const haversineDistance = (lat1, lon1, lat2, lon2) => {
     const toRadians = (degrees) => (degrees * Math.PI) / 180;
     const R = 6371;
@@ -436,9 +490,9 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
@@ -455,10 +509,20 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
 
       const categoryMatch =
         selectedCategories.length === 0 ||
-        selectedCategories.includes(post.category_name);
+        selectedCategories.includes(post.category_name) ||
+        selectedCategories.includes(post.entity_type_name);
 
+        const tagMatch =
+        selectedTags.length === 0 ||
+        selectedTags.some(tag => post.tags?.split(',').map(t => t.trim()).includes(tag));
+
+      // const statusMatch =
+      //   selectedStatuses.length === 0 || selectedStatuses.includes(post.status);
       const statusMatch =
-        selectedStatuses.length === 0 || selectedStatuses.includes(post.status);
+  selectedStatuses.length === 0 ||
+  selectedStatuses.includes(post.status) ||
+  selectedStatuses.includes(post.flagged_status) ||
+  selectedStatuses.includes(post.post_status_name);
 
       const postDate = new Date(post.created_at).setHours(0, 0, 0, 0);
       const startDate = dateRange[0]
@@ -472,23 +536,27 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
         (!startDate || postDate >= startDate) &&
         (!endDate || postDate <= endDate);
 
-        // Time range filter
-const postDateTime = new Date(post.created_at);
-const postTimeStr = postDateTime.toTimeString().slice(0, 5).replace(':', ''); // e.g., "1430"
+      // Time range filter
+      const postDateTime = new Date(post.created_at);
+      const postTimeStr = postDateTime
+        .toTimeString()
+        .slice(0, 5)
+        .replace(":", ""); // e.g., "1430"
 
-const timeStart = timeRange[0];
-const timeEnd = timeRange[1];
+      const timeStart = timeRange[0];
+      const timeEnd = timeRange[1];
 
-const timeMatch =
-  !timeStart || !timeEnd ||
-  (postTimeStr >= timeStart && postTimeStr <= timeEnd);
+      const timeMatch =
+        !timeStart ||
+        !timeEnd ||
+        (postTimeStr >= timeStart && postTimeStr <= timeEnd);
 
-// Day of the week filter
-const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-const postDay = daysOfWeek[postDateTime.getDay()];
+      // Day of the week filter
+      const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+      const postDay = daysOfWeek[postDateTime.getDay()];
 
-const dayMatch =
-  selectedDays.length === 0 || selectedDays.includes(postDay);
+      const dayMatch =
+        selectedDays.length === 0 || selectedDays.includes(postDay);
 
       const locationMatch =
         !locationFilter.latitude ||
@@ -505,74 +573,108 @@ const dayMatch =
         searchEmpty ||
         (searchValue &&
           (post.title?.toLowerCase()?.includes(searchValue.toLowerCase()) ||
-            post.description?.toLowerCase()?.includes(searchValue.toLowerCase()) ||
-            post.name_of_survey?.toLowerCase()?.includes(searchValue.toLowerCase()) ||
-            post.category_name?.toLowerCase()?.includes(searchValue.toLowerCase()) ||
-            post.created_by_name?.toLowerCase()?.includes(searchValue.toLowerCase())));
+            post.description
+              ?.toLowerCase()
+              ?.includes(searchValue.toLowerCase()) ||
+            post.name_of_survey
+              ?.toLowerCase()
+              ?.includes(searchValue.toLowerCase()) ||
+            post.category_name
+              ?.toLowerCase()
+              ?.includes(searchValue.toLowerCase()) ||
+            post.created_by_name
+              ?.toLowerCase()
+              ?.includes(searchValue.toLowerCase())));
 
-      const posterMatch = selectedPosters.length === 0 ||
+      const posterMatch =
+        selectedPosters.length === 0 ||
         selectedPosters.includes(post.created_by_name);
 
-      const subcategoryMatch = selectedSubcategories.length === 0 ||
+      const subcategoryMatch =
+        selectedSubcategories.length === 0 ||
         selectedSubcategories.includes(post.sub_category_name);
 
-      const subtagMatch = selectedSubtags.length === 0 ||
-        selectedSubtags.includes(post.sub_tag);
+      const subtagMatch =
+        selectedSubtags.length === 0 || selectedSubtags.includes(post.sub_tag);
 
-      const priorityMatch = selectedPriorityLevels.length === 0 ||
+      const priorityMatch =
+        selectedPriorityLevels.length === 0 ||
         selectedPriorityLevels.includes(post.priority_level);
 
-      const accessMatch = selectedAccessLevels.length === 0 ||
+      const accessMatch =
+        selectedAccessLevels.length === 0 ||
         selectedAccessLevels.includes(post.access_level);
       // New advanced filters
-      const dateTimeMatch = !advancedFilters.dateTime ||
+      const dateTimeMatch =
+        !advancedFilters.dateTime ||
         new Date(post.created_at) >= new Date(advancedFilters.dateTime);
 
-      const keywordMatch = !advancedFilters.keyword ||
-        Object.keys(post).some(key => {
-          if (key === 'post_values') {
-            return post[key].some(item =>
+      const keywordMatch =
+        !advancedFilters.keyword ||
+        Object.keys(post).some((key) => {
+          if (key === "post_values") {
+            return post[key].some((item) =>
               // item.field_name.toLowerCase().includes(advancedFilters.keyword.toLowerCase()) ||
-              item.field_value.toLowerCase().includes(advancedFilters.keyword.toLowerCase())
+              item.field_value
+                .toLowerCase()
+                .includes(advancedFilters.keyword.toLowerCase())
             );
           }
           const value = post[key];
-          return typeof value === 'string' &&
-            value.toLowerCase().includes(advancedFilters.keyword.toLowerCase());
+          return (
+            typeof value === "string" &&
+            value.toLowerCase().includes(advancedFilters.keyword.toLowerCase())
+          );
         });
 
       // NEW ADVANCED FILTERS
       const postDate2 = new Date(post.created_at);
 
       // Year filter
-      if (advancedFilters.year && postDate2.getFullYear() !== parseInt(advancedFilters.year)) return false;
+      if (
+        advancedFilters.year &&
+        postDate2.getFullYear() !== parseInt(advancedFilters.year)
+      )
+        return false;
 
       // Month filter (1-12)
-      if (advancedFilters.month && (postDate2.getMonth() + 1) !== parseInt(advancedFilters.month)) return false;
+      if (
+        advancedFilters.month &&
+        postDate2.getMonth() + 1 !== parseInt(advancedFilters.month)
+      )
+        return false;
 
       // Day filter
-      if (advancedFilters.day && postDate2.getDate() !== parseInt(advancedFilters.day)) return false;
+      if (
+        advancedFilters.day &&
+        postDate2.getDate() !== parseInt(advancedFilters.day)
+      )
+        return false;
 
       // Time filter
       if (advancedFilters.time) {
-        const [filterHours, filterMinutes] = advancedFilters.time.split(':').map(Number);
+        const [filterHours, filterMinutes] = advancedFilters.time
+          .split(":")
+          .map(Number);
         const postHours = postDate2.getHours();
         const postMinutes = postDate2.getMinutes();
 
-        if (postHours !== filterHours || postMinutes !== filterMinutes) return false;
+        if (postHours !== filterHours || postMinutes !== filterMinutes)
+          return false;
       }
 
       // Keyword search (include post_values)
       if (advancedFilters.keyword) {
         const searchTerm = advancedFilters.keyword.toLowerCase();
         const matchesMainFields = Object.entries(post).some(([key, value]) => {
-          if (key === 'post_values') return false; // Handle separately
+          if (key === "post_values") return false; // Handle separately
           return String(value).toLowerCase().includes(searchTerm);
         });
 
-        const matchesPostValues = post.post_values?.some(item =>
-          item.field_name?.toLowerCase().includes(searchTerm) ||
-          item.field_value?.toLowerCase().includes(searchTerm)
+        const matchesPostValues = post.post_values?.some(
+          (item) =>
+            item.field_name?.toLowerCase().includes(searchTerm) ||
+            item.field_value?.toLowerCase().includes(searchTerm)
         );
 
         if (!matchesMainFields && !matchesPostValues) return false;
@@ -592,45 +694,74 @@ const dayMatch =
         subcategoryMatch &&
         subtagMatch &&
         priorityMatch &&
+        tagMatch &&
         accessMatch
-
       );
     });
     setFilteredPosts(filtered);
-  }, [selectedSurveys, selectedEntities, selectedCategories, selectedStatuses, dateRange,timeRange, selectedDays, locationFilter, selectedPosters, selectedSubcategories, selectedSubtags, selectedPriorityLevels,
-    selectedAccessLevels, posts, searchEmpty, searchValue, advancedFilters]);
+  }, [
+    selectedSurveys,
+    selectedEntities,
+    selectedCategories,
+    selectedTags,
+    selectedStatuses,
+    dateRange,
+    timeRange,
+    selectedDays,
+    locationFilter,
+    selectedPosters,
+    selectedSubcategories,
+    selectedSubtags,
+    selectedPriorityLevels,
+    selectedAccessLevels,
+    posts,
+    searchEmpty,
+    searchValue,
+    advancedFilters,
+  ]);
 
   // Handle checkbox changes
   const handleSurveyChange = (survey) => {
-    setSelectedSurveys((prev) =>
-      prev.includes(survey)
-        ? prev.filter((s) => s !== survey) // Uncheck
-        : [...prev, survey] // Check
+    setSelectedSurveys(
+      (prev) =>
+        prev.includes(survey)
+          ? prev.filter((s) => s !== survey) // Uncheck
+          : [...prev, survey] // Check
     );
   };
 
   // Handle checkbox entities
   const handleEntityChange = (survey) => {
-    setSelectedEntities((prev) =>
-      prev.includes(survey)
-        ? prev.filter((s) => s !== survey) // Uncheck
-        : [...prev, survey] // Check
+    setSelectedEntities(
+      (prev) =>
+        prev.includes(survey)
+          ? prev.filter((s) => s !== survey) // Uncheck
+          : [...prev, survey] // Check
     );
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category) // Uncheck
-        : [...prev, category] // Check
+    setSelectedCategories(
+      (prev) =>
+        prev.includes(category)
+          ? prev.filter((c) => c !== category) // Uncheck
+          : [...prev, category] // Check
+    );
+  };
+  const handleTagChange = (tag) => {
+    setSelectedTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
     );
   };
 
   const handleStatusChange = (status) => {
-    setSelectedStatuses((prev) =>
-      prev.includes(status)
-        ? prev.filter((s) => s !== status) // Uncheck
-        : [...prev, status] // Check
+    setSelectedStatuses(
+      (prev) =>
+        prev.includes(status)
+          ? prev.filter((s) => s !== status) // Uncheck
+          : [...prev, status] // Check
     );
   };
 
@@ -642,41 +773,47 @@ const dayMatch =
 
   // Add filter handlers
   const handlePosterChange = (poster) => {
-    setSelectedPosters(prev =>
-      prev.includes(poster) ? prev.filter(p => p !== poster) : [...prev, poster]
+    setSelectedPosters((prev) =>
+      prev.includes(poster)
+        ? prev.filter((p) => p !== poster)
+        : [...prev, poster]
     );
   };
 
   const handleSubcategoryChange = (subcategory) => {
-    setSelectedSubcategories(prev =>
-      prev.includes(subcategory) ? prev.filter(s => s !== subcategory) : [...prev, subcategory]
+    setSelectedSubcategories((prev) =>
+      prev.includes(subcategory)
+        ? prev.filter((s) => s !== subcategory)
+        : [...prev, subcategory]
     );
   };
 
   const handleSubtagChange = (subtag) => {
-    setSelectedSubtags(prev =>
-      prev.includes(subtag) ? prev.filter(s => s !== subtag) : [...prev, subtag]
+    setSelectedSubtags((prev) =>
+      prev.includes(subtag)
+        ? prev.filter((s) => s !== subtag)
+        : [...prev, subtag]
     );
   };
 
   const handlePriorityLevelChange = (level) => {
-    setSelectedPriorityLevels(prev =>
-      prev.includes(level) ? prev.filter(l => l !== level) : [...prev, level]
+    setSelectedPriorityLevels((prev) =>
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
     );
   };
 
   const handleAccessLevelChange = (level) => {
-    setSelectedAccessLevels(prev =>
-      prev.includes(level) ? prev.filter(l => l !== level) : [...prev, level]
+    setSelectedAccessLevels((prev) =>
+      prev.includes(level) ? prev.filter((l) => l !== level) : [...prev, level]
     );
   };
-
 
   // Clear all filters
   const clearFilters = () => {
     setSelectedSurveys([]);
     setSelectedEntities([]);
     setSelectedCategories([]);
+    setSelectedTags([]);
     setSelectedStatuses([]);
     setDateRange([null, null]);
     setLocationFilter({ latitude: null, longitude: null, range: null });
@@ -687,9 +824,9 @@ const dayMatch =
     // setSelectedTagsWithSub({});
     setSelectedPriorityLevels([]);
     setSelectedAccessLevels([]);
-    setAdvancedFilters({ dateTime: null, keyword: '' });
-    setTimeRange(['', '']);
-  setSelectedDays([]);
+    setAdvancedFilters({ dateTime: null, keyword: "" });
+    setTimeRange(["", ""]);
+    setSelectedDays([]);
   };
 
   // Get unique values for filters
@@ -697,19 +834,25 @@ const dayMatch =
   const uniqueSurveys = [
     ...new Set(
       posts
-        .filter((post) => post.is_entity === 'false')
+        .filter((post) => post.is_entity === "false")
         .map((post) => post.name_of_survey)
     ),
   ];
   const uniqueEntities = [
     ...new Set(
       posts
-        .filter((post) => post.is_entity === 'true')
+        .filter((post) => post.is_entity === "true")
         .map((post) => post.name_of_survey)
     ),
   ];
-  const uniqueCategories = [...new Set(posts.map((post) => post.category_name))];
-  const uniqueStatuses = [...new Set(posts.map((post) => post.status))];
+  const uniqueCategories = [...new Set(
+    posts.flatMap(post => [post.category_name, post.entity_type_name])
+        .filter(value => value) // Keeps only truthy (non-empty) values
+)];
+  // const uniqueStatuses = [...new Set(posts.map((post) => post.status))];
+  const uniqueStatuses = [...new Set(
+    posts.flatMap(post => [post.status, post.post_status_name])
+  )];
 
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -866,166 +1009,160 @@ const dayMatch =
 
   const handleAdditionToCollectionBulk = () => {
     setAddToCollectionBulk(true);
-  }
-  return (<>
-    <div className="hidden md:block">
-      <FilterTopNav
-        selectedCategories={selectedCategories}
-        uniqueCategories={uniqueCategories}
-        handleCategoryChange={handleCategoryChange}
-        selectedStatuses={selectedStatuses}
-        uniqueStatuses={uniqueStatuses}
-        handleStatusChange={handleStatusChange}
-        clearFilters={clearFilters}
-       
-        dateRange={dateRange}
-        exportToCSV={doExportToCSV}
-        filteredPosts={filteredPosts}
-        selectedPosters={selectedPosters}
-        uniquePosters={uniquePosters}
-        handlePosterChange={handlePosterChange}
-        selectedSubcategories={selectedSubcategories}
-        uniqueSubcategories={uniqueSubcategories}
-        handleSubcategoryChange={handleSubcategoryChange}
-        selectedSubtags={selectedSubtags}
-        uniqueSubtags={uniqueSubtags}
-        handleSubtagChange={handleSubtagChange}
-        selectedPriorityLevels={selectedPriorityLevels}
-        uniquePriorityLevels={uniquePriorityLevels}
-        handlePriorityLevelChange={handlePriorityLevelChange}
-        selectedAccessLevels={selectedAccessLevels}
-        uniqueAccessLevels={uniqueAccessLevels}
-        handleAccessLevelChange={handleAccessLevelChange}
-        handleSort={handleSort}
-        sortConfig={sortConfig}
-        setShowAdvancedSearch={setShowAdvancedSearch}
-        addToCollectionBulk={handleAdditionToCollectionBulk}
-
-      />
-    </div>
-
-
-    <div className="flex-1 flex relative my-black-bg ">
-      {/* Left Column */}
-      <div className={`fixed inset-y-0 left-0 w-full max-w-[300px] my-black-bg  z-40 shadow-xl transform transition-transform duration-300 lg:translate-x-0 lg:relative lg:block lg:w-1/5 ${leftOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}>
-        {/* <div className="p-4"> */}
-        {/* <h3 className="text-lg font-bold mb-4">Left Panel</h3> */}
-        {/* Left column content */}
-        {(collectionOn && collectionIdNew !== 0) && (
-          <p className="flex items-start justify-between text-[0.65em]">
-            <span>Collection "{collectionName}"</span>
-            <span
-              className="cursor-pointer underline text-red-600"
-              onClick={() =>
-                dispatch(removeCollections({ name: "", collectionId: "" }))
-              }
-            >
-              Clear
-            </span>
-          </p>
-        )}
-        <div className="flex">
-          <LeftFilterPanel handleSurveyChange={handleSurveyChange} handleEntityChange={handleEntityChange} selectedSurveys={selectedSurveys} selectedEntities={selectedEntities} uniqueEntities={uniqueEntities} uniqueSurveys={uniqueSurveys} />
-          {/* <LeftF */}
-        </div>
-
-      </div>
-
-      {/* Middle Column */}
-      <div className="flex-1 lg:w-3/5 relative my-black-bg ">
-        <div className=" h-full">
-          {/* Toggle Buttons Container */}
-          {/* <div className="lg:hidden flex justify-between items-center mb-4">
-            <button
-              onClick={() => setLeftOpen(!leftOpen)}
-              className="p-2 bg-gray-800 text-white rounded-lg shadow-md flex items-center"
-            >
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-              </svg>
-              Filters
-            </button>
-
-            <button
-              onClick={() => setRightOpen(!rightOpen)}
-              className="p-2 bg-gray-800 text-white rounded-lg shadow-md flex items-center"
-            >
-              Details
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div> */}
-
-          {/* Main Content */}
-          {/* <h2 className="text-2xl font-bold mb-4">Main Content</h2>
-          <p className="text-gray-700">
-            This is the main content area. It takes up the remaining space and adjusts based on the sidebar's state.
-            Add your page content here.
-          </p> */}
-          {pending && (
-            <div className="flex items-center justify-center mb-4">
-              <Spinner animation="grow" variant="warning" className="h-[100px]" />
-            </div>
-          )}
-          {/* <CardView/> */}
-          {/* <MapView/> */}
-          <PostList
-            posts={sortedPosts}
-            pending={pending}
-            deletePost={handleDelete}
-            removeFromCollection={handleRemove}
-            updatePostStatus={handlePostUpdateStatus}
-          />
-        </div>
-
-        {/* Overlay for mobile */}
-        {(leftOpen || rightOpen) && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30"
-            onClick={() => {
-              setLeftOpen(false);
-              setRightOpen(false);
-            }}
-          ></div>
-        )}
-      </div>
-
-      {/* Right Column */}
-      <div className={`fixed inset-y-0 right-0 w-full max-w-[300px] my-black-bg z-40 shadow-xl transform transition-transform duration-300 lg:translate-x-0 lg:relative lg:block lg:w-1/5 ${rightOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}>
-
-        <RightFilterPanel
-          exportToCSV={doExportToCSV}
-          addToCollectionBulk={handleAdditionToCollectionBulk}
-
-          // onApply={() => setShowAdvancedSearch(false)}
-          filters={advancedFilters}
-          setFilters={setAdvancedFilters}
-          handleDateRangeChange={handleDateRangeChange}
-          timeRange={timeRange}
-          setTimeRange={setTimeRange}
-          selectedDays={selectedDays}
-          setSelectedDays={setSelectedDays}
+  };
+  return (
+    <>
+      <div className="hidden md:block">
+        <FilterTopNav
+          selectedCategories={selectedCategories}
+          uniqueCategories={uniqueCategories}
+          handleCategoryChange={handleCategoryChange}
+          selectedTags={selectedTags}
+          uniqueTags={uniqueTags}
+          handleTagChange={handleTagChange}
+          selectedStatuses={selectedStatuses}
+          uniqueStatuses={uniqueStatuses}
+          handleStatusChange={handleStatusChange}
+          clearFilters={clearFilters}
           handleLocationSelect={handleLocationSelect}
-          setLocationFilter={setLocationFilter}
-          locationFilter={locationFilter}
-          handleRangeSelect={handleRangeSelect}
+          dateRange={dateRange}
+          exportToCSV={doExportToCSV}
+          filteredPosts={filteredPosts}
+          selectedPosters={selectedPosters}
+          uniquePosters={uniquePosters}
+          handlePosterChange={handlePosterChange}
+          selectedSubcategories={selectedSubcategories}
+          uniqueSubcategories={uniqueSubcategories}
+          handleSubcategoryChange={handleSubcategoryChange}
+          selectedSubtags={selectedSubtags}
+          uniqueSubtags={uniqueSubtags}
+          handleSubtagChange={handleSubtagChange}
+          selectedPriorityLevels={selectedPriorityLevels}
+          uniquePriorityLevels={uniquePriorityLevels}
+          handlePriorityLevelChange={handlePriorityLevelChange}
+          selectedAccessLevels={selectedAccessLevels}
+          uniqueAccessLevels={uniqueAccessLevels}
+          handleAccessLevelChange={handleAccessLevelChange}
+          handleSort={handleSort}
+          sortConfig={sortConfig}
+          setShowAdvancedSearch={setShowAdvancedSearch}
+          addToCollectionBulk={handleAdditionToCollectionBulk}
+          rightOpen={rightOpen}
+          setRightOpen = {setRightOpen}
         />
       </div>
-    </div>
-    <AddToCollectionBulkModal
-      show={showAddToCollectionBulk}
-      onClose={() => setAddToCollectionBulk(false)}
 
-      filteredPosts={filteredPosts}
+      <div className="flex-1 flex relative my-black-bg ">
+        {/* Left Column */}
 
-    />
-  </>
-  )
-};
+        <div
+          className={`fixed inset-y-0 left-0 w-full max-w-[300px] my-black-bg  z-40 shadow-xl transform transition-transform duration-300 lg:translate-x-0 lg:relative lg:block lg:w-1/5 ${
+            leftOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {collectionOn && collectionIdNew !== 0 && (
+            <p className="flex items-start justify-between text-[0.65em] text-white pl-4">
+              <span>Collection "{collectionName}"</span>
+              <span
+                className="cursor-pointer underline text-red-600"
+                onClick={() =>
+                  dispatch(removeCollections({ name: "", collectionId: "" }))
+                }
+              >
+                Clear
+              </span>
+            </p>
+          )}
+          <div className="flex">
+            <LeftFilterPanel
+              handleSurveyChange={handleSurveyChange}
+              handleEntityChange={handleEntityChange}
+              selectedSurveys={selectedSurveys}
+              selectedEntities={selectedEntities}
+              uniqueEntities={uniqueEntities}
+              uniqueSurveys={uniqueSurveys}
+            />
+            {/* <LeftF */}
+          </div>
+        </div>
+
+        {/* Middle Column */}
+        <div
+    className={`relative my-black-bg transition-all duration-300 ${
+      !leftOpen && !rightOpen ? "w-full" :
+      leftOpen && rightOpen ? "lg:w-3/5" :
+      "lg:w-4/5"
+    }`}
+  >
+          <div className=" h-full">
 
 
+            {pending && (
+              <div className="flex items-center justify-center mb-4">
+                <Spinner
+                  animation="grow"
+                  variant="warning"
+                  className="h-[100px]"
+                />
+              </div>
+            )}
+            {/* <CardView/> */}
+            {/* <MapView/> */}
+            <PostList
+              posts={sortedPosts}
+              pending={pending}
+              deletePost={handleDelete}
+              removeFromCollection={handleRemove}
+              updatePostStatus={handlePostUpdateStatus}
+              rightOpen={rightOpen}
+
+            />
+          </div>
+
+          {/* Overlay for mobile */}
+          {(leftOpen || rightOpen) && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 lg:hidden z-30"
+              onClick={() => {
+                setLeftOpen(false);
+                setRightOpen(false);
+              }}
+            ></div>
+          )}
+        </div>
+
+        {/* Right Column */}
+
+        <div
+    className={`fixed inset-y-0 right-0 w-full max-w-[300px] my-black-bg z-40 shadow-xl transform transition-transform duration-300 lg:relative lg:w-1/5 ${
+      rightOpen ? "translate-x-0" : "translate-x-full lg:w-0 lg:max-w-0"
+    }`}
+  >
+          <RightFilterPanel
+            exportToCSV={doExportToCSV}
+            addToCollectionBulk={handleAdditionToCollectionBulk}
+            // onApply={() => setShowAdvancedSearch(false)}
+            filters={advancedFilters}
+            setFilters={setAdvancedFilters}
+            handleDateRangeChange={handleDateRangeChange}
+            timeRange={timeRange}
+            setTimeRange={setTimeRange}
+            selectedDays={selectedDays}
+            setSelectedDays={setSelectedDays}
+            handleLocationSelect={handleLocationSelect}
+            setLocationFilter={setLocationFilter}
+            locationFilter={locationFilter}
+            handleRangeSelect={handleRangeSelect}
+          />
+        </div>
+      </div>
+      <AddToCollectionBulkModal
+        show={showAddToCollectionBulk}
+        onClose={() => setAddToCollectionBulk(false)}
+        filteredPosts={filteredPosts}
+      />
+    </>
+  );
+}
 
 export default DataViewPage;

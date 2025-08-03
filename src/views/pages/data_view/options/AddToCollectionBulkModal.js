@@ -11,17 +11,17 @@ const AddToCollectionBulkModal = ({ show, onClose, filteredPosts }) => {
   return (
     <AnimatePresence>
       {show && (
-        
+
              <motion.div
                         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1200]"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        
+
                       >
                         <motion.div
-                          className="bg-gradient-to-b from-[#1c1b1a] to-[#080808] rounded-lg shadow-lg md:w-[50%] max-w-[1200px] p-8 overflow-y-auto max-h-[90vh] z-[1201]"
+                          className="bg-gradient-to-b from-[#1c1b1a] to-[#080808]  shadow-lg md:w-[50%] max-w-[1200px] p-8 overflow-y-auto max-h-[90vh] z-[1201]"
                           initial={{ y: -50, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           exit={{ y: -50, opacity: 0 }}

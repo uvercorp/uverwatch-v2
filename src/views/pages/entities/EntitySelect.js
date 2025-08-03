@@ -30,7 +30,7 @@ function EntitySelect(props) {
                 transition={{
                     duration: 0.75,
                 }}
-                
+
             >
                 <div className="min-h-lvh flex items-start justify-center">
 
@@ -51,7 +51,7 @@ function EntitySelect(props) {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-x-4">
 
                                         {props?.surveys?.map((record, index) => (
-                                            <div style={{border:"1px solid #23201e", textDecoration:"none"}} key={index} className="bg-[#0e0b0a] hover:bg-[#261f1b] rounded-lg  p-3 cursor-pointer py-3 hover:underline capitalize hover:text-white my-sidebar-link" onClick={() => props?.toggleFormType('add', record)}>{record.survey_name}</div>
+                                            <div style={{border:"1px solid #23201e", textDecoration:"none"}} key={index} className="bg-[#0e0b0a] hover:bg-[#261f1b]   p-3 cursor-pointer py-3 hover:underline capitalize hover:text-white my-sidebar-link" onClick={() => props?.toggleFormType('add', record)}>{record.survey_name}</div>
                                         ))}
 
                                     </div>

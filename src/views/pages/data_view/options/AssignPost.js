@@ -125,24 +125,27 @@ function AssignPost(props) {
             onClick={() => { setCollections([]); props.setShow(false); }} // Close modal when clicking outside
           >
             <motion.div
-              className="bg-white rounded-lg shadow-lg md:w-[55%] max-w-[1200px] p-8 overflow-y-auto max-h-[90vh] z-[1201]"
+              className="my-gradient-bg shadow-lg md:w-[55%] max-w-[1200px] p-8 overflow-y-auto max-h-[90vh] z-[1201]"
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               onClick={(e) => e.stopPropagation()} // Prevent click inside modal from closing it
+              style={{border: "1px solid #2e2c2b"}}
             >
-              
+
       <div className="flex items-start justify-between">
-      <span className="text-[1.4em] font-bold">Assign Post / Entity</span>
+      <span className="text-[1.4em] my-font-family-overpass-mono font-semibold text-[#dbdbde]">Assign Post / Entity</span>
       </div>
-      <hr/>
+      <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-6 pt-0 " />
+        </div>
               <PostAssigning
-  post={props?.selectedRecord} 
-  
+  post={props?.selectedRecord}
+
   userAccess={currentUser?.access_level}
 />
-              
+
             </motion.div>
           </motion.div>
         )}

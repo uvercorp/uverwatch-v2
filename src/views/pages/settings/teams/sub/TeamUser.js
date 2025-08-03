@@ -52,17 +52,17 @@ function TeamUser(props) {
           },
         }
       );
-  
+
       setPending(false);
-      if (response?.data) {     
+      if (response?.data) {
         let dData = response?.data;
-        
+
         // Filter out users who are already in the team
         const currentUserIds = dData?.team_users?.map(user => user.user) || [];
-        const filteredAvailableUsers = dData?.users?.filter(user => 
+        const filteredAvailableUsers = dData?.users?.filter(user =>
           !currentUserIds.includes(user.id)
         ) || [];
-        
+
         setAvailableUsers(filteredAvailableUsers);
         setFilteredUsers(filteredAvailableUsers);
         setCurrentUsers(dData?.team_users || []);
@@ -209,7 +209,7 @@ function TeamUser(props) {
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white rounded-lg">
+    <div className="my-gradient-bg max-w-6xl mx-auto  ">
       <h4 className="font-bold mb-3">Manage Users in Team</h4>
 
       {pending && (
@@ -228,7 +228,7 @@ function TeamUser(props) {
             {currentUsers?.map((user) => (
               <div
                 key={user.id}
-                className="border rounded-lg p-2 flex justify-between items-center"
+                className="border  p-2 flex justify-between items-center"
               >
                 <div>
                   <h5 className="font-medium">{user.name}</h5>
@@ -255,7 +255,7 @@ function TeamUser(props) {
       {/* Add Users Section */}
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-4">Add Users to Team</h3>
-        
+
         {/* Search Form */}
         <div className="mb-4">
           <div className="relative">
@@ -264,7 +264,7 @@ function TeamUser(props) {
               placeholder="Search users by name, email or role..."
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border  focus:outline-none focus:ring-2 focus:ring-blue-500 my-input"
             />
             <FiSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
@@ -281,10 +281,10 @@ function TeamUser(props) {
               <div
                 key={user.id}
                 onClick={() => handleUserSelect(user)}
-                className={`border rounded-lg p-2 cursor-pointer transition-colors ${
+                className={`border  p-2 cursor-pointer transition-colors ${
                   selectedUsers.some((u) => u.id === user.id)
-                    ? "border-blue-500 bg-blue-50"
-                    : "border-gray-200 hover:bg-gray-50"
+                     ? "border-blue-500 bg-[#3b3229]"
+                    : "border-gray-200 hover:bg-[#3b3229]"
                 }`}
               >
                 <div className="flex justify-between items-center">
@@ -293,7 +293,7 @@ function TeamUser(props) {
                     <p className="text-sm text-gray-600">{user.email}</p>
                     {user.role && (
                       <span className="inline-block mt-1 px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-800 rounded">
-                        {user.role} 
+                        {user.role}
                       </span>
                     )}
                   </div>

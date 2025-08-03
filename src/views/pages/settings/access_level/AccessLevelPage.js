@@ -23,8 +23,8 @@ function AccessLevelPage(props) {
    const [selectedRecord,setSelectedRecord] = useState([]);
    const [pending, setPending] = useState(false);
    let navigate = useHistory();
-   
- 
+
+
    const toggleFormType = (formType,data) => {
      setCurrentPage('add');
      setFormType(formType);
@@ -34,38 +34,38 @@ function AccessLevelPage(props) {
        setSelectedRecord(data);
      }
    };
- 
+
    const populateList = (newData)=>{
      setAccessLevel([...accesslevels,newData]);
- 
+
    }
 
- 
- 
+
+
    const updateListRecord = (updatedRecord)=>{
-     
+
      const index = accesslevels.findIndex((item) => item?.id === updatedRecord.id);
      setAccessLevel((prevList) => prevList.map((item, i) => i === index ? updatedRecord : item));
- 
+
    }
- 
+
    const updateListRecordDelete = (id)=>{
-     
+
        const newdata= accesslevels.filter((item)=>item.id!==id);
              setAccessLevel(newdata);
              setCurrentPage('list');
- 
+
    }
    useEffect(() => {
      let deployment = localStorage.getItem('deployment');
      if (deployment && deployment !== undefined) {
        getAccessLevelData(JSON.parse(deployment).id);
        setDeploymentId(JSON.parse(deployment).id);
- 
+
      }
-    
+
    }, [props.show]);
- 
+
    const getAccessLevelData = async (deployment_id) => {
      setPending(true);
      setAccessLevel([]);
@@ -80,14 +80,14 @@ function AccessLevelPage(props) {
          }
        );
        // console.log(response)
- 
+
        // console.log(JSON.stringify(response?.data));
        setPending(false);
        if (response?.data) {
          let dData = response?.data?.access_levels;
          setAccessLevel(dData);
          // console.log(dData);
- 
+
        }
      } catch (err) {
        setPending(false);
@@ -101,21 +101,21 @@ function AccessLevelPage(props) {
          dispatch(toggleToaster({ isOpen: true, toasterData: { type: "error", msg: "Loading Failed, Check your internet and try again" } }));
        }
      }
- 
+
    }
 
- 
+
 
   return (
     <>
       {/* Launch Button */}
-     
+
 
       {/* Modal Backdrop and Content */}
       <AnimatePresence>
         {
           <motion.div
-           
+
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -123,7 +123,7 @@ function AccessLevelPage(props) {
             // onClick={() => {setAccessLevel([]);props.setShow(false);}} // Close modal when clicking outside
           >
             <motion.div
-              className="bg-white rounded-lg  p-8 overflow-y-auto  "
+              className="  my-gradient-bg overflow-y-auto  "
               initial={{ y: -50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
@@ -131,7 +131,7 @@ function AccessLevelPage(props) {
               onClick={(e) => e.stopPropagation()} // Prevent click inside modal from closing it
             >
               {/* Modal Header */}
-             
+
               {/* Modal Body */}
               {currentPage == 'list' &&
      <AccessLevelList deploymentId={deploymentId}  toggleFormType={toggleFormType} pending={pending} setPending={setPending} accesslevels={accesslevels} currentPage={currentPage} setCurrentPage={setCurrentPage} />

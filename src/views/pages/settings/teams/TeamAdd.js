@@ -32,10 +32,10 @@ function TeamAdd(props) {
 
     const tabs = [
       { id: 'collections', label: 'Entry' },
-     
+
       { id: 'users', label: 'Team Users' }
     ];
-    
+
     const renderTabContent = () => {
       switch (activeTab) {
         case 'collections':
@@ -305,25 +305,28 @@ function TeamAdd(props) {
 
 
     }
- 
+
 
     return (
         <>
-        
-            <Card>
+
+        <Card className="my-gradient-bg shadow-xl text-white " >
                 <Card.Header>
                     <Card.Title as="h4">
 
                         <div className="flex items-start justify-between">
-                            <span>Team | <span className="text-[0.6em] capitalize"> {props?.formType} <span className="italic">: {formValue?.name}</span> </span> </span>
-                            <Button variant="default" onClick={() => props?.setCurrentPage('list')}>Cancel</Button>
+                            <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">Team | <span className="text-[0.6em] capitalize"> {props?.formType} <span className="italic">: {formValue?.name}</span> </span> </span>
+                            <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button>
 
                         </div>
                     </Card.Title>
                 </Card.Header>
+                <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
                 <Card.Body >
-          
-                    <hr />
+
+
                     {pending && (<div className="flex items-center justify-center mb-4">
                         <Spinner animation="grow" variant="warning" />
                     </div>)}
@@ -362,10 +365,10 @@ function TeamAdd(props) {
 
         <div>
         {/* <div className="grid gap-6 md:grid-cols-2 "> */}
-                <div className="mb-6">
+                <div className="mb-6 text-stone-900">
                     <label
                         htmlFor="survey_description"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        className="block text-sm text-gray-400 mb-1"
                     >
                         Pick An Icon And Color
                     </label>
@@ -374,17 +377,17 @@ function TeamAdd(props) {
                         initialColor={formValue.color}
                     />
                 </div>
-               
+
             {/* </div> */}
             <div className="grid gap-6 md:grid-cols-2 ">
                 <div className="mb-6">
-                    <label for="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Team Name</label>
-                    <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name of Team" required />
+                    <label for="name" className="block my-label">Team Name</label>
+                    <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" w-full my-input" placeholder="Name of Team" required />
                 </div>
                 <div className="mb-6">
-                    <label htmlFor="access_level" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Access Level</label>
+                    <label htmlFor="access_level" className="block my-label">Access Level</label>
 
-                    <select style={{ width: "100%" }} className="border border-gray-200 rounded-lg min-h-[2.5em] " value={formValue.access_level} required onChange={handleChange} name="access_level">
+                    <select style={{ width: "100%" }} className="w-full my-input min-h-[2.5em] " value={formValue.access_level} required onChange={handleChange} name="access_level">
                         <option>Select Access Level</option>
                         {accessLevel?.map((record, index) => (
                             <option key={index} value={record?.level}>{record?.name} level[{record?.level}] </option>
@@ -394,8 +397,8 @@ function TeamAdd(props) {
                 </div>
             </div>
             <div className="mb-6">
-                <label for="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Describe the Team</label>
-                <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300  dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white  focus:bg-white" placeholder="Team Description..."></textarea>
+                <label for="description" className="block my-label">Describe the Team</label>
+                <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="3" class="w-full my-input" placeholder="Team Description..."></textarea>
 
             </div>
             <div>
@@ -415,14 +418,14 @@ function TeamAdd(props) {
         </div>
     </div>
         }
-       
+
          {activeTab == 'users' &&
         <TeamUser  teamId={formValue.id}/>
         }
       </div>
     </div>
 
-                        
+
                     </motion.div>
                 </Card.Body>
             </Card>

@@ -28,6 +28,7 @@ export const helperSlice = createSlice({
     },
     setSelectedSingleData:(state, action) => {
       state.selectedSingleData = action.payload;
+      localStorage.setItem('selectedPost', JSON.stringify(action.payload));
     },
 
   },

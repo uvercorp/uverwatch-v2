@@ -29,7 +29,7 @@ function DisplayResult(props) {
     };
 
 
-   
+
     return (
         <>
             <div className="flex items-start justify-between">
@@ -38,10 +38,12 @@ function DisplayResult(props) {
                         {props.posts.length > 0 ? ` (${props.posts.length})` : "No Record Found"}
                     </span>
                 </span>
-                <Button variant="default" className="btn-sm" onClick={() => props?.setCurrentPage('choose')}>Back To Filter</Button>
+                <Button variant="warning" className="btn-sm border-r-0" onClick={() => props?.setCurrentPage('choose')}>Back To Filter</Button>
 
             </div>
-            <hr />
+            <div className="px-0">
+        <hr className="border-[#454240] mt-4 pt-0 " />
+      </div>
             {currentPage == 'list' && (<>
             {props.posts.length > 0 ? (
                 <>
@@ -81,8 +83,8 @@ function DisplayResult(props) {
                         </div>
                     </div>
                     <div className="modal-footer">
-                    <button 
-  
+                    <button
+
   onClick={() => exportToCSV(props?.posts, 'map-posts.csv')}
   className="btn btn-success"
   disabled={props?.posts.length === 0}
@@ -90,9 +92,9 @@ function DisplayResult(props) {
   <i className="fas fa-download me-2"></i>
   Export Selected ({props?.posts.length})
 </button>
-                <button 
-                  type="button" 
-                  className="btn btn-danger" 
+                <button
+                  type="button"
+                  className="btn btn-danger"
                   onClick={()=>setCurrentPage('collection')}
                 >
                   Add to Collection
@@ -110,7 +112,7 @@ function DisplayResult(props) {
                         No Records found in the selected area
                     </div>
                 </div>
-            )} 
+            )}
             </>)}
 
             {currentPage == 'collection' && (<>

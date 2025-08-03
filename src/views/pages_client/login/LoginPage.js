@@ -1,7 +1,7 @@
 
 
 import React, { useRef, useContext, useState } from 'react'
-import { Link } from "react-router-dom";
+import { Link,NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 
 
@@ -204,14 +204,14 @@ export default function LoginPage() {
           {/* Email Input */}
           {pendingComplete ? (<>
             <div className='py-6'>
-              <p className="font-bold text-2xl text-green-700">Login Succesfull</p>
+              <p className="font-bold text-2xl text-green-700">Login Succesful</p>
               <hr className="mt-6 border-b-1 border-blueGray-300" />
-              <p className="text-xs mt-4 text-[#002D74]">Preparing Deployment Dashboard.....</p>
+              <p className="text-xs mt-4 text-[#dce4dc]">Preparing Deployment Dashboard.....</p>
               <div className='flex items-center justify-center'>
                 <Blocks
                   height="180"
                   width="180"
-                  color="#002D74"
+                  color="#2bbb33"
                   ariaLabel="blocks-loading"
                   wrapperStyle={{}}
                   wrapperClass="blocks-wrapper"
@@ -279,7 +279,12 @@ export default function LoginPage() {
                 href="#"
                 className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
               >
-                Don't have an account? <span className="underline">Create Deployment</span>
+                Don't have an account?
+                <NavLink
+          key=''
+          to='create'>
+            <span className="underline text-white">Create Deployment</span>
+            </NavLink>
               </a>
             </div>
           </>}

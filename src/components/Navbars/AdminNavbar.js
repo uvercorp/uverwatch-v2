@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useHistory,NavLink } from "react-router-dom";
 import routes from "../../routes.js";
 
 function Header({ isLogin, user }) {
@@ -14,11 +14,12 @@ function Header({ isLogin, user }) {
         return routes[i].name;
       }
     }
-    return "Brand";
+    return "Not Found";
   };
 
   const showSearchComponent =
     location.pathname === "/deployment/data_view" ||
+    location.pathname === "/deployment/incoming" ||
     location.pathname === "/deployment/map_view";
 
   useEffect(() => {
@@ -35,10 +36,10 @@ function Header({ isLogin, user }) {
   {!showSearchComponent && (<>
     <div className="lg:fixed lg:top-0 lg:left-[17%] right-0 lg:z-50 bg-black border-b border-gray-700">
     {/* <div className="lg:w-[100%] lg:border-b border-gray-700"> */}
-             
+
              <div className="flex justify-between my-black-bg items-center p-1 lg:mx-4 ">
                 <h1 className="text-2xl tracking-widest my-font-family-ailerons text-white hidden lg:block">{getBrandText()}</h1>
-              
+
                 <div
               className="flex items-center space-x-4 pt-3 lg:pt-0 mb-1 mr-2 relative"
               ref={dropdownRef}
@@ -62,21 +63,28 @@ function Header({ isLogin, user }) {
                   <div className="px-4 py-2 text-sm border-b border-gray-700">
                     {user?.name}
                   </div>
-                  
-                  <a
+
+                  {/* <a
                     href="/profile"
                     className="block px-4 py-2 hover:bg-gray-800 text-sm"
                   >
                     View Profile
-                  </a>
-                  
-                  
+                  </a> */}
+                  <NavLink
+              to='user'
+              className="block px-4 py-2 hover:bg-gray-800 text-sm"
+              activeClassName="active"
+            >
+              {/* <i className="nc-icon  nc-circle-09" /> */}
+              User Profile
+            </NavLink>
+
                 <button
                   className="w-full text-left px-4 py-2 hover:bg-gray-800 text-sm text-red-400"
                   onClick={() => {
                     localStorage.setItem("is_login", "no");
                     localStorage.removeItem("currentUser");
-                    window.location.replace("/deployment/map_view");
+                    window.location.replace("/pages/login");
                   }}
                 >
                   Log out
@@ -99,7 +107,7 @@ function Header({ isLogin, user }) {
             </div>
             <div className="h-[65px]"></div>
               </>)}
- 
+
   </>);
 }
 

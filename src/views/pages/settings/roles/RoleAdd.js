@@ -205,19 +205,22 @@ function RoleAdd(props) {
   }
   return (
     <>
-      <Card>
+      <Card className="my-gradient-bg shadow-xl  " >
         <Card.Header>
           <Card.Title as="h4">
 
             <div className="flex items-start justify-between">
-              <span>Roles | <span className="text-[0.6em] capitalize"> {props?.formType} </span> </span>
-              <Button variant="default" onClick={() => props?.setCurrentPage('list')}>Cancel</Button>
+              <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">Roles | <span className="text-[0.6em] capitalize"> {props?.formType} </span> </span>
+              <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button>
 
             </div>
           </Card.Title>
         </Card.Header>
+        <div className="px-4">
+          <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
+        </div>
         <Card.Body >
-          <hr />
+
           {pending && (<div className="flex items-center justify-center mb-4">
             <Spinner animation="grow" variant="warning" />
           </div>)}
@@ -234,16 +237,16 @@ function RoleAdd(props) {
 
               <div>
                 <div className="mb-6">
-                  <label for="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
-                  <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" focus:bg-white bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Name of Role" required />
+                  <label for="name" className="block my-label">Name</label>
+                  <input type="text" onChange={handleChange} name="name" value={formValue.name} id="name" className=" w-full my-input" placeholder="Name of Role" required />
                 </div>
 
                 <div className="mb-6">
-                  <label for="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Describe the Role</label>
-                  <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="3" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300  dark:bg-gray-700 dark:border-gray-300 dark:placeholder-gray-400 dark:text-white  focus:bg-white" placeholder="Role Description..."></textarea>
+                  <label for="description" className="block my-label">Describe the Role</label>
+                  <textarea id="description" onChange={handleChange} name="description" value={formValue.description} rows="3" class="w-full my-input" placeholder="Role Description..."></textarea>
 
                 </div>
-                <div>
+                <div className="my-label">
                   {/* <hr /> */}
                   <p>Permissions</p>
 
@@ -254,56 +257,56 @@ function RoleAdd(props) {
                     <div className="flex items-center h-5">
                       <input id="remember" type="checkbox" value="" className="w-5 h-5 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="remember" className="ms-2 text-sm font-medium text-black">Manage Users
+                    <label for="remember" className="ms-2 text-sm font-medium my-label">Manage Users
                     </label>
                   </div>
                   <div className="flex items-start mb-4">
                     <div className="flex items-center h-5">
                       <input id="remember" type="checkbox" value="" className="w-5 h-5 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="remember" className="ms-2 text-sm font-medium text-black">Manage Posts
+                    <label for="remember" className="ms-2 text-sm font-medium my-label">Manage Posts
                     </label>
                   </div>
                   <div className="flex items-start mb-4">
                     <div className="flex items-center h-5">
                       <input id="remember" type="checkbox" value="" className="w-5 h-5 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="remember" className="ms-2 text-sm font-medium text-black">Manage Settings
+                    <label for="remember" className="ms-2 text-sm font-medium my-label">Manage Settings
                     </label>
                   </div>
                   <div className="flex items-start mb-4">
                     <div className="flex items-center h-5">
                       <input id="remember" type="checkbox" value="" className="w-5 h-5 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="remember" className="ms-2 text-sm font-medium text-black">Data Import and Export
+                    <label for="remember" className="ms-2 text-sm font-medium my-label">Data Import and Export
                     </label>
                   </div>
                   <div className="flex items-start mb-4">
                     <div className="flex items-center h-5">
                       <input id="remember" type="checkbox" value="" className="w-5 h-5 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="remember" className="ms-2 text-sm font-medium text-black">Edit Own Post
+                    <label for="remember" className="ms-2 text-sm font-medium my-label">Edit Own Post
                     </label>
                   </div>
                   <div className="flex items-start mb-4">
                     <div className="flex items-center h-5">
                       <input id="remember" type="checkbox" value="" className="w-5 h-5 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="remember" className="ms-2 text-sm font-medium text-black">Manage Collections
+                    <label for="remember" className="ms-2 text-sm font-medium my-label">Manage Collections
                     </label>
                   </div>
                   <div className="flex items-start mb-4">
                     <div className="flex items-center h-5">
                       <input id="remember" type="checkbox" value="" className="w-5 h-5 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="remember" className="ms-2 text-sm font-medium text-black">Delete Posts
+                    <label for="remember" className="ms-2 text-sm font-medium my-label">Delete Posts
                     </label>
                   </div>
                   <div className="flex items-start mb-4">
                     <div className="flex items-center h-5">
                       <input id="remember" type="checkbox" value="" className="w-5 h-5 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" required />
                     </div>
-                    <label for="remember" className="ms-2 text-sm font-medium text-black">Delete Own Post
+                    <label for="remember" className="ms-2 text-sm font-medium my-label">Delete Own Post
                     </label>
                   </div>
                   </div>

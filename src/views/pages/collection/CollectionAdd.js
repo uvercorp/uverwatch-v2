@@ -461,7 +461,7 @@ function CollectionAdd(props) {
         >
           Cancel
         </Button>
-        
+
       </div>
       <hr className="border-[#2e2c2b] mb-0" />
     </Card.Title>
@@ -509,7 +509,7 @@ function CollectionAdd(props) {
                   <label className="block text-sm text-gray-400 mb-1">Pick an Icon and Color</label>
                   <IconPicker onSelection={handleIconSelection} initialIconClass={formValue.icon} initialColor={formValue.color} />
                 </div>
-                
+
                 {/* Type Selector */}
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">Entity Type</label>
@@ -600,7 +600,7 @@ function CollectionAdd(props) {
                                                         <span className="text-black">.</span> :
                                                         <a onClick={() => handleDelete(formValue?.id)} className="cursor-pointer text-red-600 hover:text-red-700" disabled={pending}>Delete</a>
                                                     }
-                                                    {props.formType == "add" ? 
+                                                    {props.formType == "add" ?
                                                     <button
                                                     onClick={handleSubmit}
                                                     disabled={pending}
@@ -614,7 +614,7 @@ function CollectionAdd(props) {
                                                 </div>
                                             </div>
               {/* Bottom Buttons */}
-              
+
             </div>
           )}
 
@@ -627,7 +627,7 @@ function CollectionAdd(props) {
 </Card>
 
 
-         
+
 
         </>
     );
