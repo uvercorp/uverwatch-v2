@@ -26,7 +26,7 @@ function SurveyAdd(props) {
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
   const [customFields, setCustomFields] = useState([]);
-  const [surverFields, setSurveyFields] = useState(['title','description']);
+  const [surverFields, setSurveyFields] = useState(['title','description','latitute','longitude']);
   const [selectedUpdateRecord, setSelectedUpdateRecord] = useState();
   const [show, setShow] = useState(false);
   const [showCsv, setShowCsv] = useState(false);
