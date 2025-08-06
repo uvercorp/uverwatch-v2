@@ -157,7 +157,9 @@ export default function MapPositionSelect(props) {
       }
 
       userMarkerRef.current.setLatLng(newLatLng);
-      mapRef.current?.flyTo(newLatLng);
+      mapRef.current?.flyTo(newLatLng, undefined, {
+          animate: false
+        });
     }
   }, [props?.latitude, props?.longitude, location]);
 
