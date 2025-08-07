@@ -4,6 +4,7 @@ import useLocalStorage from "hooks/useLocalStorage";
 import useGeoLocation from "hooks/useGeoLocation";
 import markerIconPng from "assets/leaflet/marker-icon.png";
 import markerShadowPnd from "assets/leaflet/marker-shadow.png";
+import useIsMobile from "hooks/useIsMobile";
 
 // Define the tile layers for different themes
 const tileLayers = {
@@ -23,6 +24,9 @@ export default function MapPositionSelect(props) {
   const userMarkerRef = useRef(null);
   const isDraggingRef = useRef(false);
   const geocodeTimeoutRef = useRef(null);
+
+  const isMobile = useIsMobile();
+
   const [userPosition] = useLocalStorage("USER_MARKER", {
     latitude: 0,
     longitude: 0,
@@ -109,6 +113,31 @@ export default function MapPositionSelect(props) {
     });
   }, [location, handleDrag, handleDragEnd]);
 
+  const handlePinSelection = useCallback((event) => {
+    if (event.latlng) {
+      if (userMarkerRef.current) {
+        userMarkerRef.current.setLatLng(event.latlng);
+      }
+
+      props?.onLocationChange(event.latlng.lat, event.latlng.lng, null);
+    }
+  }, [props]);
+
+  // Handle contextmenu event (longpress) for mobile
+  const handleContextMenu = useCallback((event) => {
+    if (isMobile) {
+      event.preventDefault();
+      handlePinSelection(event);
+    }
+  }, [isMobile, handlePinSelection]);
+
+  // Handle click event for desktop
+  const handleClick = useCallback((event) => {
+    if (!isMobile) {
+      handlePinSelection(event);
+    }
+  }, [isMobile, handlePinSelection]);
+
   // Map initialization
   useEffect(() => {
     if (!mapRef.current) {
@@ -136,10 +165,16 @@ export default function MapPositionSelect(props) {
       userMarkerRef.current
         .on('drag', handleDrag)
         .on('dragend', handleDragEnd);
+
+      mapRef.current.on('click', handleClick);
+      mapRef.current.on('contextmenu', handleContextMenu);
     }
 
     return () => {
       if (mapRef.current) {
+        mapRef.current.off('click', handleClick);
+        mapRef.current.off('contextmenu', handleContextMenu);
+
         mapRef.current.remove();
         mapRef.current = null;
       }
