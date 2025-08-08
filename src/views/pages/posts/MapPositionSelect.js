@@ -27,6 +27,10 @@ export default function MapPositionSelect(props) {
 
   const isMobile = useIsMobile();
 
+  // Timer for distinguishing single vs double click on desktop
+  const singleClickTimerRef = useRef(null);
+  const DOUBLE_CLICK_DELAY_MS = 300;
+
   const [userPosition] = useLocalStorage("USER_MARKER", {
     latitude: 0,
     longitude: 0,
@@ -131,12 +135,28 @@ export default function MapPositionSelect(props) {
     }
   }, [isMobile, handlePinSelection]);
 
-  // Handle click event for desktop
+  // Desktop: single-click places pin unless a double-click occurs
   const handleClick = useCallback((event) => {
     if (!isMobile) {
-      handlePinSelection(event);
+      if (singleClickTimerRef.current) clearTimeout(singleClickTimerRef.current);
+      singleClickTimerRef.current = setTimeout(() => {
+        handlePinSelection(event);
+        singleClickTimerRef.current = null;
+      }, DOUBLE_CLICK_DELAY_MS);
     }
   }, [isMobile, handlePinSelection]);
+
+  // Desktop: double-click zooms; cancel pending single-click placement
+  const handleDoubleClick = useCallback((event) => {
+    if (!isMobile) {
+      if (singleClickTimerRef.current) {
+        clearTimeout(singleClickTimerRef.current);
+        singleClickTimerRef.current = null;
+      }
+      // Let Leaflet's default doubleClickZoom handle zooming
+      // No pin placement on double click
+    }
+  }, [isMobile]);
 
   // Map initialization
   useEffect(() => {
@@ -168,15 +188,21 @@ export default function MapPositionSelect(props) {
 
       mapRef.current.on('click', handleClick);
       mapRef.current.on('contextmenu', handleContextMenu);
+      mapRef.current.on('dblclick', handleDoubleClick);
     }
 
     return () => {
       if (mapRef.current) {
         mapRef.current.off('click', handleClick);
         mapRef.current.off('contextmenu', handleContextMenu);
+        mapRef.current.off('dblclick', handleDoubleClick);
 
         mapRef.current.remove();
         mapRef.current = null;
+      }
+      if (singleClickTimerRef.current) {
+        clearTimeout(singleClickTimerRef.current);
+        singleClickTimerRef.current = null;
       }
     };
   }, []);
