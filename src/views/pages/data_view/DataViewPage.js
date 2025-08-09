@@ -1010,10 +1010,34 @@ function DataViewPage() {
   const handleAdditionToCollectionBulk = () => {
     setAddToCollectionBulk(true);
   };
+
+  const onApplyPreset = (p) => {
+    if (!p) return;
+    setSelectedSurveys(p.selectedSurveys || []);
+    setSelectedEntities(p.selectedEntities || []);
+    setSelectedCategories(p.selectedCategories || []);
+    setSelectedTags(p.selectedTags || []);
+    setSelectedStatuses(p.selectedStatuses || []);
+    setDateRange(p.dateRange || [null, null]);
+    setTimeRange(p.timeRange || ["", ""]);
+    setSelectedDays(p.selectedDays || []);
+    setLocationFilter(p.locationFilter || { latitude: null, longitude: null, range: null });
+    setSelectedPosters(p.selectedPosters || []);
+    setSelectedSubcategories(p.selectedSubcategories || []);
+    setSelectedSubtags(p.selectedSubtags || []);
+    setSelectedPriorityLevels(p.selectedPriorityLevels || []);
+    setSelectedAccessLevels(p.selectedAccessLevels || []);
+    setAdvancedFilters(p.advancedFilters || { dateTime: null, keyword: "" });
+    setSortConfig(p.sortConfig || { key: null, direction: "asc" });
+  };
   return (
     <>
       <div className="hidden md:block">
         <FilterTopNav
+          viewKey={"data_view"}
+          onApplyPreset={onApplyPreset}
+          selectedSurveys={selectedSurveys}
+          selectedEntities={selectedEntities}
           selectedCategories={selectedCategories}
           uniqueCategories={uniqueCategories}
           handleCategoryChange={handleCategoryChange}
@@ -1025,7 +1049,9 @@ function DataViewPage() {
           handleStatusChange={handleStatusChange}
           clearFilters={clearFilters}
           handleLocationSelect={handleLocationSelect}
+          locationFilter={locationFilter}
           dateRange={dateRange}
+          timeRange={timeRange}
           exportToCSV={doExportToCSV}
           filteredPosts={filteredPosts}
           selectedPosters={selectedPosters}
@@ -1045,6 +1071,8 @@ function DataViewPage() {
           handleAccessLevelChange={handleAccessLevelChange}
           handleSort={handleSort}
           sortConfig={sortConfig}
+          selectedDays={selectedDays}
+          advancedFilters={advancedFilters}
           setShowAdvancedSearch={setShowAdvancedSearch}
           addToCollectionBulk={handleAdditionToCollectionBulk}
           rightOpen={rightOpen}
