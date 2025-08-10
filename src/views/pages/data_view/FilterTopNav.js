@@ -18,6 +18,15 @@ function FilterTopNav(props) {
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
   let navigate = useHistory();
+  const [tagSearchTerm, setTagSearchTerm] = useState('');
+  const toggleDropdown1 = (name) => {
+  if (activeDropdown === name) {
+    setActiveDropdown(null);
+    setTagSearchTerm(''); // Reset search term
+  } else {
+    setActiveDropdown(name);
+  }
+};
 
   // Dropdown options data
   const dropdownOptions = {
@@ -295,7 +304,7 @@ function FilterTopNav(props) {
               )}
 
             </div>
-            <div className="relative"  ref={el => dropdownRefs.current['TAGS'] = el}>
+            {/* <div className="relative"  ref={el => dropdownRefs.current['TAGS'] = el}>
               <button
                 onClick={() => toggleDropdown("TAGS")}
                 className="flex items-center space-x-1 text-white pr-3 mr-4 hover:text-gray-300"
@@ -308,19 +317,7 @@ function FilterTopNav(props) {
 
               {activeDropdown === "TAGS" && (
                 <div className="absolute top-full mt-0 right-0  bg-[#1F2F3F]  text-white shadow-md w-40 p-2 z-50 max-h-[50VH] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
-                  {/* {dropdownOptions[label].map((option) => (
-                    <p
-                      key={option}
-                      className="hover:bg-gray-600 p-1 cursor-pointer m-0"
-                      onClick={() => {
-                        // Handle option selection here
-                        console.log(`${label} selected:`, option);
-                        setActiveDropdown(null);
-                      }}
-                    >
-                      {option}
-                    </p>
-                  ))} */}
+                  
                     {props?.uniqueTags.map((category) => (
 
                     <div key={category} className="flex items-start mb-1 pt-1  hover:bg-gray-600 p-1 cursor-pointer m-0">
@@ -337,8 +334,53 @@ function FilterTopNav(props) {
                 </div>
               )}
 
-            </div>
+            </div> */}
+<div className="relative" ref={el => dropdownRefs.current['TAGS'] = el}>
+  <button
+    onClick={() => toggleDropdown("TAGS")}
+    className="flex items-center space-x-1 text-white pr-3 mr-4 hover:text-gray-300"
+  >
+    <span className="my-font-family-evogria tracking-wider text-[1.3em]">
+      TAGS({props?.selectedTags.length})
+    </span>
+    <FiMoreVertical className="text-white" />
+  </button>
 
+  {activeDropdown === "TAGS" && (
+    <div className="absolute top-full mt-0 right-0 bg-[#1F2F3F] text-white shadow-md w-40 p-2 z-50 max-h-[50VH] flex flex-col">
+      {/* Search Input */}
+      <input
+        type="text"
+        placeholder="Search tags..."
+        className="w-full p-1 mb-2 text-sm bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+        value={tagSearchTerm}
+        onChange={(e) => setTagSearchTerm(e.target.value)}
+      />
+      
+      {/* Tags List Container */}
+      <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 flex-grow">
+        {props.uniqueTags
+          .filter(tag => tag.toLowerCase().includes(tagSearchTerm.toLowerCase()))
+          .map((category) => (
+            <div key={category} className="flex items-start mb-1 pt-1 hover:bg-gray-600 p-1 cursor-pointer m-0">
+              <div className="flex items-center h-4">
+                <input 
+                  type="checkbox"
+                  checked={props.selectedTags.includes(category)}
+                  onChange={() => props.handleTagChange(category)} 
+                  className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" 
+                />
+              </div>
+              <label htmlFor="published" className="ms-2 capitalize text-sm font-medium text-white truncate w-full">
+                {category}
+              </label>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  )}
+</div> 
 
 
             <div className="relative"  ref={el => dropdownRefs.current['SORTBY'] = el}>
