@@ -33,7 +33,8 @@ function DisplayResult(props) {
     return (
         <>
             <div className="flex items-start justify-between">
-                <span className="text-[1.4em] font-bold">{props?.selectedType == 'entity'? 'Entities':'Posts'} |
+                {/* <span className="text-[1.4em] font-bold">{props?.selectedType == 'entity'? 'Entities':'Posts'} | */}
+                <span className="text-[1.4em] font-bold capitalize">{props?.selectedType} |
                     <span className="text-[0.8em] capitalize">
                         {props.posts.length > 0 ? ` (${props.posts.length})` : "No Record Found"}
                     </span>
@@ -56,7 +57,7 @@ function DisplayResult(props) {
                             {props.posts.map((post) => (
                                 <div
                                     key={post.id}
-                                    className="list-group-item list-group-item-action d-flex gap-3 py-3"
+                                    className="p-2 d-flex gap-3 py-3 bg-[#1F2F3F] hover:bg-[#3F1F2F] mb-1"
                                 >
                                     <div className="d-flex w-100 justify-content-between">
                                         <div>
