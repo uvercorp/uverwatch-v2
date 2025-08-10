@@ -260,7 +260,7 @@ function SinglePostListCard(props) {
 
         {/* Tags */}
         <div className="flex justify-between items-start">
-        <div className="text-xs text-gray-400 truncate w-full">
+        <div className=" truncate w-full  text-xs text-gray-400 ">
           {/* Tagged: {props?.post?.tags.join(', ')} */}
           <span className=""> {props?.post?.is_entity === "true" ? "" : <> Tagged: {props?.post?.tags} </>}</span>
 
