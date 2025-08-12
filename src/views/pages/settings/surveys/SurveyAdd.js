@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import swal from "sweetalert";
-import { CiEdit } from "react-icons/ci";
+import { CiCircleRemove } from "react-icons/ci";
 import {
   Badge,
   Button,
@@ -88,6 +88,15 @@ function SurveyAdd(props) {
     ]);
     setShow(false);
   };
+
+  const removeCustomField = (index) => {
+    const fieldName = customFields[index].field_name;
+    if (window.confirm(`Are you sure you want to remove the field "${fieldName}"?`)) {
+      const updatedCustomFields = customFields.filter((_, i) => i !== index);
+      setCustomFields(updatedCustomFields);
+    }
+  };
+
 
   const handleSubmit = () => {
     const data = {
@@ -356,9 +365,11 @@ function SurveyAdd(props) {
                           <i className="nc-icon nc-grid-45" />
                           <div className="p-0 font-bold">{record.field_name}</div>
                         </div>
-                        {/* <div onClick={() => {setSelectedUpdateRecord(record);setCustomFieldView('update'); setShow(true);}}>
-                          <CiEdit className="h-5 w-5 cursor-pointer" />
-                        </div> */}
+                        <div className="flex gap-2">
+                          <div onClick={() => removeCustomField(index)}>
+                            <CiCircleRemove className="h-5 w-5 cursor-pointer hover:text-blue-600" />
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
