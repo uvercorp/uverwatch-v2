@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import SinglePostListCard from "../data_view/SinglePostListCard";
+import SinglePostListCardForDashboard from "../data_view/SinglePostListCardForDashboard";
 import UpdatePostModal from "../data_view/UpdatePostModal";
 import AddToCollection from "../data_view/options/AddToCollection";
 import SharePost from "../data_view/options/SharePost";
@@ -8,61 +8,7 @@ import AssignPost from "../data_view/options/AssignPost";
 import LinkPost from "../data_view/options/LinkPost";
 import { isPending } from "@reduxjs/toolkit";
 
-function TopLocations2(props) {
 
-
-  return (
-    <div className="w-full">
-    <div className="grid grid-cols-1 pt-2">
-        <span className="text-xl font-semibold mb-2 p-2 w-full text-white py-2 text-[1.8em]">
-          TOP <span className="bg-gray-400 text-black"> 03:</span> LOCATIONS
-        </span>
-
-      </div>
-      <div className="grid grid-cols-2 gap-0.5 w-full p-0 mt-0">
-      <span className="text-xl font-semibold w-full  py-1">
-      {props?.dashboardTopAnalytics?.top_locations[0]?.address}
-      </span>
-
-      <div className="w-full   h-4 mr-0">
-        <div
-          className={`h-8  bg-red-700 p-2 text-white`}
-          style={{ width: `${(150 / 150) * 100}%` }}
-        >
-         {props?.dashboardTopAnalytics?.top_locations[0]?.post_count}
-        </div>
-      </div>
-    </div>
-    <div className="grid grid-cols-2 gap-0.5 w-full p-0">
-      <span className="text-xl font-semibold w-full  py-1">
-      {props?.dashboardTopAnalytics?.top_locations[1]?.address}
-      </span>
-
-      <div className="w-full   h-4 mr-0">
-        <div
-          className={`h-8  bg-orange-600 p-2 text-white`}
-          style={{ width: `${(113 / 150) * 100}%` }}
-        >
-          {props?.dashboardTopAnalytics?.top_locations[1]?.post_count}
-        </div>
-      </div>
-    </div>
-    <div className="grid grid-cols-2 gap-0.5 w-full p-0">
-      <span className="text-xl font-semibold w-full  py-1">
-      {props?.dashboardTopAnalytics?.top_locations[2]?.address}
-      </span>
-      <div className="w-full   h-4 mr-0">
-        <div
-          className={`h-8  bg-blue-500 p-2 text-white`}
-          style={{ width: `${(45 / 113) * 100}%` }}
-        >
-          {props?.dashboardTopAnalytics?.top_locations[2]?.post_count}
-        </div>
-      </div>
-    </div>
-      </div>
-  );
-}
 function TopLocations(props) {
   const topLocations = props?.dashboardTopAnalytics?.top_locations || [];
 
@@ -126,11 +72,11 @@ function TopLocations(props) {
 
 function LeftSection(props) {
   const [show, setShow] = useState(false);
-  const [showCollection, setShowCollection] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(null);
-  const [showSharePost, setShowSharePost] = useState(false);
-  const [showLinkPost, setShowLinkPost] = useState(false);
-  const [showAssignPost, setShowAssignPost] = useState(false);
+  // const [showCollection, setShowCollection] = useState(false);
+  // const [selectedRecord, setSelectedRecord] = useState(null);
+  // const [showSharePost, setShowSharePost] = useState(false);
+  // const [showLinkPost, setShowLinkPost] = useState(false);
+  // const [showAssignPost, setShowAssignPost] = useState(false);
   // Variants for the container
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -148,15 +94,20 @@ function LeftSection(props) {
     visible: { opacity: 1, y: 0 }, // Animate to visible and original position
   };
 
-  const handleLinkPost = () => {
-    setShowLinkPost(true);
-  };
-  const handleSharePost = () => {
-    setShowSharePost(true);
-  };
 
-  const handleAssignPost = () => {
-    setShowAssignPost(true);
+  const { 
+    setShowModal, 
+    setShowCollection,
+    setShowSharePost,
+    setShowAssignPost,
+    setShowLinkPost,
+    setSelectedRecord 
+  } = props.modalControls;
+
+  // Update all handlers to use the new setters
+  const handleMenuClick = (record) => {
+    setSelectedRecord(record);
+    setShowModal(true);
   };
 
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
@@ -164,6 +115,33 @@ function LeftSection(props) {
   const handleMenuToggle = (index) => {
     setOpenMenuIndex(openMenuIndex === index ? null : index);
   };
+
+   // Handler functions that use the modal controls
+  const handleEdit = (record) => {
+    setSelectedRecord(record);
+    setShowModal(true);
+  };
+
+  const handleAddToCollection = (record) => {
+    setSelectedRecord(record);
+    setShowCollection(true);
+  };
+
+  const handleShare = (record) => {
+    setSelectedRecord(record);
+    setShowSharePost(true);
+  };
+
+  const handleAssign = (record) => {
+    setSelectedRecord(record);
+    setShowAssignPost(true);
+  };
+
+  const handleLink = (record) => {
+    setSelectedRecord(record);
+    setShowLinkPost(true);
+  };
+
 
   return (
     <>
@@ -214,24 +192,37 @@ function LeftSection(props) {
                 variants={cardVariants}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
               >
-                <SinglePostListCard
+                {/* <SinglePostListCardForDashboard
                   post={record}
                   index={index}
                   isMenuOpen={openMenuIndex === index}
                   onMenuToggle={handleMenuToggle}
-                  showCollection={showCollection}
-                  setShowCollection={setShowCollection}
+                 
+                  
+                 
+
+                  onEdit={handleMenuClick}
+        onAddToCollection={handleAddToCollection}
+
+                /> */}
+                <SinglePostListCardForDashboard
+                post={record}
+                index={index}
+                isMenuOpen={openMenuIndex === index}
+                onMenuToggle={handleMenuToggle}
+                setShowCollection={setShowCollection}
                   show={show}
                   setShow={setShow}
                   setSelectedRecord={setSelectedRecord}
                   removeFromCollection={props.removeFromCollection}
                   deletePost={props.deletePost}
                   updatePostStatus={props.updatePostStatus}
-                  handleAssignPost={handleAssignPost}
-                  handleLinkPost={handleLinkPost}
-                  handleSharePost={handleSharePost}
-
-                />
+                onEdit={handleEdit}
+                onAddToCollection={handleAddToCollection}
+                onShare={handleShare}
+                onAssign={handleAssign}
+                onLink={handleLink}
+              />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -239,7 +230,7 @@ function LeftSection(props) {
         <TopLocations
         dashboardTopAnalytics={props?.dashboardTopAnalytics} />
 
-        <AddToCollection
+        {/* <AddToCollection
           show={showCollection}
           setShow={setShowCollection}
           selectedRecord={selectedRecord}
@@ -262,12 +253,11 @@ function LeftSection(props) {
         />
 
         <UpdatePostModal
-        // style={{position:"absolute",width:"100%"}}
-        // className="absolute"
+        
           show={show}
           setShow={setShow}
           selectedRecord={selectedRecord}
-        />
+        /> */}
       </div>
     </>
   );
