@@ -33,18 +33,20 @@ function SelectedModal(props) {
     }
 
     // setFormType(formType);
-    if(type == "entity"){
+    if(type == "entities"){
       let toFilter = props.posts
       const entityPosts = toFilter.filter(post =>
         post.hasOwnProperty('is_entity') && post.is_entity === 'true'
       );
       setFilteredPosts(entityPosts);
-    }else{
+    }else if(type == "posts"){
       let toFilter = props.posts
       const entityPosts = toFilter.filter(post =>
         post.hasOwnProperty('is_entity') && post.is_entity === 'false'
       );
       setFilteredPosts(entityPosts);
+    }else{
+      setFilteredPosts(props.posts);
     }
   };
 
@@ -93,8 +95,8 @@ function SelectedModal(props) {
 <div className="grid grid-cols-2 gap-3 gap-x-4">
 
 
-        <div className="my-gradient-bg h-[90px] text-lg  font-bold text-center p-3 cursor-pointer  py-3 hover:underline capitalize" onClick={() => toggleRecordType('post')} style={{ border: "1px solid #f5f5f5" }}>Posts</div>
-        <div className="my-gradient-bg h-[90px] text-lg font-bold text-center p-3 cursor-pointer  py-3 hover:underline capitalize" onClick={() => toggleRecordType('entity')} style={{ border: "1px solid #f5f5f5" }}> Entities</div>
+        <div className="my-gradient-bg h-[90px] text-lg  font-bold text-center p-3 cursor-pointer  py-3 hover:underline capitalize" onClick={() => toggleRecordType('posts')} style={{ border: "1px solid #f5f5f5" }}>Posts</div>
+        <div className="my-gradient-bg h-[90px] text-lg font-bold text-center p-3 cursor-pointer  py-3 hover:underline capitalize" onClick={() => toggleRecordType('entities')} style={{ border: "1px solid #f5f5f5" }}> Entities</div>
 
 
 </div>
@@ -104,6 +106,7 @@ function SelectedModal(props) {
       </div>
 {/* <br/> */}
 <div className="grid grid-cols-2 gap-3 gap-x-4">
+        <div className="my-gradient-bg h-[90px] text-lg font-bold text-center p-3 cursor-pointer  py-3 hover:underline capitalize" onClick={() => toggleRecordType('posts/entities')} style={{ border: "1px solid #f5f5f5" }}> Both</div>
 
 
              {/* <div className="bg-[#f5f5f5] h-[100px] text-lg font-bold text-center p-3 cursor-pointer rounded-sm py-3 hover:underline capitalize" onClick={() => toggleRecordType('create_entity')}> Create Entity</div> */}

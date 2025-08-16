@@ -260,15 +260,16 @@ function SinglePostListCard(props) {
 
         {/* Tags */}
         <div className="flex justify-between items-start">
-        <div className="text-xs text-gray-400 ">
+        <div className=" truncate w-full  text-xs text-gray-400 ">
           {/* Tagged: {props?.post?.tags.join(', ')} */}
-          <span className="truncate w-full"> {props?.post?.is_entity === "true" ? "" : <> Tagged: {props?.post?.tags} </>}</span>
+          <span className=""> {props?.post?.is_entity === "true" ? "" : <> Tagged: {props?.post?.tags} </>}</span>
 
           {/* Tagged: tag1 tag 2 tag3 */}
         </div>
         {/* <div className="text-sm cursor-pointer text-white hover:underline " onClick={() => { handleReadMore(props?.post) }}>Read More</div> */}
         </div>
-        <div className="flex justify-end items-end">
+        
+        <div className="flex justify-end items-end ">
         <div className="text-sm cursor-pointer text-white hover:underline " onClick={() => { handleReadMore(props?.post) }}>Read More</div>
 
         </div>
