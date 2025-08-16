@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { CSVLink } from 'react-csv';
 import Papa from 'papaparse';
 import { Button } from "react-bootstrap";
+import axiosInstance from "services/axios";
+import { toggleToaster, selectToasterData, selectToasterStatus } from "provider/features/helperSlice";
+import { useSelector, useDispatch } from "react-redux";
+import Spinner from "react-bootstrap/Spinner";
 
 const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows = 5 }) => {
   const [csvData, setCsvData] = useState([]);
   const [validationErrors, setValidationErrors] = useState([]);
   const [isValid, setIsValid] = useState(false);
+   const [pending, setPending] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+    const dispatch = useDispatch();
 
   // Generate template CSV data with headers only
   const generateFileName = (str) => {
@@ -115,13 +121,89 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
       }
     });
   };
-  const handleImport = () => {
+
+    const handleImport44 = async () => {
+  
+      setPending(true);
+      try {
+        const results = await axiosInstance.post(
+          "publishPost",
+          {id:1},
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+            },
+          }
+        );
+        if (results?.data?.status === "success") {
+          dispatch(
+            toggleToaster({
+              isOpen: true,
+              toasterData: { type: "success", msg: "Post Added Successfully" },
+            })
+          );
+          setPending(false);
+          // props.populateList(results?.data?.data);
+          history.push("/deployment/data_view");
+        }
+      } catch (error) {
+        console.error("Error adding post:", error);
+        setPending(false);
+      }
+    };
+  
+  const handleImportold = () => {
     if (isValid) {
       // Here you would send csvData to your API
       console.log('Valid data to import:', csvData);
       alert(`Successfully imported ${csvData.length} records`);
     }
   };
+
+  const handleImport = async () => {
+    alert('passing here');
+  if (isValid) {
+    try {
+      // Convert data to CSV string
+      const csvContent = Papa.unparse({
+        fields: surveyFields,
+        data: csvData
+      });
+      
+      // Create blob and form data
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const formData = new FormData();
+      formData.append('csv_file', blob, 'import.csv'); 
+      
+      // Add additional parameters
+      formData.append('deployment', 1);
+      formData.append('survey_id', 2);
+      formData.append('user_type', 'csv-import');
+      formData.append('id', 1);
+      // Add any other required parameters
+      
+      // Send to backend
+      const response = await axiosInstance.post('publishPost', 
+        formData,
+        {
+          headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+            },
+        }
+      );
+
+      if (response.data.status === 'success') {
+        alert(`Successfully imported ${response.data.imported} posts!`);
+        setShowCsv(false);
+      }
+    } catch (error) {
+      console.error('Import failed:', error);
+      alert('Import failed. Check console for details.');
+    }
+  }
+};
 
   return (
 
