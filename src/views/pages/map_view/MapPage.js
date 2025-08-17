@@ -412,7 +412,8 @@ const dayMatch =
 
 
     setFilteredPosts(filtered);
-  }, [selectedSurveys, selectedCategories,selectedTags, selectedStatuses, dateRange, locationFilter, selectedPosters, selectedSubcategories, selectedSubtags, selectedPriorityLevels,
+  }, [selectedSurveys, selectedCategories,selectedTags, selectedStatuses, dateRange, timeRange,
+    selectedDays, locationFilter, selectedPosters, selectedSubcategories, selectedSubtags, selectedPriorityLevels,
     selectedAccessLevels, posts, searchEmpty, searchValue, advancedFilters]);
   // Handle checkbox changes
   const handleSurveyChange = (survey) => {
