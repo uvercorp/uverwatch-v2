@@ -36,11 +36,17 @@ function EntitySurveyAdd(props) {
     survey_description: "",
     icon: "",
     color: "",
+    priority_enabled: false,
+    impact_enabled: false,
   });
 
   useEffect(() => {
     if (props.record && props.formType === "update") {
-      setFormValue(props.record);
+      setFormValue({
+        ...props.record,
+        priority_enabled: props.record.priority_enabled || false,
+        impact_enabled: props.record.impact_enabled || false,
+      });
       setCustomFields(props.record.custom_fields || []);
     } else {
       setFormValue({
@@ -50,6 +56,8 @@ function EntitySurveyAdd(props) {
         survey_description: "",
         icon: "",
         color: "",
+        priority_enabled: false,
+        impact_enabled: false,
       });
       setCustomFields([]);
     }
@@ -62,7 +70,7 @@ function EntitySurveyAdd(props) {
     });
   };
 
-  const handleIconSelection = ({iconClass,color}) => {
+  const handleIconSelection = ({ iconClass, color }) => {
 
     setFormValue({
       ...formValue,
@@ -81,18 +89,18 @@ function EntitySurveyAdd(props) {
   const addCustomField = (obj) => {
     // alert(obj.field_name);
     setCustomFields([
-      ...customFields,obj
-    //   {
-    //     field_name: "",
-    //     field_type: "text",
-    //     field_value: null,
-    //     required: true,
-    //     has_options: false,
-    //     options: [],
-    //   },
-//     { field_name: "Is Minor", field_type: "enum",field_value: null,required:true, has_options:true,options:['true','false','single']},
-//     { field_name: "Marital Status", field_type: "enum",field_value: null,required:true, has_options:true,options:['maried','devorced','single']},
-// { field_name: "Date of Birth", field_type: "date", field_value: null ,required:true, has_options:false,options:[] },
+      ...customFields, obj
+      //   {
+      //     field_name: "",
+      //     field_type: "text",
+      //     field_value: null,
+      //     required: true,
+      //     has_options: false,
+      //     options: [],
+      //   },
+      //     { field_name: "Is Minor", field_type: "enum",field_value: null,required:true, has_options:true,options:['true','false','single']},
+      //     { field_name: "Marital Status", field_type: "enum",field_value: null,required:true, has_options:true,options:['maried','devorced','single']},
+      // { field_name: "Date of Birth", field_type: "date", field_value: null ,required:true, has_options:false,options:[] },
 
     ]);
     setShow(false);
@@ -296,7 +304,7 @@ function EntitySurveyAdd(props) {
             <div className="relative h-full">
               {/* general_form with scrolling */}
               <div id="general_form" className="h-[calc(100%-80px)] overflow-y-auto pb-20 scrollbar scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400 pr-2">
-              <div className="mb-6">
+                <div className="mb-6">
                   <label
                     htmlFor="survey_description"
                     className="block mb-2 my-label"
@@ -310,7 +318,7 @@ function EntitySurveyAdd(props) {
                     htmlFor="survey_name"
                     className="block mb-2 my-label"
                   >
-                     Name
+                    Name
                   </label>
                   <input
                     type="text"
@@ -344,6 +352,47 @@ function EntitySurveyAdd(props) {
                   ></textarea>
                 </div>
 
+                <div className="mb-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="priority_enabled"
+                        name="priority_enabled"
+                        checked={formValue.priority_enabled}
+                        onChange={(e) => setFormValue({
+                          ...formValue,
+                          priority_enabled: e.target.checked
+                        })}
+                        className="mr-2"
+                      />
+                      <label htmlFor="priority_enabled" className="my-label">
+                        Enable Priority Field
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="impact_enabled"
+                        name="impact_enabled"
+                        checked={formValue.impact_enabled}
+                        onChange={(e) => setFormValue({
+                          ...formValue,
+                          impact_enabled: e.target.checked
+                        })}
+                        className="mr-2"
+                      />
+                      <label htmlFor="impact_enabled" className="my-label">
+                        Enable Impact Field
+                      </label>
+                    </div>
+                  </div>
+                  <small className="text-gray-400 text-sm mt-2 block">
+                    When enabled, users can set priority and impact levels when creating entities.
+                    When disabled, lowest priority and impact are automatically assigned.
+                  </small>
+                </div>
+
                 <div>
                   <div className="flex items-start justify-between">
                     <span className="my-label">Fields </span>
@@ -351,7 +400,7 @@ function EntitySurveyAdd(props) {
                       className="nav-link border flex items-start justify-between gap-1 bg-gray-400 hover:bg-gray-500 hover:border-red-500"
                       style={{ border: "2px solid red" }}
                       variant="default"
-                      onClick={() => {setCustomFieldView('list'); setShow(true);}}
+                      onClick={() => { setCustomFieldView('list'); setShow(true); }}
                     >
                       <span className="text-black mr-2">Add Field</span>
                       <i className="nc-icon nc-simple-add text-black" />
@@ -441,7 +490,7 @@ function EntitySurveyAdd(props) {
               )}
             </div>
           </div>
-          <CustomModal show={show} setShow={setShow} addCustomField={addCustomField} customFieldView={customFieldView} setCustomFieldView={setCustomFieldView} selectedUpdateRecord={selectedUpdateRecord}/>
+          <CustomModal show={show} setShow={setShow} addCustomField={addCustomField} customFieldView={customFieldView} setCustomFieldView={setCustomFieldView} selectedUpdateRecord={selectedUpdateRecord} />
         </Card.Body>
       </Card>
     </>
