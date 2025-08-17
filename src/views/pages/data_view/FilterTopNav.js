@@ -5,6 +5,8 @@ import axiosInstance from "services/axios";
 import { useSelector, useDispatch } from 'react-redux';
 import {addCollections,removeCollections} from 'provider/features/collectionSlice';
 import { Button, Container, Form, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import AutocompleteLocationSearch from "./AutocompleteLocationSearch";
+
 
 import { FiMoreVertical } from "react-icons/fi";
 import {
@@ -77,14 +79,21 @@ function FilterTopNav(props) {
     setActiveDropdown(activeDropdown === label ? null : label);
   };
 
+  // const clearFilters = () => {
+  //   props?.clearFilters();
+  //   setQuery("");
+  //   if (autocompleteRef.current) {
+  //     autocompleteRef.current.focus();
+  //   }
+  //   props.handleLocationSelect(null, null);
+  //   setActiveDropdown(null);
+  // };
+
   const clearFilters = () => {
+    setQuery('');
+    props.handleLocationSelect(null);
+    props.handleRangeSelect({ target: { value: '' } });
     props?.clearFilters();
-    setQuery("");
-    if (autocompleteRef.current) {
-      autocompleteRef.current.focus();
-    }
-    props.handleLocationSelect(null, null);
-    setActiveDropdown(null);
   };
 
   const sortLabels = {
@@ -413,6 +422,7 @@ function FilterTopNav(props) {
               )}
 
             </div> */}
+           
 <div className="relative" ref={el => dropdownRefs.current['TAGS'] = el}>
   <button
     onClick={() => toggleDropdown("TAGS")}
@@ -459,6 +469,54 @@ function FilterTopNav(props) {
     </div>
   )}
 </div> 
+
+  <div className="relative"  ref={el => dropdownRefs.current['LOCATION'] = el}>
+              <button
+                onClick={() => toggleDropdown("LOCATION")}
+                className="flex items-center space-x-1 text-white pr-3 mr-4 hover:text-gray-300"
+              >
+                <span className="my-font-family-evogria tracking-wider text-[1.3em]">
+                LOCATION
+                </span>
+                <FiMoreVertical className="text-white" />
+              </button>
+
+              {activeDropdown === "LOCATION" && (
+                <div className="absolute top-full mt-0 right-0  bg-[#1F2F3F]  text-white shadow-md w-40 p-2 z-50 max-h-[50VH] min-w-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+                 
+                 
+                <div className="text-right text-red-500 underline cursor-pointer" onClick={clearFilters}>
+                  clear
+                </div>
+                <div className="min-h-[400px]  pt-3">
+                  <label>City Or Address</label>
+                  <AutocompleteLocationSearch
+                    query={query} // Pass query state
+                    onQueryChange={setQuery} // Pass setter for query
+                    onLocationSelect={props.handleLocationSelect}
+                    ref={autocompleteRef} // Pass ref to child
+                  />
+                  <br />
+                  <select
+                    value={props?.selectedRange || ""}
+                    onChange={props.handleRangeSelect}
+                    className="block w-full px-4 py-2 text-base my-input"
+                  >
+                    <option value="1">Within 1 km</option>
+                    <option value="2">Within 2 km</option>
+                    <option value="5">Within 5 km</option>
+                    <option value="10">Within 10 km</option>
+                    <option value="20">Within 20 km</option>
+                    <option value="50">Within 50 km</option>
+                    <option value="100">Within 100 km</option>
+                    <option value="500">Within 500 km</option>
+                    <option value="1000">Within 1000 km</option>
+                  </select>
+                </div>
+                </div>
+              )}
+
+            </div>
 
 
             <div className="relative"  ref={el => dropdownRefs.current['SORTBY'] = el}>

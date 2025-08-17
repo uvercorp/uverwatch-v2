@@ -171,6 +171,8 @@ function MapPage() {
   // State for filters
   const [selectedSurveys, setSelectedSurveys] = useState([]);
    const [selectedEntities, setSelectedEntities] = useState([]);
+    const [selectedRange, setSelectedRange] = useState(1);
+     const [selectedLocation, setSelectedLocation] = useState();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   // const [dateRange, setDateRange] = useState({ start: null, end: null });
@@ -541,24 +543,30 @@ const dayMatch =
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
 
-  const handleLocationSelect = (lat, lng) => {
-    setLatitude(lat);
-    setLongitude(lng);
-    setLocationFilter((prev) => ({
-      ...prev,
-      latitude: parseFloat(lat),
-      longitude: parseFloat(lng),
-    }))
-  };
-
-  const handleRangeSelect = (event) => {
-    // alert(parseFloat(event.target.value));
-    setLocationFilter((prev) => ({
-      ...prev,
-      range: parseFloat(event.target.value),
-    }))
-  }
-
+    const handleLocationSelect = (lat, lng) => {
+      setLatitude(lat);
+      setLongitude(lng);
+      setLocationFilter((prev) => ({
+        ...prev,
+        latitude: parseFloat(lat),
+        longitude: parseFloat(lng),
+      }));
+    };
+  
+    const handleRangeSelect = (event) => {
+      setSelectedRange(event.target.value);
+      // setLocationFilter((prev) => ({
+      //   ...prev,
+      //   range: parseFloat(event.target.value),
+      // }));
+    };
+  
+      useEffect(() => {
+     setLocationFilter((prev) => ({
+        ...prev,
+        range: parseFloat(selectedRange),
+      }));
+    }, [selectedLocation,selectedRange]);
   // Sorting state
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -674,9 +682,12 @@ const dayMatch =
           handleStatusChange={handleStatusChange}
           clearFilters={clearFilters}
           handleLocationSelect={handleLocationSelect}
+        
+          handleRangeSelect={handleRangeSelect}
+          selectedRange={selectedRange}
           setLocationFilter={setLocationFilter}
           locationFilter={locationFilter}
-          handleRangeSelect={handleRangeSelect}
+      
           dateRange={dateRange}
           timeRange={timeRange}
 
