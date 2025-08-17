@@ -277,6 +277,8 @@ function DataViewPage() {
   // State for filters
   const [selectedSurveys, setSelectedSurveys] = useState([]);
   const [selectedEntities, setSelectedEntities] = useState([]);
+  const [selectedRange, setSelectedRange] = useState(1);
+  const [selectedLocation, setSelectedLocation] = useState();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -868,11 +870,19 @@ function DataViewPage() {
   };
 
   const handleRangeSelect = (event) => {
-    setLocationFilter((prev) => ({
-      ...prev,
-      range: parseFloat(event.target.value),
-    }));
+    setSelectedRange(event.target.value);
+    // setLocationFilter((prev) => ({
+    //   ...prev,
+    //   range: parseFloat(event.target.value),
+    // }));
   };
+
+    useEffect(() => {
+   setLocationFilter((prev) => ({
+      ...prev,
+      range: parseFloat(selectedRange),
+    }));
+  }, [selectedLocation,selectedRange]);
 
   const handlePostUpdateStatus = (id, status) => {
     updateRecordStatus(id, status);
@@ -1025,6 +1035,8 @@ function DataViewPage() {
           handleStatusChange={handleStatusChange}
           clearFilters={clearFilters}
           handleLocationSelect={handleLocationSelect}
+          handleRangeSelect={handleRangeSelect}
+          selectedRange={selectedRange}
           dateRange={dateRange}
           exportToCSV={doExportToCSV}
           filteredPosts={filteredPosts}
