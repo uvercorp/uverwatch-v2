@@ -9,6 +9,15 @@ import AutocompleteLocationSearch from "./AutocompleteLocationSearch";
 
 
 import { FiMoreVertical } from "react-icons/fi";
+import {
+  getPresets,
+  getDefaultPreset,
+  savePreset,
+  applyPreset as applyPresetService,
+  deletePreset as deletePresetService,
+  renamePreset as renamePresetService,
+  setDefaultPreset as setDefaultPresetService,
+} from "services/presets";
 
 function FilterTopNav(props) {
   const [query, setQuery] = useState("");
@@ -17,6 +26,9 @@ function FilterTopNav(props) {
   const autocompleteRef = useRef(null);
   const [deploymentId,setDeploymentId] = useState(null);
   const [collections, setCollection] = useState([]);
+  const [presets, setPresets] = useState([]);
+  const [presetsOpen, setPresetsOpen] = useState(false);
+  const [newPresetName, setNewPresetName] = useState("");
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
   let navigate = useHistory();
@@ -99,7 +111,14 @@ function FilterTopNav(props) {
     if (deployment && deployment !== undefined) {
       getCollectionData(JSON.parse(deployment).id);
       setDeploymentId(JSON.parse(deployment).id);
-
+      // Load presets for this view key
+      const viewKey = props.viewKey || 'data_view';
+      setPresets(getPresets(JSON.parse(deployment).id, viewKey));
+      // Auto-apply default preset on mount
+      const def = getDefaultPreset(JSON.parse(deployment).id, viewKey);
+      if (def && props.onApplyPreset) {
+        props.onApplyPreset(def.filters);
+      }
     }
 
   }, []);
@@ -148,6 +167,65 @@ function FilterTopNav(props) {
     }
 
   }
+
+  // Preset helpers
+  const viewKey = props.viewKey || 'data_view';
+
+  const refreshPresets = () => {
+    setPresets(getPresets(deploymentId, viewKey));
+  };
+
+  const collectCurrentFilters = () => ({
+    selectedSurveys: props.selectedSurveys || [],
+    selectedEntities: props.selectedEntities || [],
+    selectedCategories: props.selectedCategories || [],
+    selectedTags: props.selectedTags || [],
+    selectedStatuses: props.selectedStatuses || [],
+    dateRange: props.dateRange || [null, null],
+    timeRange: props.timeRange || ["", ""],
+    selectedDays: props.selectedDays || [],
+    locationFilter: props.locationFilter || { latitude: null, longitude: null, range: null },
+    selectedPosters: props.selectedPosters || [],
+    selectedSubcategories: props.selectedSubcategories || [],
+    selectedSubtags: props.selectedSubtags || [],
+    selectedPriorityLevels: props.selectedPriorityLevels || [],
+    selectedAccessLevels: props.selectedAccessLevels || [],
+    advancedFilters: props.advancedFilters || {},
+    sortConfig: props.sortConfig || { key: null, direction: 'asc' },
+  });
+
+  const handleSavePreset = (isDefault = false) => {
+    const name = newPresetName.trim() || `Preset ${presets.length + 1}`;
+    const filters = collectCurrentFilters();
+    savePreset({ deploymentId, viewKey, name, filters, isDefault });
+    setNewPresetName("");
+    refreshPresets();
+  };
+
+  const applyPreset = (presetId) => {
+    const filters = applyPresetService(deploymentId, viewKey, presetId);
+    if (filters && props.onApplyPreset) {
+      props.onApplyPreset(filters);
+    }
+    setActiveDropdown(null);
+  };
+
+  const deletePreset = (presetId) => {
+    deletePresetService(deploymentId, viewKey, presetId);
+    refreshPresets();
+  };
+
+  const renamePreset = (presetId) => {
+    const newName = prompt('Rename preset to:');
+    if (!newName) return;
+    renamePresetService(deploymentId, viewKey, presetId, newName.trim());
+    refreshPresets();
+  };
+
+  const setDefaultPreset = (presetId) => {
+    setDefaultPresetService(deploymentId, viewKey, presetId);
+    refreshPresets();
+  };
   return (
     <>
       <div className="relative z-[1810] flex items-center justify-between space-x-5 text-sm p-2 pt-3 pl-3">
@@ -542,8 +620,53 @@ function FilterTopNav(props) {
           </a>
         </div>
 
-        <div className="pr-2">
-          <span className="text-gray-400 hover:text-white cursor-pointer font-mono text-[1.6em] pr-3" onClick={() => props?.setRightOpen(!props?.rightOpen)}>
+        <div className="flex items-center gap-3 pr-2">
+          <div className="relative" ref={el => dropdownRefs.current['PRESETS'] = el}>
+            <button
+              onClick={() => toggleDropdown('PRESETS')}
+              className="text-gray-300 hover:text-white cursor-pointer font-mono text-[1.1em] px-2 py-1 border border-gray-600 rounded"
+            >
+              Presets ({presets.length})
+            </button>
+            {activeDropdown === 'PRESETS' && (
+              <div className="absolute right-0 mt-1 bg-[#1F2F3F] text-white shadow-md w-80 p-3 z-50 rounded border border-gray-700 max-h-[70vh] overflow-y-auto">
+                <div className="mb-3">
+                  <input
+                    value={newPresetName}
+                    onChange={e => setNewPresetName(e.target.value)}
+                    placeholder="Preset name"
+                    className="w-full bg-transparent border border-gray-600 rounded px-2 py-1 text-sm"
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <button className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded text-sm" onClick={() => handleSavePreset(false)}>Save</button>
+                    <button className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded text-sm" onClick={() => handleSavePreset(true)}>Save as Default</button>
+                  </div>
+                </div>
+                <hr className="border-gray-700 mb-2" />
+                <div className="text-xs text-gray-300 mb-2">Saved presets</div>
+                {presets.length === 0 && (
+                  <div className="text-gray-400 text-sm">No presets yet.</div>
+                )}
+                {presets.map(p => (
+                  <div key={p.id} className="flex items-center justify-between py-1 gap-2 group">
+                    <div className="min-w-0">
+                      <div className="truncate text-sm">{p.name} {p.isDefault && <span className="text-green-400">(default)</span>}</div>
+                      <div className="text-[10px] text-gray-400">{new Date(p.createdAt).toLocaleString()}</div>
+                    </div>
+                    <div className="flex items-center gap-1 opacity-80">
+                      <button className="px-2 py-0.5 text-xs bg-gray-700 hover:bg-gray-600 rounded" onClick={() => applyPreset(p.id)}>Apply</button>
+                      {!p.isDefault && (
+                        <button className="px-2 py-0.5 text-xs bg-gray-700 hover:bg-gray-600 rounded" onClick={() => setDefaultPreset(p.id)}>Make Default</button>
+                      )}
+                      <button className="px-2 py-0.5 text-xs bg-gray-700 hover:bg-gray-600 rounded" onClick={() => renamePreset(p.id)}>Rename</button>
+                      <button className="px-2 py-0.5 text-xs bg-red-700 hover:bg-red-600 rounded" onClick={() => deletePreset(p.id)}>Delete</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <span className="text-gray-400 hover:text-white cursor-pointer font-mono text-[1.6em] pr-1" onClick={() => props?.setRightOpen(!props?.rightOpen)}>
           {props?.rightOpen ? '▼' : '›'} Advanced Filter
           </span>
         </div>

@@ -238,10 +238,10 @@ function PostAdd(props) {
     if (!formData.access_level) {
       invalidFields.push("Access Level");
     }
-    if (!formData.priority_level) {
+    if (props.record?.priority_enabled && !formData.priority_level) {
       invalidFields.push("Priority Level");
     }
-    if (!formData.impact_level) {
+    if (props.record?.impact_enabled && !formData.impact_level) {
       invalidFields.push("Impact Level");
     }
 
@@ -358,7 +358,7 @@ function PostAdd(props) {
                  setStatus(dData?.statuses);
                  setTagsList(dData?.tags || []); // Add this line
 
-                 if ((dData?.categories?.length == 0) || (dData?.priority_levels?.length == 0) || (dData?.access_levels?.length == 0) || (dData?.impact_levels?.length == 0) ||  dData?.tags?.length == 0 || (dData?.statuses?.length == 0)) {
+                 if ((dData?.categories?.length == 0) || (props.record?.priority_enabled && dData?.priority_levels?.length == 0) || (dData?.access_levels?.length == 0) || (props.record?.impact_enabled && dData?.impact_levels?.length == 0) || dData?.tags?.length == 0 || (dData?.statuses?.length == 0)) {
                   // alert('not completed')
                   setSetupComplete(false)
               } else {
@@ -701,46 +701,50 @@ function PostAdd(props) {
 
                                                 </select>
                                             </div>
-                                            <div className="mb-6">
+                                            {props.record?.impact_enabled && (
+                                              <div className="mb-6">
                                                 <label htmlFor="impact_level" className="block mb-2 text-sm font-medium my-label">Impact Level</label>
 
                                                 <select style={{ width: "100%" }} className="my-input  min-h-[2.5em] " value={formValue.impact_level} required onChange={handleChange} name="impact_level">
-                                                    <option>Select Impact Level</option>
-                                                    {impactLevel?.map((record, index) => (
-                                                        <option key={index} value={record?.level}>{record?.name} level[{record?.level}]</option>
-                                                    ))}
+                                                  <option>Select Impact Level</option>
+                                                  {impactLevel?.map((record, index) => (
+                                                    <option key={index} value={record?.level}>{record?.name} level[{record?.level}]</option>
+                                                  ))}
 
                                                 </select>
-                                            </div>
-                                            <div className="mb-6">
+                                              </div>
+                                            )}
+                                            {props.record?.priority_enabled && (
+                                              <div className="mb-6">
                                                 <label htmlFor="priority_level" className="block mb-2 text-sm font-medium my-label">Priority Level</label>
 
                                                 <select style={{ width: "100%" }} className="my-input  min-h-[2.5em] " value={formValue.priority_level} required onChange={handleChange} name="priority_level">
-                                                    <option>Select Priority Level</option>
-                                                    {priorityLevel?.map((record, index) => (
-                                                        <option key={index} value={record?.level}>{record?.name} level[{record?.level}]</option>
-                                                    ))}
+                                                  <option>Select Priority Level</option>
+                                                  {priorityLevel?.map((record, index) => (
+                                                    <option key={index} value={record?.level}>{record?.name} level[{record?.level}]</option>
+                                                  ))}
 
                                                 </select>
-                                            </div>
+                                              </div>
+                                            )}
                                             <div className="mb-6">
-                                                <label htmlFor="status" className="block mb-2 text-sm font-medium my-label">Post Status</label>
+                                              <label htmlFor="status" className="block mb-2 text-sm font-medium my-label">Post Status</label>
 
-                                                <select style={{ width: "100%" }} className="my-input  min-h-[2.5em] " value={formValue.post_status} required onChange={handleChange} name="post_status">
-                                                    <option>Select Status Level</option>
-                                                    {statuses?.map((record, index) => (
-                                                        <option key={index} value={record?.id}>{record?.name} </option>
-                                                    ))}
+                                              <select style={{ width: "100%" }} className="my-input  min-h-[2.5em] " value={formValue.post_status} required onChange={handleChange} name="post_status">
+                                                <option>Select Status Level</option>
+                                                {statuses?.map((record, index) => (
+                                                  <option key={index} value={record?.id}>{record?.name} </option>
+                                                ))}
 
-                                                </select>
+                                              </select>
                                             </div>
-                                            </div>
+                                          </div>
                   {invalidFields !== "" && (
                     <p className="bg-red-700 shadow text-left p-2  text-white">{invalidFields}</p>
                   )}
  {!setupComplete ? <>
                                             <div className="md:flex items-center justify-center">
-                                                <div className="bg-white  font-semibold text-[1.2em] text-red-500">Please You need to Finish Setup at Settings Before You Can Add A post; Especialy Category, Access Level, Impact Level, Priority Level </div>
+                                                <div className="bg-white  font-semibold text-[1.2em] text-red-500">Please You need to Finish Setup at Settings Before You Can Add A post; Especialy Category, Access Level, Impact Level, Priority Level, Tags </div>
                                             </div>
                                         </> : <>
                   <div className="p-2">
