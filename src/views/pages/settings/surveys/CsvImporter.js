@@ -122,12 +122,12 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
     });
   };
 
-    const handleImport = async () => {
-  
+
+    const handleImport44 = async () => {
       setPending(true);
       try {
         const results = await axiosInstance.post(
-          "myCsvImport",
+          "publishPost",
           {id:1},
           {
             headers: {
@@ -161,7 +161,10 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
     }
   };
 
-  const handleImport55 = async () => {
+
+  const handleImport = async () => {
+    alert('passing here');
+
   if (isValid) {
     try {
       // Convert data to CSV string
@@ -179,16 +182,17 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
       formData.append('deployment', 1);
       formData.append('survey_id', 2);
       formData.append('user_type', 'csv-import');
+      formData.append('id', 1);
       // Add any other required parameters
       
       // Send to backend
-      const response = await axiosInstance.post('myCsvImport', 
+      const response = await axiosInstance.post('publishPost', 
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${localStorage.getItem("access")}`
-          }
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("access")}`,
+            },
         }
       );
 
