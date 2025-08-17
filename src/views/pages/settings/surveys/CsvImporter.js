@@ -122,8 +122,8 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
     });
   };
 
+
     const handleImport44 = async () => {
-  
       setPending(true);
       try {
         const results = await axiosInstance.post(
@@ -161,8 +161,10 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
     }
   };
 
+
   const handleImport = async () => {
     alert('passing here');
+
   if (isValid) {
     try {
       // Convert data to CSV string

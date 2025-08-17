@@ -30,6 +30,7 @@ import LocationSelectMap from "../settings/general/LocationSelectMap";
 import MapPositionSelect from "./MapPositionSelect";
 import TagInput from "./TagInput";
 import { IconPicker } from "others/icons/IconPicker";
+import useGeoLocation from "hooks/useGeoLocation";
 
 function PostAddBasic(props) {
   const [surveys, setPosts] = useState([]);
@@ -44,13 +45,15 @@ function PostAddBasic(props) {
   const [setupComplete, setSetupComplete] = useState(false);
   let navigate = useHistory();
   const [deploymentId, setDeploymentId] = useState(null);
+  const location = useGeoLocation();
+
   const [formValue, setFormValue] = useState({
     id: "",
     deployment: props?.deploymentId,
     title: "",
     description: "",
-    latitude: "",
-    longitude: "",
+    latitude: location.latitude,
+    longitude: location.longitude,
     icon: "",
     color: "",
     tags: "",
@@ -80,8 +83,8 @@ function PostAddBasic(props) {
         id: "",
         deployment: props?.deploymentId,
         title: "",
-        latitude: "",
-        longitude: "",
+        latitude: location.latitude,
+        longitude: location.longitude,
         icon: "",
         color: "",
         tags: "",
@@ -98,7 +101,7 @@ function PostAddBasic(props) {
         deployment_user: props?.userId,
       });
     }
-  }, [props.record, props.formType]);
+  }, [props.record, props.formType, props.deploymentId, props.userId]);
 
   const handleIconSelection = ({ iconClass, color }) => {
     setFormValue({
@@ -176,10 +179,10 @@ function PostAddBasic(props) {
     if (!formData.access_level) {
       invalidFields.push("Access Level");
     }
-    if (!formData.priority_level) {
+    if (props.record?.priority_enabled && !formData.priority_level) {
       invalidFields.push("Priority Level");
     }
-    if (!formData.impact_level) {
+    if (props.record?.impact_enabled && !formData.impact_level) {
       invalidFields.push("Impact Level");
     }
 
@@ -341,9 +344,9 @@ function PostAddBasic(props) {
         // console.log(dData);
         if (
           dData?.categories?.length == 0 ||
-          dData?.priority_levels?.length == 0 ||
+          (props.record?.priority_enabled && dData?.priority_levels?.length == 0) ||
           dData?.access_levels?.length == 0 ||
-          dData?.impact_levels?.length == 0 ||
+          (props.record?.impact_enabled && dData?.impact_levels?.length == 0) ||
           dData?.tags?.length == 0 ||
           dData?.statuses?.length == 0
         ) {
@@ -357,6 +360,19 @@ function PostAddBasic(props) {
       setPending(false);
     }
   };
+
+
+  useEffect(() => {
+    if (!formValue.latitude && !formValue.longitude) {
+      if (location.latitude && location.longitude) {
+        setFormValue({
+          ...formValue,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
+      }
+    }
+  }, [location]);
 
   return (
     <>
@@ -618,54 +634,58 @@ function PostAddBasic(props) {
                           ))}
                         </select>
                       </div>
-                      <div className="mb-6">
-                        <label
-                          htmlFor="impact_level"
-                          className="block mb-2 text-sm font-medium my-label"
-                        >
-                          Impact Level
-                        </label>
+                      {props.record?.impact_enabled && (
+                        <div className="mb-6">
+                          <label
+                            htmlFor="impact_level"
+                            className="block mb-2 text-sm font-medium my-label"
+                          >
+                            Impact Level
+                          </label>
 
-                        <select
-                          style={{ width: "100%" }}
-                          className="my-input  min-h-[2.5em] "
-                          value={formValue.impact_level}
-                          required
-                          onChange={handleChange}
-                          name="impact_level"
-                        >
-                          <option>Select Impact Level</option>
-                          {impactLevel?.map((record, index) => (
-                            <option key={index} value={record?.level}>
-                              {record?.name} level[{record?.level}]
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="mb-6">
-                        <label
-                          htmlFor="priority_level"
-                          className="block mb-2 text-sm font-medium my-label"
-                        >
-                          Priority Level
-                        </label>
+                          <select
+                            style={{ width: "100%" }}
+                            className="my-input  min-h-[2.5em] "
+                            value={formValue.impact_level}
+                            required
+                            onChange={handleChange}
+                            name="impact_level"
+                          >
+                            <option>Select Impact Level</option>
+                            {impactLevel?.map((record, index) => (
+                              <option key={index} value={record?.level}>
+                                {record?.name} level[{record?.level}]{" "}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                      {props.record?.priority_enabled && (
+                        <div className="mb-6">
+                          <label
+                            htmlFor="priority_level"
+                            className="block mb-2 text-sm font-medium my-label"
+                          >
+                            Priority Level
+                          </label>
 
-                        <select
-                          style={{ width: "100%" }}
-                          className="my-input  min-h-[2.5em] "
-                          value={formValue.priority_level}
-                          required
-                          onChange={handleChange}
-                          name="priority_level"
-                        >
-                          <option>Select Priority Level</option>
-                          {priorityLevel?.map((record, index) => (
-                            <option key={index} value={record?.level}>
-                              {record?.name} level[{record?.level}]
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                          <select
+                            style={{ width: "100%" }}
+                            className="my-input  min-h-[2.5em] "
+                            value={formValue.priority_level}
+                            required
+                            onChange={handleChange}
+                            name="priority_level"
+                          >
+                            <option>Select Priority Level</option>
+                            {priorityLevel?.map((record, index) => (
+                              <option key={index} value={record?.level}>
+                                {record?.name} level[{record?.level}]
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                       <div className="mb-6">
                         <label
                           htmlFor="status"

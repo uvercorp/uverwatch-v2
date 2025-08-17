@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import swal from "sweetalert";
-import { CiEdit } from "react-icons/ci";
+import { CiCircleRemove } from "react-icons/ci";
 import {
   Badge,
   Button,
@@ -26,7 +26,7 @@ function SurveyAdd(props) {
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
   const [customFields, setCustomFields] = useState([]);
-  const [surverFields, setSurveyFields] = useState(['title','description','latitude','longitude','formatted_address']);
+  const [surverFields, setSurveyFields] = useState(['title', 'description', 'latitude', 'longitude', 'formatted_address']);
   const [selectedUpdateRecord, setSelectedUpdateRecord] = useState();
   const [show, setShow] = useState(false);
   const [showCsv, setShowCsv] = useState(false);
@@ -36,11 +36,17 @@ function SurveyAdd(props) {
     deployment: "",
     survey_name: "",
     survey_description: "",
+    priority_enabled: false,
+    impact_enabled: false,
   });
 
   useEffect(() => {
     if (props.record && props.formType === "update") {
-      setFormValue(props.record);
+      setFormValue({
+        ...props.record,
+        priority_enabled: props.record.priority_enabled || false,
+        impact_enabled: props.record.impact_enabled || false,
+      });
       setCustomFields(props.record.custom_fields || []);
       props.record.custom_fields.forEach(element => {
         surverFields.push(element.field_name);
@@ -51,6 +57,8 @@ function SurveyAdd(props) {
         deployment: props?.deploymentId,
         survey_name: "",
         survey_description: "",
+        priority_enabled: false,
+        impact_enabled: false,
       });
       setCustomFields([]);
     }
@@ -72,22 +80,31 @@ function SurveyAdd(props) {
   const addCustomField = (obj) => {
     // alert(obj.field_name);
     setCustomFields([
-      ...customFields,obj
-    //   {
-    //     field_name: "",
-    //     field_type: "text",
-    //     field_value: null,
-    //     required: true,
-    //     has_options: false,
-    //     options: [],
-    //   },
-//     { field_name: "Is Minor", field_type: "enum",field_value: null,required:true, has_options:true,options:['true','false','single']},
-//     { field_name: "Marital Status", field_type: "enum",field_value: null,required:true, has_options:true,options:['maried','devorced','single']},
-// { field_name: "Date of Birth", field_type: "date", field_value: null ,required:true, has_options:false,options:[] },
+      ...customFields, obj
+      //   {
+      //     field_name: "",
+      //     field_type: "text",
+      //     field_value: null,
+      //     required: true,
+      //     has_options: false,
+      //     options: [],
+      //   },
+      //     { field_name: "Is Minor", field_type: "enum",field_value: null,required:true, has_options:true,options:['true','false','single']},
+      //     { field_name: "Marital Status", field_type: "enum",field_value: null,required:true, has_options:true,options:['maried','devorced','single']},
+      // { field_name: "Date of Birth", field_type: "date", field_value: null ,required:true, has_options:false,options:[] },
 
     ]);
     setShow(false);
   };
+
+  const removeCustomField = (index) => {
+    const fieldName = customFields[index].field_name;
+    if (window.confirm(`Are you sure you want to remove the field "${fieldName}"?`)) {
+      const updatedCustomFields = customFields.filter((_, i) => i !== index);
+      setCustomFields(updatedCustomFields);
+    }
+  };
+
 
   const handleSubmit = () => {
     const data = {
@@ -259,7 +276,7 @@ function SurveyAdd(props) {
             </div>
           </Card.Title>
         </Card.Header>
-         <div className="px-4">
+        <div className="px-4">
           <hr className="border-[#2e2c2b] mt-0 mb-2 pt-0 " />
         </div>
         <Card.Body className="relative h-[calc(100vh-200px)] overflow-hidden">
@@ -314,6 +331,47 @@ function SurveyAdd(props) {
                     placeholder="Survey Description..."
                   ></textarea>
                 </div>
+
+                <div className="mb-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="priority_enabled"
+                        name="priority_enabled"
+                        checked={formValue.priority_enabled}
+                        onChange={(e) => setFormValue({
+                          ...formValue,
+                          priority_enabled: e.target.checked
+                        })}
+                        className="mr-2"
+                      />
+                      <label htmlFor="priority_enabled" className="my-label">
+                        Enable Priority Field
+                      </label>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id="impact_enabled"
+                        name="impact_enabled"
+                        checked={formValue.impact_enabled}
+                        onChange={(e) => setFormValue({
+                          ...formValue,
+                          impact_enabled: e.target.checked
+                        })}
+                        className="mr-2"
+                      />
+                      <label htmlFor="impact_enabled" className="my-label">
+                        Enable Impact Field
+                      </label>
+                    </div>
+                  </div>
+                  <small className="text-gray-400 text-sm mt-2 block">
+                    When enabled, users can set priority and impact levels when creating posts.
+                    When disabled, lowest priority and impact are automatically assigned.
+                  </small>
+                </div>
                 <div>
                   <div className="flex items-start justify-between my-label">
                     <span >Fields </span>
@@ -321,7 +379,7 @@ function SurveyAdd(props) {
                       className="nav-link border flex items-start justify-between gap-1 bg-gray-400 hover:bg-gray-500 hover:border-red-500"
                       style={{ border: "2px solid red" }}
                       variant="default"
-                      onClick={() => {setCustomFieldView('list'); setShow(true);}}
+                      onClick={() => { setCustomFieldView('list'); setShow(true); }}
                     >
                       <span className="text-black mr-2">Add Field</span>
                       <i className="nc-icon nc-simple-add text-black" />
@@ -356,9 +414,11 @@ function SurveyAdd(props) {
                           <i className="nc-icon nc-grid-45" />
                           <div className="p-0 font-bold">{record.field_name}</div>
                         </div>
-                        {/* <div onClick={() => {setSelectedUpdateRecord(record);setCustomFieldView('update'); setShow(true);}}>
-                          <CiEdit className="h-5 w-5 cursor-pointer" />
-                        </div> */}
+                        <div className="flex gap-2">
+                          <div onClick={() => removeCustomField(index)}>
+                            <CiCircleRemove className="h-5 w-5 cursor-pointer hover:text-blue-600" />
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -384,18 +444,18 @@ function SurveyAdd(props) {
                 <span>.</span>
               ) : (
                 <div>
-                <a
-                  onClick={() => handleDelete(formValue?.id)}
-                  className="cursor-pointer text-red-600 hover:text-red-700"
-                >
-                  Delete
-                </a>
-                <a
-                   onClick={() => setShowCsv(true)}
-                  className="cursor-pointer text-green-600 hover:text-green-700 ml-3"
-                >
-                  Csv Importer
-                </a>
+                  <a
+                    onClick={() => handleDelete(formValue?.id)}
+                    className="cursor-pointer text-red-600 hover:text-red-700"
+                  >
+                    Delete
+                  </a>
+                  <a
+                    onClick={() => setShowCsv(true)}
+                    className="cursor-pointer text-green-600 hover:text-green-700 ml-3"
+                  >
+                    Csv Importer
+                  </a>
 
                 </div>
               )}
@@ -419,35 +479,35 @@ function SurveyAdd(props) {
               )}
             </div>
           </div>
-          <CustomModal show={show} setShow={setShow} addCustomField={addCustomField} customFieldView={customFieldView} handleCustomFieldChange={handleCustomFieldChange } setCustomFieldView={setCustomFieldView} selectedUpdateRecord={selectedUpdateRecord}/>
+          <CustomModal show={show} setShow={setShow} addCustomField={addCustomField} customFieldView={customFieldView} handleCustomFieldChange={handleCustomFieldChange} setCustomFieldView={setCustomFieldView} selectedUpdateRecord={selectedUpdateRecord} />
           <AnimatePresence>
-        {showCsv && (
-          <motion.div
-            className="fixed inset-0 my-gradient-bg bg-opacity-50 z-50 p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            // onClick={() => setShowCsv(false)}
-          >
-            {/* Modal Container */}
-            <motion.div
-              className="my-gradient-bg shadow-lg p-4 overflow-y-auto  max-h-[90vh] mx-auto mt-4
+            {showCsv && (
+              <motion.div
+                className="fixed inset-0 my-gradient-bg bg-opacity-50 z-50 p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              // onClick={() => setShowCsv(false)}
+              >
+                {/* Modal Container */}
+                <motion.div
+                  className="my-gradient-bg shadow-lg p-4 overflow-y-auto  max-h-[90vh] mx-auto mt-4
                          w-[90%] sm:w-[80%] lg:w-[75%] xl:w-[60%] 2xl:w-[70%]"
-              initial={{ y: -100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -100, opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              style={{border: "1px solid #2e2c2b"}}
-            >
-              {/* Modal Header */}
+                  initial={{ y: -100, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -100, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  style={{ border: "1px solid #2e2c2b" }}
+                >
+                  {/* Modal Header */}
 
 
-              <CsvImporter surveyFields={surverFields} survey={props?.record} setShowCsv ={setShowCsv}/>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  <CsvImporter surveyFields={surverFields} survey={props?.record} setShowCsv={setShowCsv} />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </Card.Body>
       </Card>
     </>

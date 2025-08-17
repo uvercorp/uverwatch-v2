@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import SinglePostListCard from "../data_view/SinglePostListCard";
+import SinglePostListCardForDashboard from "../data_view/SinglePostListCardForDashboard";
 import UpdatePostModal from "../data_view/UpdatePostModal";
 import AddToCollection from "../data_view/options/AddToCollection";
 import SharePost from "../data_view/options/SharePost";
@@ -10,11 +10,11 @@ import { isPending } from "@reduxjs/toolkit";
 
 function RightSection(props) {
   const [show, setShow] = useState(false);
-  const [showCollection, setShowCollection] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(null);
-const [showSharePost, setShowSharePost] = useState(false);
-const [showLinkPost, setShowLinkPost] = useState(false);
-const [showAssignPost, setShowAssignPost] = useState(false);
+//   const [showCollection, setShowCollection] = useState(false);
+//   const [selectedRecord, setSelectedRecord] = useState(null);
+// const [showSharePost, setShowSharePost] = useState(false);
+// const [showLinkPost, setShowLinkPost] = useState(false);
+// const [showAssignPost, setShowAssignPost] = useState(false);
   // Variants for the container
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -32,23 +32,53 @@ const [showAssignPost, setShowAssignPost] = useState(false);
     visible: { opacity: 1, y: 0 }, // Animate to visible and original position
   };
 
-  const handleLinkPost = () =>{
-    setShowLinkPost(true);
-}
-const handleSharePost = () =>{
-  setShowSharePost(true);
-}
-
-const handleAssignPost = () =>{
-  setShowAssignPost(true);
-}
-
-const [openMenuIndex, setOpenMenuIndex] = useState(null);
-
-  const handleMenuToggle = (index) => {
-    setOpenMenuIndex(openMenuIndex === index ? null : index);
-  };
-
+  const { 
+      setShowModal, 
+      setShowCollection,
+      setShowSharePost,
+      setShowAssignPost,
+      setShowLinkPost,
+      setSelectedRecord 
+    } = props.modalControls;
+  
+    // Update all handlers to use the new setters
+    const handleMenuClick = (record) => {
+      setSelectedRecord(record);
+      setShowModal(true);
+    };
+  
+    const [openMenuIndex, setOpenMenuIndex] = useState(null);
+  
+    const handleMenuToggle = (index) => {
+      setOpenMenuIndex(openMenuIndex === index ? null : index);
+    };
+  
+     // Handler functions that use the modal controls
+    const handleEdit = (record) => {
+      setSelectedRecord(record);
+      setShowModal(true);
+    };
+  
+    const handleAddToCollection = (record) => {
+      setSelectedRecord(record);
+      setShowCollection(true);
+    };
+  
+    const handleShare = (record) => {
+      setSelectedRecord(record);
+      setShowSharePost(true);
+    };
+  
+    const handleAssign = (record) => {
+      setSelectedRecord(record);
+      setShowAssignPost(true);
+    };
+  
+    const handleLink = (record) => {
+      setSelectedRecord(record);
+      setShowLinkPost(true);
+    };
+  
   return (<>
       <div className="px-1 pb-2 pt-0 bg-black min-h-screen font-mono text-white">
       <h2 className="text-xl font-semibold mb-2">
@@ -100,7 +130,7 @@ const [openMenuIndex, setOpenMenuIndex] = useState(null);
           variants={cardVariants}
           transition={{ duration: 0.5, delay: index * 0.2 }}
         >
-          <SinglePostListCard
+          {/* <SinglePostListCard
             post={record}
             index={index}
             isMenuOpen={openMenuIndex === index}
@@ -116,18 +146,31 @@ const [openMenuIndex, setOpenMenuIndex] = useState(null);
             handleAssignPost={handleAssignPost}
             handleLinkPost={handleLinkPost}
             handleSharePost={handleSharePost}
-          />
+          /> */}
+           <SinglePostListCardForDashboard
+                post={record}
+                index={index}
+                isMenuOpen={openMenuIndex === index}
+                onMenuToggle={handleMenuToggle}
+                setShowCollection={setShowCollection}
+                  show={show}
+                  setShow={setShow}
+                  setSelectedRecord={setSelectedRecord}
+                  removeFromCollection={props.removeFromCollection}
+                  deletePost={props.deletePost}
+                  updatePostStatus={props.updatePostStatus}
+                onEdit={handleEdit}
+                onAddToCollection={handleAddToCollection}
+                onShare={handleShare}
+                onAssign={handleAssign}
+                onLink={handleLink}
+              />
         </motion.div>
       ))}
       </AnimatePresence>
 
     </motion.div>
-    <AddToCollection show={showCollection} setShow={setShowCollection} selectedRecord={selectedRecord}/>
-    <SharePost show={showSharePost} setShow={setShowSharePost} selectedRecord={selectedRecord}/>
-    <AssignPost show={showAssignPost} setShow={setShowAssignPost} selectedRecord={selectedRecord}/>
-    <LinkPost show={showLinkPost} setShow={setShowLinkPost} selectedRecord={selectedRecord} allPosts={props?.posts}/>
-
-    <UpdatePostModal show={show} setShow={setShow} selectedRecord={selectedRecord}/>
+   
    </div>
 
   </>);
