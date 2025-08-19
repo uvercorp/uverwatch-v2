@@ -11,9 +11,9 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
   const [csvData, setCsvData] = useState([]);
   const [validationErrors, setValidationErrors] = useState([]);
   const [isValid, setIsValid] = useState(false);
-   const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   // Generate template CSV data with headers only
   const generateFileName = (str) => {
@@ -122,13 +122,43 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
     });
   };
 
-    const handleImport44 = async () => {
-  
-      setPending(true);
+
+
+  // const handleImportold = () => {
+  //   if (isValid) {
+  //     // Here you would send csvData to your API
+  //     console.log('Valid data to import:', csvData);
+  //     alert(`Successfully imported ${csvData.length} records`);
+  //   }
+  // };
+
+  const handleImport = async () => {
+    // alert('passing here');
+    if (isValid) {
       try {
-        const results = await axiosInstance.post(
-          "publishPost",
-          {id:1},
+        // Convert data to CSV string
+        const csvContent = Papa.unparse({
+          fields: surveyFields,
+          data: csvData
+        });
+
+        // Create blob and form data
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const formData = new FormData();
+        formData.append('csv_file', blob, 'import.csv');
+
+        // Add additional parameters
+        formData.append('deployment', 1);
+        formData.append('survey_id', survey?.id);
+        formData.append('survey_name', 'custom');
+        formData.append('source', 'csv');
+        formData.append('user_type', 'csv-import');
+        formData.append('id', 1);
+        // Add any other required parameters
+
+        // Send to backend
+        const response = await axiosInstance.post("completeCsvImport",
+          formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -136,138 +166,81 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
             },
           }
         );
-        if (results?.data?.status === "success") {
-          dispatch(
-            toggleToaster({
-              isOpen: true,
-              toasterData: { type: "success", msg: "Post Added Successfully" },
-            })
-          );
-          setPending(false);
-          // props.populateList(results?.data?.data);
-          history.push("/deployment/data_view");
+
+        if (response.data.status === 'success') {
+          alert(`Successfully imported ${response.data.imported} posts!`);
+          setShowCsv(false);
         }
       } catch (error) {
-        console.error("Error adding post:", error);
-        setPending(false);
+        console.error('Import failed:', error);
+        alert('Import failed. Check console for details.');
       }
-    };
-  
-  const handleImportold = () => {
-    if (isValid) {
-      // Here you would send csvData to your API
-      console.log('Valid data to import:', csvData);
-      alert(`Successfully imported ${csvData.length} records`);
     }
   };
-
-  const handleImport = async () => {
-    alert('passing here');
-  if (isValid) {
-    try {
-      // Convert data to CSV string
-      const csvContent = Papa.unparse({
-        fields: surveyFields,
-        data: csvData
-      });
-      
-      // Create blob and form data
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const formData = new FormData();
-      formData.append('csv_file', blob, 'import.csv'); 
-      
-      // Add additional parameters
-      formData.append('deployment', 1);
-      formData.append('survey_id', 2);
-      formData.append('user_type', 'csv-import');
-      formData.append('id', 1);
-      // Add any other required parameters
-      
-      // Send to backend
-      const response = await axiosInstance.post('publishPost', 
-        formData,
-        {
-          headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${localStorage.getItem("access")}`,
-            },
-        }
-      );
-
-      if (response.data.status === 'success') {
-        alert(`Successfully imported ${response.data.imported} posts!`);
-        setShowCsv(false);
-      }
-    } catch (error) {
-      console.error('Import failed:', error);
-      alert('Import failed. Check console for details.');
-    }
-  }
-};
 
   return (
 
     <div className="csv-importer relative h-[calc(100vh-120px)] bg-[#3F1F2F] text-gray-100 p-2 px-4 pt-0 ">
       {/* <h2 className="text-2xl font-bold mb-4 text-blue-400">CSV Import</h2> */}
       <div className="flex items-start justify-between">
-              <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde] text-[1.3em]">
-              CSV Importer: {" "}
-                <span className="text-[0.6em] capitalize"> {survey?.survey_name} </span>{" "}
-              </span>
-              {/* <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button> */}
-            </div>
-            <div className="py-4">
-          <hr className="border-[#d1c4be] mt-0 mb-2 pt-0 " />
-        </div>
-<div className='grid grid-cols-2 gap-3'>
-      <div className="template-section mb-6">
-        <h3 className="text-xl font-semibold mb-2 text-blue-300">1. Download Template</h3>
-        <CSVLink
-          data={generateTemplate()}
-          // filename="survey_import_template.csv"
-          filename={generateFileName(survey?.survey_name)}
-          className="my-btn-blue bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 "
-        >
-          Download CSV Template
-        </CSVLink>
-        <p className="mt-2 text-gray-300 text-[0.8em]">Template includes required fields: <span className="font-mono">{surveyFields.join(', ')}</span></p>
-        {maxRows && <p className="text-gray-300 text-[0.8em]">Maximum <span className="font-bold">{maxRows}</span> rows allowed per import</p>}
-        <p className="text-gray-300 text-[0.8em]">Minimum <span className="font-bold">{minRows}</span> rows required per import</p>
+        <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde] text-[1.3em]">
+          CSV Importer: {" "}
+          <span className="text-[0.6em] capitalize"> {survey?.survey_name} </span>{" "}
+        </span>
+        {/* <button className="my-btn-cancel" onClick={() => props?.setCurrentPage('list')}>Cancel</button> */}
       </div>
-
-      <div className="import-section">
-        <h3 className="text-xl font-semibold mb-2 text-blue-300">2. Import Data</h3>
-        <input
-          type="file"
-          accept=".csv"
-          onChange={handleFileUpload}
-          className=" block w-full px-3 py-1.5 text-base font-normal my-input"
-        />
-
-        {validationErrors.length > 0 && (
-          <div className=" bg-red-900  text-red-100 mt-3 p-3 max-h-[150px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
-            <h4 className="font-bold text-lg">Validation Errors.</h4>
-            <ul className="list-disc pl-5 mt-2">
-              {validationErrors.map((error, index) => (
-                <li key={index} className="py-1">{error}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+      <div className="py-4">
+        <hr className="border-[#d1c4be] mt-0 mb-2 pt-0 " />
+      </div>
+      <div className='grid grid-cols-2 gap-3'>
+        <div className="template-section mb-6">
+          <h3 className="text-xl font-semibold mb-2 text-blue-300">1. Download Template</h3>
+          <CSVLink
+            data={generateTemplate()}
+            // filename="survey_import_template.csv"
+            filename={generateFileName(survey?.survey_name)}
+            className="my-btn-blue bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 "
+          >
+            Download CSV Template
+          </CSVLink>
+          <p className="mt-2 text-gray-300 text-[0.8em]">Template includes required fields: <span className="font-mono">{surveyFields.join(', ')}</span></p>
+          {maxRows && <p className="text-gray-300 text-[0.8em]">Maximum <span className="font-bold">{maxRows}</span> rows allowed per import</p>}
+          <p className="text-gray-300 text-[0.8em]">Minimum <span className="font-bold">{minRows}</span> rows required per import</p>
         </div>
+
+        <div className="import-section">
+          <h3 className="text-xl font-semibold mb-2 text-blue-300">2. Import Data</h3>
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleFileUpload}
+            className=" block w-full px-3 py-1.5 text-base font-normal my-input"
+          />
+
+          {validationErrors.length > 0 && (
+            <div className=" bg-red-900  text-red-100 mt-3 p-3 max-h-[150px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+              <h4 className="font-bold text-lg">Validation Errors.</h4>
+              <ul className="list-disc pl-5 mt-2">
+                {validationErrors.map((error, index) => (
+                  <li key={index} className="py-1">{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-        <div>
+      </div>
+      <div>
 
         {showPreview && (
 
-            <div
+          <div
 
             className="mt-0"
           >
             <h4 className=" font-semibold mb-2 text-blue-300 flex items-start justify-between">
-                <span className='text-lg'>Data Preview </span>
-                {/* <p className="text-gray-400 text-[0.7em]">Showing {Math.min(5, csvData.length)} of {csvData.length} rows</p> */}
-                <p className="text-gray-400 text-[0.7em]">Showing  {csvData.length} rows</p>
+              <span className='text-lg'>Data Preview </span>
+              {/* <p className="text-gray-400 text-[0.7em]">Showing {Math.min(5, csvData.length)} of {csvData.length} rows</p> */}
+              <p className="text-gray-400 text-[0.7em]">Showing  {csvData.length} rows</p>
             </h4>
             <div className="table-responsive max-h-[200px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
               <table className="table-auto w-full border-collapse border border-gray-700">
@@ -291,50 +264,50 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
               </table>
             </div>
 
-            <div  className="absolute bottom-0 left-0 right-0 my-gradient-bg p-2 pt-0 shadow-lg " >
-            {isValid && (
-              <>
-                <div className=" bg-green-900  text-green-100 mb-1 p-1 px-3 ">
-                  CSV file is valid! Ready to import {csvData.length} records.
-                </div>
+            <div className="absolute bottom-0 left-0 right-0 my-gradient-bg p-2 pt-0 shadow-lg " >
+              {isValid && (
+                <>
+                  <div className=" bg-green-900  text-green-100 mb-1 p-1 px-3 ">
+                    CSV file is valid! Ready to import {csvData.length} records.
+                  </div>
                 </>
-            )}
-                <div className='flex item-start justify-between'>
+              )}
+              <div className='flex item-start justify-between'>
 
-            <Button
-              variant="dark"
-              onClick={() => setShowCsv(false)}
-              className="mt-1 bg-gray-700 hover:bg-gray-600 text-white"
-            >
-              Cancel
-            </Button>
-            {isValid && (
-              <>
-
-                <button
-                  onClick={handleImport}
-                  className="my-btn-green bg-green-600 hover:bg-green-700 text-white px-4 py-2  mt-0"
+                <Button
+                  variant="dark"
+                  onClick={() => setShowCsv(false)}
+                  className="mt-1 bg-gray-700 hover:bg-gray-600 text-white"
                 >
-                  Confirm Import
-                </button>
-              </>
-            )}
+                  Cancel
+                </Button>
+                {isValid && (
+                  <>
 
-            </div>
+                    <button
+                      onClick={handleImport}
+                      className="my-btn-green bg-green-600 hover:bg-green-700 text-white px-4 py-2  mt-0"
+                    >
+                      Confirm Import
+                    </button>
+                  </>
+                )}
+
+              </div>
             </div>
           </div>
         )}
         {!showPreview && (
-            <div className='absolute bottom-0 left-0 right-0 p-2'>
-        <Button
+          <div className='absolute bottom-0 left-0 right-0 p-2'>
+            <Button
               variant="dark"
               onClick={() => setShowCsv(false)}
               className=" mt-1 bg-red-700 hover:bg-red-600 text-white"
             >
               Cancel
             </Button>
-            </div>
-             )}
+          </div>
+        )}
       </div>
     </div>
   );
