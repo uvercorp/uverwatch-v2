@@ -317,6 +317,7 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
                       toasterData: { type: "success", msg: response.data.message },
                     })
                   );
+                setShowCsv(false);
                   
         }
       } catch (error) {
@@ -354,9 +355,9 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
       });
     }
     
-    setImportStatus('cancelled');
-    setPending(false);
-    setImportProgress(0);
+    // setImportStatus('cancelled');
+    // setPending(false);
+    // setImportProgress(0);
   };
 
   return (
@@ -373,7 +374,7 @@ const CsvImporter = ({ surveyFields, survey, setShowCsv, maxRows = 100, minRows 
       
       {importStatus === 'processing' && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-          <div className="bg-[#2A1A25] p-6 rounded-lg shadow-xl w-96">
+          <div className="bg-[#2A1A25] p-6  shadow-xl w-96">
             <h3 className="text-lg font-medium text-white mb-4 flex items-start justify-between">
               <span>Importing Reports </span>
                         <Spinner animation="border" size="sm" className="mr-2" />
