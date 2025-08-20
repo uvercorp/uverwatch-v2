@@ -150,7 +150,6 @@ const MyCard = ({
   return (
     <div
       className={`relative p-3  mb-4  text-white transition-colors duration-300 bg-[#1F2F3F] hover:bg-[#3F1F2F]`}
-      // className={`relative p-3  mb-4  text-white transition-colors duration-300 #1F2F3F ${bgColor} hover:${hoverBgColor}`}
     >
       {/* Title & Menu */}
       <div className="flex justify-between items-start">
@@ -277,6 +276,8 @@ function DataViewPage() {
   // State for filters
   const [selectedSurveys, setSelectedSurveys] = useState([]);
   const [selectedEntities, setSelectedEntities] = useState([]);
+  const [selectedRange, setSelectedRange] = useState(1);
+  const [selectedLocation, setSelectedLocation] = useState();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -296,6 +297,7 @@ function DataViewPage() {
   const [selectedAccessLevels, setSelectedAccessLevels] = useState([]);
   // Add new state variables
   const [showAddToCollectionBulk, setAddToCollectionBulk] = useState(false);
+  const [showBulkMenu, setShowBulkMenu] = useState(false);
 
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [advancedFilters, setAdvancedFilters] = useState({
@@ -345,6 +347,9 @@ function DataViewPage() {
     key: null,
     direction: "asc",
   });
+  // Bulk selection state
+  const [selectedPostIds, setSelectedPostIds] = useState([]);
+  const [showAddToCollectionBulkSelected, setShowAddToCollectionBulkSelected] = useState(false);
 
   const doExportToCSV = () => {
     exportToCSV(filteredPosts, "data.csv");
@@ -414,6 +419,30 @@ function DataViewPage() {
     }
     setSortConfig({ key, direction });
   };
+
+  // Selection helpers
+  const toggleSelectPost = (postId) => {
+    setSelectedPostIds((prev) =>
+      prev.includes(postId) ? prev.filter((id) => id !== postId) : [...prev, postId]
+    );
+  };
+
+  const selectPostsOnPage = (pagePostIds, shouldSelect) => {
+    setSelectedPostIds((prev) => {
+      if (shouldSelect) {
+        const merged = new Set([...prev, ...pagePostIds]);
+        return Array.from(merged);
+      }
+      const pageSet = new Set(pagePostIds);
+      return prev.filter((id) => !pageSet.has(id));
+    });
+  };
+
+  const selectAllFiltered = () => {
+    setSelectedPostIds(filteredPosts.map((p) => p.id));
+  };
+
+  const clearSelection = () => setSelectedPostIds([]);
 
   useEffect(() => {
     let deployment = localStorage.getItem("deployment");
@@ -868,11 +897,19 @@ function DataViewPage() {
   };
 
   const handleRangeSelect = (event) => {
-    setLocationFilter((prev) => ({
-      ...prev,
-      range: parseFloat(event.target.value),
-    }));
+    setSelectedRange(event.target.value);
+    // setLocationFilter((prev) => ({
+    //   ...prev,
+    //   range: parseFloat(event.target.value),
+    // }));
   };
+
+    useEffect(() => {
+   setLocationFilter((prev) => ({
+      ...prev,
+      range: parseFloat(selectedRange),
+    }));
+  }, [selectedLocation,selectedRange]);
 
   const handlePostUpdateStatus = (id, status) => {
     updateRecordStatus(id, status);
@@ -918,6 +955,28 @@ function DataViewPage() {
     } catch (error) {
       console.error("Error deleting survey:", error);
       setPending(false);
+    }
+  };
+  // Silent helpers for bulk ops (no redirect/toast per item)
+  const deleteRecordSilent = async (idD) => {
+    try {
+      const results = await axiosInstance.post(
+        "deletePost",
+        JSON.stringify({ id: idD }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+          },
+        }
+      );
+      if (results?.data?.status === "success") {
+        updateListRecordDelete(idD);
+        return { id: idD, ok: true };
+      }
+      return { id: idD, ok: false, error: results?.data };
+    } catch (error) {
+      return { id: idD, ok: false, error };
     }
   };
 
@@ -993,6 +1052,92 @@ function DataViewPage() {
       setPending(false);
     }
   };
+  const updateRecordStatusSilent = async (idD, pStatus) => {
+    try {
+      const results = await axiosInstance.post(
+        "publishPost",
+        JSON.stringify({ id: idD, status: pStatus }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access")}`,
+          },
+        }
+      );
+      if (results?.data?.status === "success") {
+        const newData = results?.data?.data;
+        setPost((prevList) =>
+          prevList.map((item) => (item?.id === newData.id ? newData : item))
+        );
+        return { id: idD, ok: true };
+      }
+      return { id: idD, ok: false, error: results?.data };
+    } catch (error) {
+      return { id: idD, ok: false, error };
+    }
+  };
+
+  // Bulk operations
+  const handleBulkDelete = () => {
+    if (selectedPostIds.length === 0) return;
+    swal({
+      title: "Confirm Bulk Deletion",
+      text: `Delete ${selectedPostIds.length} report(s)? This cannot be undone`,
+      icon: "warning",
+      buttons: ["Cancel", "Confirm"],
+      dangerMode: true,
+    }).then(async (willDelete) => {
+      if (!willDelete) return;
+      setPending(true);
+      const results = await Promise.allSettled(
+        selectedPostIds.map((id) => deleteRecordSilent(id))
+      );
+      const successes = results
+        .map((r) => (r.status === "fulfilled" ? r.value : null))
+        .filter((x) => x && x.ok).length;
+      const failures = selectedPostIds.length - successes;
+      dispatch(
+        toggleToaster({
+          isOpen: true,
+          toasterData: {
+            type: failures === 0 ? "success" : "warning",
+            msg:
+              failures === 0
+                ? `Deleted ${successes} report(s).`
+                : `Deleted ${successes} report(s), ${failures} failed.`,
+          },
+        })
+      );
+      setPending(false);
+      clearSelection();
+    });
+  };
+
+  const handleBulkSetStatus = async (statusValue) => {
+    if (!statusValue || selectedPostIds.length === 0) return;
+    setPending(true);
+    const results = await Promise.allSettled(
+      selectedPostIds.map((id) => updateRecordStatusSilent(id, statusValue))
+    );
+    const successes = results
+      .map((r) => (r.status === "fulfilled" ? r.value : null))
+      .filter((x) => x && x.ok).length;
+    const failures = selectedPostIds.length - successes;
+    dispatch(
+      toggleToaster({
+        isOpen: true,
+        toasterData: {
+          type: failures === 0 ? "success" : "warning",
+          msg:
+            failures === 0
+              ? `Updated status for ${successes} report(s).`
+              : `Updated status for ${successes} report(s), ${failures} failed.`,
+        },
+      })
+    );
+    setPending(false);
+    clearSelection();
+  };
 
   const updateListRecord = (updatedRecord) => {
     window.location.replace("/deployment/data_view");
@@ -1010,10 +1155,34 @@ function DataViewPage() {
   const handleAdditionToCollectionBulk = () => {
     setAddToCollectionBulk(true);
   };
+
+  const onApplyPreset = (p) => {
+    if (!p) return;
+    setSelectedSurveys(p.selectedSurveys || []);
+    setSelectedEntities(p.selectedEntities || []);
+    setSelectedCategories(p.selectedCategories || []);
+    setSelectedTags(p.selectedTags || []);
+    setSelectedStatuses(p.selectedStatuses || []);
+    setDateRange(p.dateRange || [null, null]);
+    setTimeRange(p.timeRange || ["", ""]);
+    setSelectedDays(p.selectedDays || []);
+    setLocationFilter(p.locationFilter || { latitude: null, longitude: null, range: null });
+    setSelectedPosters(p.selectedPosters || []);
+    setSelectedSubcategories(p.selectedSubcategories || []);
+    setSelectedSubtags(p.selectedSubtags || []);
+    setSelectedPriorityLevels(p.selectedPriorityLevels || []);
+    setSelectedAccessLevels(p.selectedAccessLevels || []);
+    setAdvancedFilters(p.advancedFilters || { dateTime: null, keyword: "" });
+    setSortConfig(p.sortConfig || { key: null, direction: "asc" });
+  };
   return (
     <>
       <div className="hidden md:block">
         <FilterTopNav
+          viewKey={"data_view"}
+          onApplyPreset={onApplyPreset}
+          selectedSurveys={selectedSurveys}
+          selectedEntities={selectedEntities}
           selectedCategories={selectedCategories}
           uniqueCategories={uniqueCategories}
           handleCategoryChange={handleCategoryChange}
@@ -1025,7 +1194,10 @@ function DataViewPage() {
           handleStatusChange={handleStatusChange}
           clearFilters={clearFilters}
           handleLocationSelect={handleLocationSelect}
+          handleRangeSelect={handleRangeSelect}
+          selectedRange={selectedRange}
           dateRange={dateRange}
+          timeRange={timeRange}
           exportToCSV={doExportToCSV}
           filteredPosts={filteredPosts}
           selectedPosters={selectedPosters}
@@ -1045,6 +1217,8 @@ function DataViewPage() {
           handleAccessLevelChange={handleAccessLevelChange}
           handleSort={handleSort}
           sortConfig={sortConfig}
+          selectedDays={selectedDays}
+          advancedFilters={advancedFilters}
           setShowAdvancedSearch={setShowAdvancedSearch}
           addToCollectionBulk={handleAdditionToCollectionBulk}
           rightOpen={rightOpen}
@@ -1106,6 +1280,151 @@ function DataViewPage() {
                 />
               </div>
             )}
+            {/* Bulk selection/action bar */}
+            <div className="px-4 py-2 text-xs text-white relative">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  {selectedPostIds.length > 0 ? (
+                    <span>{selectedPostIds.length} selected</span>
+                  ) : (
+                    <span className="text-gray-400">No selection</span>
+                  )}
+                </div>
+
+                {/* Full actions on >= sm */}
+                <div className="hidden sm:flex items-center gap-2">
+                  <button
+                    className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded"
+                    onClick={selectAllFiltered}
+                  >
+                    Select all filtered
+                  </button>
+                  <button
+                    className="px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded"
+                    onClick={clearSelection}
+                  >
+                    Clear selection
+                  </button>
+                  <button
+                    disabled={selectedPostIds.length === 0}
+                    className="px-2 py-1 bg-red-700 hover:bg-red-600 rounded disabled:bg-gray-600"
+                    onClick={handleBulkDelete}
+                  >
+                    Delete selected
+                  </button>
+                  <select
+                    className="px-2 py-1 bg-gray-800 rounded"
+                    defaultValue=""
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val) handleBulkSetStatus(val);
+                      e.target.value = "";
+                    }}
+                  >
+                    <option value="" disabled>
+                      Set status…
+                    </option>
+                    {uniqueStatuses
+                      .filter((s) => s && String(s).trim() !== "")
+                      .map((s) => (
+                        <option key={s} value={s} className="capitalize">
+                          {String(s).toLowerCase() === "archived" ? "Archived" : s}
+                        </option>
+                      ))}
+                    {!uniqueStatuses
+                      .map((s) => String(s || "").toLowerCase())
+                      .includes("archived") && <option value="archived">Archived</option>}
+                  </select>
+                  <button
+                    disabled={selectedPostIds.length === 0}
+                    className="px-2 py-1 bg-blue-700 hover:bg-blue-600 rounded disabled:bg-gray-600"
+                    onClick={() => setShowAddToCollectionBulkSelected(true)}
+                  >
+                    Add to collection
+                  </button>
+                </div>
+
+                {/* Compact actions on < sm */}
+                <div className="sm:hidden flex justify-end">
+                  <button
+                    className="px-3 py-1 bg-gray-800 rounded border border-gray-700"
+                    onClick={() => setShowBulkMenu((v) => !v)}
+                  >
+                    Bulk actions
+                  </button>
+                </div>
+              </div>
+
+              {showBulkMenu && (
+                <div className="sm:hidden absolute right-4 mt-2 w-56 bg-[#1f1f1f] border border-gray-700 rounded shadow-lg z-20 p-2">
+                  <button
+                    className="w-full text-left px-2 py-2 hover:bg-gray-700 rounded"
+                    onClick={() => {
+                      selectAllFiltered();
+                      setShowBulkMenu(false);
+                    }}
+                  >
+                    Select all filtered
+                  </button>
+                  <button
+                    className="w-full text-left px-2 py-2 hover:bg-gray-700 rounded"
+                    onClick={() => {
+                      clearSelection();
+                      setShowBulkMenu(false);
+                    }}
+                  >
+                    Clear selection
+                  </button>
+                  <button
+                    disabled={selectedPostIds.length === 0}
+                    className="w-full text-left px-2 py-2 hover:bg-gray-700 rounded disabled:opacity-50"
+                    onClick={() => {
+                      setShowBulkMenu(false);
+                      handleBulkDelete();
+                    }}
+                  >
+                    Delete selected
+                  </button>
+                  <div className="px-2 py-2">
+                    <label className="block mb-1 text-gray-300">Set status</label>
+                    <select
+                      className="w-full px-2 py-1 bg-gray-800 rounded"
+                      defaultValue=""
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val) handleBulkSetStatus(val);
+                        e.target.value = "";
+                        setShowBulkMenu(false);
+                      }}
+                    >
+                      <option value="" disabled>
+                        Choose…
+                      </option>
+                      {uniqueStatuses
+                        .filter((s) => s && String(s).trim() !== "")
+                        .map((s) => (
+                          <option key={s} value={s} className="capitalize">
+                            {String(s).toLowerCase() === "archived" ? "Archived" : s}
+                          </option>
+                        ))}
+                      {!uniqueStatuses
+                        .map((s) => String(s || "").toLowerCase())
+                        .includes("archived") && <option value="archived">Archived</option>}
+                    </select>
+                  </div>
+                  <button
+                    disabled={selectedPostIds.length === 0}
+                    className="w-full text-left px-2 py-2 hover:bg-gray-700 rounded disabled:opacity-50"
+                    onClick={() => {
+                      setShowAddToCollectionBulkSelected(true);
+                      setShowBulkMenu(false);
+                    }}
+                  >
+                    Add to collection
+                  </button>
+                </div>
+              )}
+            </div>
             {/* <CardView/> */}
             {/* <MapView/> */}
             <PostList
@@ -1115,6 +1434,9 @@ function DataViewPage() {
               removeFromCollection={handleRemove}
               updatePostStatus={handlePostUpdateStatus}
               rightOpen={rightOpen}
+              selectedPostIds={selectedPostIds}
+              onToggleSelect={toggleSelectPost}
+              onSelectPage={selectPostsOnPage}
 
             />
           </div>
@@ -1160,6 +1482,11 @@ function DataViewPage() {
         show={showAddToCollectionBulk}
         onClose={() => setAddToCollectionBulk(false)}
         filteredPosts={filteredPosts}
+      />
+      <AddToCollectionBulkModal
+        show={showAddToCollectionBulkSelected}
+        onClose={() => setShowAddToCollectionBulkSelected(false)}
+        filteredPosts={posts.filter((p) => selectedPostIds.includes(p.id))}
       />
     </>
   );
