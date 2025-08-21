@@ -324,6 +324,7 @@ export default function MapPositionSelect(props) {
           zIndex: 1000,
           width: isMobile ? 'calc(100% - 80px)' : '300px',
           backgroundColor: 'white',
+          color:"black",
           borderRadius: '0px',
           boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
           padding: '5px'
