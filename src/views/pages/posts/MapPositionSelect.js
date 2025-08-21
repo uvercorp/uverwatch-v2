@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import leaflet from "leaflet";
 import useLocalStorage from "hooks/useLocalStorage";
 import useGeoLocation from "hooks/useGeoLocation";
@@ -24,6 +24,10 @@ export default function MapPositionSelect(props) {
   const userMarkerRef = useRef(null);
   const isDraggingRef = useRef(false);
   const geocodeTimeoutRef = useRef(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const isMobile = useIsMobile();
 
@@ -45,6 +49,78 @@ export default function MapPositionSelect(props) {
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   });
+
+  // Debounced search for locations using Nominatim API
+  const handleSearch = useCallback(async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
+        {
+          headers: {
+            'User-Agent': 'Your App Name/1.0 (your@email.com)',
+          },
+        }
+      );
+      const data = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error('Search error:', error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  // Debounce the search input
+  useEffect(() => {
+    if (geocodeTimeoutRef.current) {
+      clearTimeout(geocodeTimeoutRef.current);
+    }
+
+    if (searchQuery.trim()) {
+      geocodeTimeoutRef.current = setTimeout(() => {
+        handleSearch(searchQuery);
+      }, 300); // 300ms debounce delay
+    } else {
+      setSearchResults([]);
+    }
+
+    return () => {
+      if (geocodeTimeoutRef.current) {
+        clearTimeout(geocodeTimeoutRef.current);
+      }
+    };
+  }, [searchQuery, handleSearch]);
+
+  // Handle selecting a search result
+  const handleSelectResult = useCallback((result) => {
+    const lat = parseFloat(result.lat);
+    const lng = parseFloat(result.lon);
+    
+    // Update marker position
+    if (userMarkerRef.current) {
+      userMarkerRef.current.setLatLng([lat, lng]);
+    }
+    
+    // Update map view
+    mapRef.current?.flyTo([lat, lng], 13, {
+      duration: 1.5,
+    });
+    
+    // Trigger the location change callback
+    props?.onLocationChange(lat, lng, result.display_name, result.display_name);
+    
+    // Clear search results and hide suggestions
+    setSearchResults([]);
+    setSearchQuery("");
+    setShowSuggestions(false);
+  }, [props]);
 
   // Smooth coordinate update without geocoding
   const handleDrag = useCallback((e) => {
@@ -238,6 +314,89 @@ export default function MapPositionSelect(props) {
   return (
     <div style={{ position: 'relative', height: props?.mapHeight || "500px" }}>
       <div id="map" style={{ height: '100%', width: '100%', borderRadius: '0' }}></div>
+      
+      {/* Search Bar */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '10px',
+          left: '50px',
+          zIndex: 1000,
+          width: isMobile ? 'calc(100% - 80px)' : '300px',
+          backgroundColor: 'white',
+          borderRadius: '0px',
+          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+          padding: '5px'
+        }}
+      >
+        <div style={{ display: 'flex', position: 'relative' }}>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+            placeholder="Search for a location..."
+            style={{
+              flex: 1,
+              border: 'none',
+              padding: '8px',
+              outline: 'none',
+              borderRadius: '0px'
+            }}
+          />
+          {isSearching && (
+            <div style={{
+              position: 'absolute',
+              right: '8px',
+              top: '50%',
+              transform: 'translateY(-50%)'
+            }}>
+              <i className="fa-solid fa-spinner fa-spin"></i>
+            </div>
+          )}
+        </div>
+        
+        {/* Search Suggestions */}
+        {showSuggestions && searchResults.length > 0 && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              backgroundColor: 'white',
+              borderRadius: '0 0 4px 4px',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+              maxHeight: '200px',
+              overflowY: 'auto',
+              zIndex: 1001,
+              marginTop: '5px'
+            }}
+          >
+            {searchResults.map((result, index) => (
+              <div
+                key={index}
+                onMouseDown={() => handleSelectResult(result)} // Use onMouseDown to fire before onBlur
+                style={{
+                  padding: '8px 12px',
+                  borderBottom: '1px solid #eee',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#f0f0f0'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+              >
+                {result.display_name}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      
       <button
         className="btn btn-sm btn-light"
         style={{
