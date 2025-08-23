@@ -35,6 +35,7 @@ import HelpPage from "views/pages/help/HelpPage";
 import WelcomePage from "views/pages_client/welcome/WelcomePage";
 import CreateDeploymentPage from "views/pages_client/create_deployment/CreateDeploymentPage";
 import LoginPage from "views/pages_client/login/LoginPage";
+import EmailVerificationPage from "views/pages_client/emailVerification/EmailVerificationPage";
 import MapTest from "views/Maptest";
 import PostPage from "views/pages/posts/PostPage";
 import MapLocationDetection from "views/pages/settings/general/MapLocationDetection";
@@ -222,6 +223,13 @@ const dashboardRoutes = [
     name: "Login",
     icon: "nc-icon nc-bell-55",
     component: LoginPage,
+    layout: "/pages",
+  },
+  {
+    path: "/verify-email",
+    name: "Email Verification",
+    icon: "nc-icon nc-bell-55",
+    component: EmailVerificationPage,
     layout: "/pages",
   },
   {
