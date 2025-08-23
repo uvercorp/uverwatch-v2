@@ -138,7 +138,7 @@ function TagAdd(props) {
         setFormValue({ ...formValue, deployment: props?.deploymentId });
         if (validateformData(formValue, setInvalidFields)) {
             addRecordInstance(formValue);
-            setFormValue({ id: '', deployment: props?.deploymentId, name: '', description: '', icon: '', parent_id: '' });
+            setFormValue({ id: '', deployment: props?.deploymentId, name: '', description: '', icon: '', parent_id: null });
         } else {
             setTimeout(() => setInvalidFields(''), 5000);
         }
