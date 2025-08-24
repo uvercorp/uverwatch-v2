@@ -15,6 +15,7 @@ import axiosInstance from "services/axios";
 import Spinner from "react-bootstrap/Spinner";
 import MapPositionSelectEntity from "./MapPositionSelectEntity";
 import { IconPicker } from "others/icons/IconPicker";
+import useGeoLocation from "hooks/useGeoLocation";
 
 function EntityAdd(props) {
   const [posts, setPosts] = useState([]);
@@ -29,13 +30,14 @@ function EntityAdd(props) {
   const history = useHistory();
   const [deploymentId, setDeploymentId] = useState(null);
   const [customFiledsForUpdate, setCustomFieldForUpdate] = useState(null);
+  const location = useGeoLocation();
   const [formValue, setFormValue] = useState({
     id: "",
     deployment: props?.deploymentId,
     title: "",
     description: "",
-    latitude: '',
-    longitude: '',
+    latitude: location.latitude,
+    longitude: location.longitude,
     deployment_survey: props?.record?.id || "",
     survey_fields: props?.record?.custom_fields || [], // Ensure survey_fields is always an array
     entity_type: null,
@@ -69,8 +71,8 @@ function EntityAdd(props) {
         deployment: props?.deploymentId || "",
         title: "",
         description: "",
-        latitude: '',
-        longitude: '',
+        latitude: location.latitude,
+        longitude: location.longitude,
         access_level: "",
         assessment: "",
         impact_level: "",
@@ -87,7 +89,7 @@ function EntityAdd(props) {
         deployment_user: props?.userId || "",
       });
     }
-  }, [props.record, props.formType, props.deploymentId, props.userId]);
+  }, [props.record, props.formType, props.deploymentId, props.userId, location]);
 
 
   const handleIconSelection = ({ iconClass, color }) => {

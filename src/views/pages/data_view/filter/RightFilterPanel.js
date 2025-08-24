@@ -134,7 +134,7 @@ export default function RightFilterPanel(props) {
 
 
         {/* Area Filter */}
-        <div ref={areaFilterRef} className="relative">
+        {/* <div ref={areaFilterRef} className="relative">
           <div className="flex items-center border border-gray-500 mt-2">
             <input
               type="text"
@@ -182,7 +182,7 @@ export default function RightFilterPanel(props) {
               </div>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Visualization */}
         <div>

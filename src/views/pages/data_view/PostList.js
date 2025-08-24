@@ -25,6 +25,8 @@ const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = props?.posts?.slice(indexOfFirstPost, indexOfLastPost) || [];
+  const currentPostIds = currentPosts.map(p => p.id);
+  const areAllOnPageSelected = currentPostIds.length > 0 && currentPostIds.every(id => (props.selectedPostIds || []).includes(id));
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -64,27 +66,36 @@ const [openMenuIndex, setOpenMenuIndex] = useState(null);
   };
 
   return (<>
-      <div className="px-4 pb-2 pt-1 bg-black min-h-screen font-mono text-white">
-      <div className="flex justify-between items-center mb-2 pr-0">
-        <h1 className="text-2xl tracking-widest my-font-family-ailerons text-[1.7em]">CARD VIEW</h1>
+    <div className="px-4 pb-2 pt-1 bg-black min-h-screen font-mono text-white">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 mb-2 pr-0">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl tracking-widest my-font-family-ailerons text-[1.7em]">CARD VIEW</h1>
+          {/* Select all on page */}
+          <label className="flex items-center gap-2 text-xs cursor-pointer">
+            <input
+              type="checkbox"
+              checked={areAllOnPageSelected}
+              onChange={(e) => props.onSelectPage && props.onSelectPage(currentPostIds, e.target.checked)}
+            />
+            <span>Select page</span>
+          </label>
+        </div>
         <div className="pt-0">
-          {/* <button className="px-3 pt-0 py-2 border bg-gray-400 border-gray-500 text-black mr-2 text-sm hover:bg-gray-300">Load Presets:</button> */}
           <button className="px-3 pt-0 py-2 border  bg-gray-400 border-gray-500 text-black mr-2 text-sm hover:bg-gray-300">Reports [{props?.posts?.length}]</button>
         </div>
       </div>
 
-        {
-        (!props.pending  && props?.posts?.length < 1) &&
+      {
+        (!props.pending && props?.posts?.length < 1) &&
         <div className="md:flex items-center justify-center md:min-h-[calc(100vh-200px)] bg-[#0e0b0a]">
-            <div className=" text-[#faebd7] p-5 font-semibold text-[1.5em]">No Results Found For This Deployment</div>
-            </div>
+          <div className=" text-[#faebd7] p-5 font-semibold text-[1.5em]">No Results Found For This Deployment</div>
+        </div>
 
-       }
+      }
 
-<motion.div
-        className={`max-h-[72vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 grid grid-cols-1 ${
-          props?.rightOpen ? "space-y-0" : "md:grid-cols-2 gap-2"
-        }`}
+      <motion.div
+        className={`max-h-[72vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 grid grid-cols-1 ${props?.rightOpen ? "space-y-0" : "md:grid-cols-2 gap-2"
+          }`}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -113,6 +124,8 @@ const [openMenuIndex, setOpenMenuIndex] = useState(null);
                 handleLinkPost={handleLinkPost}
                 handleSharePost={handleSharePost}
                 rightOpen={props?.rightOpen}
+                isSelected={(props.selectedPostIds || []).includes(record.id)}
+                onToggleSelect={props.onToggleSelect}
               />
             </motion.div>
           ))}
@@ -122,51 +135,50 @@ const [openMenuIndex, setOpenMenuIndex] = useState(null);
       {/* Pagination Controls */}
       {/* <div className="bg-[#3F1F2F] my-gradient-bg py-1"> */}
       <div className="">
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-4 space-x-2">
-          <button
-            onClick={() => paginate(currentPage > 1 ? currentPage - 1 : 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1  bg-gray-700 text-white disabled:opacity-50"
-          >
-            Previous
-          </button>
-
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-4 space-x-2">
             <button
-              key={number}
-              onClick={() => paginate(number)}
-              className={`px-3 py-1 ${
-                currentPage === number ? 'bg-[#3F1F2F] text-white' : 'bg-gray-200 text-gray-800'
-              }`}
+              onClick={() => paginate(currentPage > 1 ? currentPage - 1 : 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1  bg-gray-700 text-white disabled:opacity-50"
             >
-              {number}
+              Previous
             </button>
-          ))}
 
-          <button
-            onClick={() => paginate(currentPage < totalPages ? currentPage + 1 : totalPages)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-gray-700 text-white disabled:opacity-50"
-          >
-            Next
-          </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+              <button
+                key={number}
+                onClick={() => paginate(number)}
+                className={`px-3 py-1 ${currentPage === number ? 'bg-[#3F1F2F] text-white' : 'bg-gray-200 text-gray-800'
+                  }`}
+              >
+                {number}
+              </button>
+            ))}
+
+            <button
+              onClick={() => paginate(currentPage < totalPages ? currentPage + 1 : totalPages)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 bg-gray-700 text-white disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        )}
+
+        <div className="text-center text-sm text-gray-400 mt-2">
+          Showing {indexOfFirstPost + 1}-{Math.min(indexOfLastPost, totalPosts)} of {totalPosts} Reports
         </div>
-      )}
-
-      <div className="text-center text-sm text-gray-400 mt-2">
-        Showing {indexOfFirstPost + 1}-{Math.min(indexOfLastPost, totalPosts)} of {totalPosts} Reports
-      </div>
       </div>
 
 
-    <AddToCollection show={showCollection} setShow={setShowCollection} selectedRecord={selectedRecord}/>
-    <SharePost show={showSharePost} setShow={setShowSharePost} selectedRecord={selectedRecord}/>
-    <AssignPost show={showAssignPost} setShow={setShowAssignPost} selectedRecord={selectedRecord}/>
-    <LinkPost show={showLinkPost} setShow={setShowLinkPost} selectedRecord={selectedRecord} allPosts={props?.posts}/>
+      <AddToCollection show={showCollection} setShow={setShowCollection} selectedRecord={selectedRecord} />
+      <SharePost show={showSharePost} setShow={setShowSharePost} selectedRecord={selectedRecord} />
+      <AssignPost show={showAssignPost} setShow={setShowAssignPost} selectedRecord={selectedRecord} />
+      <LinkPost show={showLinkPost} setShow={setShowLinkPost} selectedRecord={selectedRecord} allPosts={props?.posts} />
 
-    <UpdatePostModal show={show} setShow={setShow} selectedRecord={selectedRecord}/>
-   </div>
+      <UpdatePostModal show={show} setShow={setShow} selectedRecord={selectedRecord} />
+    </div>
 
   </>);
 }
