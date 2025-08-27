@@ -30,6 +30,7 @@ import LocationSelectMap from "../settings/general/LocationSelectMap";
 import MapPositionSelect from "./MapPositionSelect";
 import TagInput from "./TagInput";
 import { IconPicker } from "others/icons/IconPicker";
+import useGeoLocation from "hooks/useGeoLocation";
 
 function PostAddBasic(props) {
   const [surveys, setPosts] = useState([]);
@@ -44,13 +45,15 @@ function PostAddBasic(props) {
   const [setupComplete, setSetupComplete] = useState(false);
   let navigate = useHistory();
   const [deploymentId, setDeploymentId] = useState(null);
+  const location = useGeoLocation();
+
   const [formValue, setFormValue] = useState({
     id: "",
     deployment: props?.deploymentId,
     title: "",
     description: "",
-    latitude: "",
-    longitude: "",
+    latitude: location.latitude,
+    longitude: location.longitude,
     icon: "",
     color: "",
     tags: "",
@@ -80,8 +83,8 @@ function PostAddBasic(props) {
         id: "",
         deployment: props?.deploymentId,
         title: "",
-        latitude: "",
-        longitude: "",
+        latitude: location.latitude,
+        longitude: location.longitude,
         icon: "",
         color: "",
         tags: "",
@@ -357,6 +360,19 @@ function PostAddBasic(props) {
       setPending(false);
     }
   };
+
+
+  useEffect(() => {
+    if (!formValue.latitude && !formValue.longitude) {
+      if (location.latitude && location.longitude) {
+        setFormValue({
+          ...formValue,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        });
+      }
+    }
+  }, [location]);
 
   return (
     <>
