@@ -16,7 +16,6 @@ import Spinner from "react-bootstrap/Spinner";
 import MapPositionSelect from "./MapPositionSelect";
 import { IconPicker } from "others/icons/IconPicker";
 import TagInput from "./TagInput";
-import useGeoLocation from "hooks/useGeoLocation";
 
 
 function PostAdd(props) {
@@ -33,14 +32,13 @@ function PostAdd(props) {
   const history = useHistory();
   const [deploymentId, setDeploymentId] = useState(null);
   const [customFiledsForUpdate, setCustomFieldForUpdate] = useState(null);
-  const location = useGeoLocation();
   const [formValue, setFormValue] = useState({
     id: "",
     deployment: props?.deploymentId,
     title: "",
     description: "",
-    latitude: location.latitude,
-    longitude: location.longitude,
+    latitude: '',
+    longitude: '',
     icon: "",
     color: "",
     tags: "",
@@ -75,8 +73,8 @@ function PostAdd(props) {
         deployment: props?.deploymentId || "",
         title: "",
         description: "",
-        latitude: location.latitude,
-        longitude: location.longitude,
+        latitude: '',
+        longitude: '',
         icon: "",
         color: "",
         tags: "",
@@ -94,7 +92,7 @@ function PostAdd(props) {
         deployment_user: props?.userId || "",
       });
     }
-  }, [props.record, props.formType, props.deploymentId, props.userId, location]);
+  }, [props.record, props.formType, props.deploymentId, props.userId]);
 
   const handleIconSelection = ({ iconClass, color }) => {
 

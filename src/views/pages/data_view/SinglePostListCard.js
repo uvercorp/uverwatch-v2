@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { CiEdit } from "react-icons/ci";
 import { IoIosList } from "react-icons/io";
@@ -105,18 +105,11 @@ function SinglePostListCard(props) {
         }`}
         // className={`relative p-3  mb-4  text-white transition-colors duration-300 #1F2F3F ${bgColor} hover:${hoverBgColor}`}
       >
-        {/* Selection, Title & Menu */}
+        {/* Title & Menu */}
         <span className="italic text-xs text-gray-400"> {props?.post?.is_entity === "true"? "Entity":"Report"}</span>
-        <div className="flex justify-between items-start gap-2">
+        <div className="flex justify-between items-start">
 
-          <div className="flex items-start gap-2 w-full min-w-0">
-            <input
-              type="checkbox"
-              className="mt-1"
-              checked={!!props.isSelected}
-              onChange={() => props.onToggleSelect && props.onToggleSelect(props?.post?.id)}
-            />
-            <h2 className="text-xl font-extrabold my-font-family-courier-prime uppercase tracking-wide p-0 truncate w-full">
+          <h2 className="text-xl font-extrabold my-font-family-courier-prime uppercase tracking-wide p-0 truncate w-full">
 
             {/* <i
 
@@ -127,9 +120,8 @@ function SinglePostListCard(props) {
               marginRight: '8px'
             }}
           /> */}
-              {props?.post?.title}
-            </h2>
-          </div>
+            {props?.post?.title}
+          </h2>
           {/* <p className="text-sm mb-2 truncate max-w-[200px]">{props?.post?.description}</p> */}
           <div className="relative">
             <button
@@ -139,11 +131,11 @@ function SinglePostListCard(props) {
               ⋮
             </button>
             {localStorage.getItem('is_login') == 'yes' && (<>
-              <DropdownMenu
-                isOpen={props.isMenuOpen}
-                onClose={() => props.onMenuToggle(null)}
-              >
-                {/* <button
+            <DropdownMenu
+              isOpen={props.isMenuOpen}
+              onClose={() => props.onMenuToggle(null)}
+            >
+              {/* <button
                 onClick={() => handleReadMore(props.post)}
                 className="block w-full text-left px-3 py-2 hover:bg-gray-700"
               >

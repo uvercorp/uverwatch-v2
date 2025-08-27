@@ -171,8 +171,6 @@ function MapPage() {
   // State for filters
   const [selectedSurveys, setSelectedSurveys] = useState([]);
    const [selectedEntities, setSelectedEntities] = useState([]);
-    const [selectedRange, setSelectedRange] = useState(1);
-     const [selectedLocation, setSelectedLocation] = useState();
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   // const [dateRange, setDateRange] = useState({ start: null, end: null });
@@ -412,8 +410,7 @@ const dayMatch =
 
 
     setFilteredPosts(filtered);
-  }, [selectedSurveys, selectedCategories,selectedTags, selectedStatuses, dateRange, timeRange,
-    selectedDays, locationFilter, selectedPosters, selectedSubcategories, selectedSubtags, selectedPriorityLevels,
+  }, [selectedSurveys, selectedCategories,selectedTags, selectedStatuses, dateRange, locationFilter, selectedPosters, selectedSubcategories, selectedSubtags, selectedPriorityLevels,
     selectedAccessLevels, posts, searchEmpty, searchValue, advancedFilters]);
   // Handle checkbox changes
   const handleSurveyChange = (survey) => {
@@ -544,30 +541,24 @@ const dayMatch =
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
 
-    const handleLocationSelect = (lat, lng) => {
-      setLatitude(lat);
-      setLongitude(lng);
-      setLocationFilter((prev) => ({
-        ...prev,
-        latitude: parseFloat(lat),
-        longitude: parseFloat(lng),
-      }));
-    };
-  
-    const handleRangeSelect = (event) => {
-      setSelectedRange(event.target.value);
-      // setLocationFilter((prev) => ({
-      //   ...prev,
-      //   range: parseFloat(event.target.value),
-      // }));
-    };
-  
-      useEffect(() => {
-     setLocationFilter((prev) => ({
-        ...prev,
-        range: parseFloat(selectedRange),
-      }));
-    }, [selectedLocation,selectedRange]);
+  const handleLocationSelect = (lat, lng) => {
+    setLatitude(lat);
+    setLongitude(lng);
+    setLocationFilter((prev) => ({
+      ...prev,
+      latitude: parseFloat(lat),
+      longitude: parseFloat(lng),
+    }))
+  };
+
+  const handleRangeSelect = (event) => {
+    // alert(parseFloat(event.target.value));
+    setLocationFilter((prev) => ({
+      ...prev,
+      range: parseFloat(event.target.value),
+    }))
+  }
+
   // Sorting state
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -643,35 +634,11 @@ const dayMatch =
     setAddToCollectionBulk(true);
   }
 
-  const onApplyPreset = (p) => {
-    if (!p) return;
-    setSelectedSurveys(p.selectedSurveys || []);
-    setSelectedEntities(p.selectedEntities || []);
-    setSelectedCategories(p.selectedCategories || []);
-    setSelectedTags(p.selectedTags || []);
-    setSelectedStatuses(p.selectedStatuses || []);
-    setDateRange(p.dateRange || [null, null]);
-    setTimeRange(p.timeRange || ["", ""]);
-    setSelectedDays(p.selectedDays || []);
-    setLocationFilter(p.locationFilter || { latitude: null, longitude: null, range: null });
-    setSelectedPosters(p.selectedPosters || []);
-    setSelectedSubcategories(p.selectedSubcategories || []);
-    setSelectedSubtags(p.selectedSubtags || []);
-    setSelectedPriorityLevels(p.selectedPriorityLevels || []);
-    setSelectedAccessLevels(p.selectedAccessLevels || []);
-    setAdvancedFilters(p.advancedFilters || { dateTime: null, keyword: '' });
-    setSortConfig(p.sortConfig || { key: null, direction: 'asc' });
-  };
-
 
   return (
     <>
     <div className="hidden md:block">
       <FilterTopNav
-          viewKey={"map_view"}
-          onApplyPreset={onApplyPreset}
-          selectedSurveys={selectedSurveys}
-          selectedEntities={selectedEntities}
           selectedCategories={selectedCategories}
           uniqueCategories={uniqueCategories}
           handleCategoryChange={handleCategoryChange}
@@ -683,14 +650,10 @@ const dayMatch =
           handleStatusChange={handleStatusChange}
           clearFilters={clearFilters}
           handleLocationSelect={handleLocationSelect}
-        
-          handleRangeSelect={handleRangeSelect}
-          selectedRange={selectedRange}
           setLocationFilter={setLocationFilter}
           locationFilter={locationFilter}
-      
+          handleRangeSelect={handleRangeSelect}
           dateRange={dateRange}
-          timeRange={timeRange}
 
           exportToCSV={doExportToCSV}
           filteredPosts={filteredPosts}
@@ -713,7 +676,6 @@ const dayMatch =
           sortConfig={sortConfig}
           setShowAdvancedSearch={setShowAdvancedSearch}
           addToCollectionBulk={handleAdditionToCollectionBulk}
-          selectedDays={selectedDays}
           rightOpen={rightOpen}
           setRightOpen = {setRightOpen}
               />

@@ -23,7 +23,7 @@ function UpdatePostModal(props) {
           >
             {/* Modal Container */}
             <motion.div
-              className="w-[95%] md:w-[60%] max-w-[1200px] py-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 max-h-[90vh] mx-auto mt-8"
+              className="rounded-lg shadow-lg w-[60%] max-w-[1200px] py-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 max-h-[90vh] mx-auto mt-8"
               initial={{ y: -100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -100, opacity: 0 }}
