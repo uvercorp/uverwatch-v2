@@ -66,7 +66,7 @@ const AutocompleteLocationSearch = forwardRef(
           value={query}
           onChange={handleInputChange}
           ref={ref} // Attach ref to input
-          className="w-full px-4 py-2  focus:border-transparent my-input"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
 
         {/* Loading Indicator */}
@@ -97,12 +97,12 @@ const AutocompleteLocationSearch = forwardRef(
 
         {/* Suggestions Dropdown */}
         {suggestions.length > 0 && (
-          <ul className="absolute z-10 w-full mt-1 bg-[#1d2a38] hover:bg-[#3F1F2F] border border-gray-300  shadow-lg max-h-60 overflow-y-auto">
+          <ul className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
             {suggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
                 onClick={() => handleSuggestionClick(suggestion)}
-                className="px-4 py-2 cursor-pointer hover:bg-[#371c2a]"
+                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
               >
                 {suggestion.display_name}
               </li>
