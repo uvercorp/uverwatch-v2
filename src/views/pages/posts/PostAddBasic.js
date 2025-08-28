@@ -31,6 +31,9 @@ import MapPositionSelect from "./MapPositionSelect";
 import TagInput from "./TagInput";
 import { IconPicker } from "others/icons/IconPicker";
 import useGeoLocation from "hooks/useGeoLocation";
+import { useGeofenceValidation } from "hooks/useGeofenceValidation";
+import LocationChecker from "components/LocationValidator/LocationChecker";
+import locationSecurityChecker from "utils/securityUtils";
 
 function PostAddBasic(props) {
   const [surveys, setPosts] = useState([]);
@@ -46,6 +49,12 @@ function PostAddBasic(props) {
   let navigate = useHistory();
   const [deploymentId, setDeploymentId] = useState(null);
   const location = useGeoLocation();
+
+  // Geofence validation hooks
+  const {
+    isValidLocation, validationError, isValidating, userGeofences, geofenceEnabled,
+    isGeofenceValidationRequired
+  } = useGeofenceValidation(props?.userId, props?.deploymentId);
 
   const [formValue, setFormValue] = useState({
     id: "",
@@ -129,7 +138,42 @@ function PostAddBasic(props) {
     });
   };
 
+  const handleRetryLocation = () => {
+    // console.log("Location refresh requested");
+  };
+
+  const handleViewGeofences = () => {
+    // console.log("View geofences clicked");
+  };
+
   const handleSubmit = () => {
+    console.log({ isGeofenceValidationRequired, isValidLocation });
+    // Geofence validation check
+    if (isGeofenceValidationRequired && !isValidLocation) {
+      swal({
+        title: "Location Validation Required",
+        text: "You must be within your assigned geofence to create a post. Please check your location and try again.",
+        icon: "error",
+        button: "OK"
+      });
+      return;
+    }
+
+    // Location security check
+    if (location && props?.userId) {
+      const securityCheck = locationSecurityChecker.detectSuspiciousLocation(props.userId, location);
+      if (securityCheck.isSuspicious) {
+        swal({
+          title: "Suspicious Location Detected",
+          text: "Your location appears to be suspicious. Please ensure you are using a legitimate GPS signal and try again.",
+          icon: "warning",
+          button: "OK"
+        });
+        return;
+      }
+      locationSecurityChecker.updateLocationHistory(props.userId, location);
+    }
+
     setFormValue({
       ...formValue,
       deployment: props?.deploymentId,
@@ -145,6 +189,32 @@ function PostAddBasic(props) {
   };
 
   const handleUpdate = () => {
+    // Geofence validation check for updates
+    if (isGeofenceValidationRequired && !isValidLocation) {
+      swal({
+        title: "Location Validation Required",
+        text: "You must be within your assigned geofence to update a post. Please check your location and try again.",
+        icon: "error",
+        button: "OK"
+      });
+      return;
+    }
+
+    // Location security check for updates
+    if (location && props?.userId) {
+      const securityCheck = locationSecurityChecker.detectSuspiciousLocation(props.userId, location);
+      if (securityCheck.isSuspicious) {
+        swal({
+          title: "Suspicious Location Detected",
+          text: "Your location appears to be suspicious. Please ensure you are using a legitimate GPS signal and try again.",
+          icon: "warning",
+          button: "OK"
+        });
+        return;
+      }
+      locationSecurityChecker.updateLocationHistory(props.userId, location);
+    }
+
     if (validateformData(formValue, setInvalidFields)) {
       updateRecordInstance(formValue);
     } else {
@@ -421,6 +491,18 @@ function PostAddBasic(props) {
               >
                 <div className="md:min-h-[450px] relative md:px-10">
                   <div>
+                    {/* Geofence Location Validation */}
+                    <LocationChecker
+                      isValidLocation={isValidLocation}
+                      validationError={validationError}
+                      isValidating={isValidating}
+                      onRetry={handleRetryLocation}
+                      userGeofences={userGeofences}
+                      geofenceEnabled={geofenceEnabled}
+                      onViewGeofences={handleViewGeofences}
+                    />
+
+
                     <Row>
                       <Col className="pr-1" md="12">
                         <label className="my-label">
@@ -429,15 +511,24 @@ function PostAddBasic(props) {
                             {formValue?.full_address}
                           </span>
                         </label>
-                        <div className="min-h-[250px] text-center bg-blue-100 border border-1 mr-2">
-                          <MapPositionSelect
-                            mapHeight={"250px"}
-                            onLocationChange={handleLocationChange}
-                            latitude={formValue?.latitude}
-                            longitude={formValue?.longitude}
-                          />
-                          {/* <MapPositionSelect mapHeight={'250px'} onLocationChange={handleLocationChange} latitude="5.884479389490895" longitude="-0.18007437721544675" /> */}
-                        </div>
+                        {!isGeofenceValidationRequired ? (
+                          <div className="min-h-[250px] text-center bg-blue-100 border border-1 mr-2">
+                            <MapPositionSelect
+                              mapHeight={"250px"}
+                              onLocationChange={handleLocationChange}
+                              latitude={formValue?.latitude}
+                              longitude={formValue?.longitude}
+                            />
+                          </div>
+                        ) : (
+                          <div className="min-h-[250px] text-center bg-gray-100 border border-1 mr-2 p-4">
+                            <p className="text-gray-600">
+                              <i className="fas fa-info-circle me-2"></i>
+                              Location selection is disabled when geofence restrictions are active.
+                              Your current GPS location will be used automatically.
+                            </p>
+                          </div>
+                        )}
                       </Col>
                     </Row>
                     <div className="grid gap-6 mb-6 md:grid-cols-2 pt-4">
@@ -453,7 +544,7 @@ function PostAddBasic(props) {
                           id="latitude"
                           name="latitude"
                           onChange={handleChange}
-                          disabled
+                          disabled={isGeofenceValidationRequired}
                           value={formValue.latitude}
                           className="my-input block p-2.5 w-full "
                           placeholder=""
@@ -472,7 +563,7 @@ function PostAddBasic(props) {
                           id="longitude"
                           name="longitude"
                           onChange={handleChange}
-                          disabled
+                          disabled={isGeofenceValidationRequired}
                           value={formValue.longitude}
                           className="my-input block p-2.5 w-full "
                           placeholder=""
@@ -527,7 +618,7 @@ function PostAddBasic(props) {
                         name="description"
                         value={formValue.description}
                         rows="3"
-                        class="my-input block p-2.5 w-full "
+                        className="my-input block p-2.5 w-full "
                         placeholder="Post Description..."
                       ></textarea>
                     </div>
@@ -769,7 +860,7 @@ function PostAddBasic(props) {
                                     type="submit"
                                     onClick={handleUpdate}
                                     className="text-white bg-green-500 hover:bg-green-600  font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center "
-                                    disabled={pending}
+                                    disabled={pending || (isGeofenceValidationRequired && !isValidLocation)}
                                   >
                                     {pending ? "Saving..." : "Save Changes"}
                                   </button>

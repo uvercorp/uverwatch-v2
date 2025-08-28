@@ -120,7 +120,7 @@ function PostPage() {
      <SurveySelect userId={userId} deploymentId={deploymentId} toggleFormType={toggleFormType} pending={pending} setPending={setPending} surveys={surveys} currentPage={currentPage} setCurrentPage={setCurrentPage} />
     }
     {(currentPage == 'add' && selectedRecord.id == 0) &&
-     <PostAddBasic userId={userId} deploymentId={deploymentId} toggleFormType={toggleFormType} record={selectedRecord} pending={pending} setPending={setPending} formType={formType} setFormType={setFormType} surveys={surveys} currentPage={currentPage} setCurrentPage={setCurrentPage} populateList={populateList} updateListRecord={updateListRecord} updateListRecordDelete={updateListRecordDelete}/>
+    <PostAddBasic userId={userId} deploymentId={deploymentId} toggleFormType={toggleFormType} record={selectedRecord} pending={pending} setPending={setPending} formType={formType} setFormType={setFormType} surveys={surveys} currentPage={currentPage} setCurrentPage={setCurrentPage} populateList={populateList} updateListRecord={updateListRecord} updateListRecordDelete={updateListRecordDelete}/>
     }
     {(currentPage == 'add' && selectedRecord.id !== 0) &&
      <PostAdd userId={userId} deploymentId={deploymentId} toggleFormType={toggleFormType} record={selectedRecord} pending={pending} setPending={setPending} formType={formType} setFormType={setFormType} surveys={surveys} currentPage={currentPage} setCurrentPage={setCurrentPage} populateList={populateList} updateListRecord={updateListRecord} updateListRecordDelete={updateListRecordDelete}/>

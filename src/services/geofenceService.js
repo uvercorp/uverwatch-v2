@@ -40,7 +40,7 @@ export class GeofenceService {
 			});
 			return response.data;
 		} catch (error) {
-			throw new Error(`Location validation failed: ${error.message}`);
+			throw new Error(`Location validation failed: ${error.response?.data?.message || error.message}`);
 		}
 	}
 
