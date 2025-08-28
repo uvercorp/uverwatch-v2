@@ -43,6 +43,7 @@ import DeploymentStatusPage from "./status/DeploymentStatusPage";
 import TeamPage from "./teams/TeamPage";
 import TagPage from "./tags/TagPage";
 import GoefencePage from "./geofence/GeofencePage";
+import UserGeofenceManager from "../../../components/AdminPanel/UserGeofenceManager";
 
 function SettingsPage() {
   const [pending, setPending] = useState(false);
@@ -63,6 +64,10 @@ function SettingsPage() {
     if(tab == 'system'){
       setCurrentPage('general');
     }
+    if (tab == 'user_geofence_manager') {
+      setCurrentPage('user_geofence_manager');
+    }
+
     if(tab == 'accesses'){
       setCurrentPage('access_levels');
     }
@@ -306,8 +311,30 @@ function SettingsPage() {
                   Create and manage user permissions
                 </p>
               </div>
+                <div
+                  style={{ border: "1px solid #515153" }}
+                  onClick={() => toggleCurrentPage("user_geofence_manager")}
+                  className={`min-h-[115px] max-h-[115px] shadow-sm cursor-pointer  py-2 px-1  hover:border-y-yellow-600  ${currentPage == "user_geofence_manager"
+                      ? "text-black bg-gray-400"
+                      : "text-[#dbdbde] bg-[#333333] hover:text-black hover:bg-gray-400"
+                    }`}
+                >
+                  <div className="flex items-start gap-3 my-font-family-overpass-mono">
+                    <i
+                      className="nc-icon nc-pin-3 "
+                      style={{ fontSize: "18px" }}
+                    />
+                    <h className="font-semibold" style={{ fontSize: "1.2em" }}>User Geofence Manager: </h>
+                  </div>
+                  <p
+                    className=" mt-2 "
+                    style={{ fontSize: "13px", paddingLeft: "10px" }}
+                  >
+                    Manage user geofence assignments and restrictions
+                  </p>
+                </div>
               </>
-)}
+              )}
 
               {currentTab == "schema" && (<>
               <div
@@ -588,6 +615,7 @@ function SettingsPage() {
             {currentPage == "users" && <UsersPage />}
             {currentPage == "teams" && <TeamPage />}
             {currentPage == "roles" && <RolesPage />}
+            {currentPage == "user_geofence_manager" && <UserGeofenceManager deploymentId={deploymentData?.id || JSON.parse(localStorage.getItem('deployment'))?.id} />}
 
             {currentPage == "geofence" && <GoefencePage />}
           </Col>
