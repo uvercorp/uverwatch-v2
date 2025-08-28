@@ -183,8 +183,24 @@ function UserAdd(props) {
       }
     );
     if (results?.data?.status == "success") {
-
-      dispatch(toggleToaster({ isOpen: true, toasterData: { type: "success", msg: "User Added Successfully" } }))
+      // Check if user needs email verification
+      if (results?.data?.data?.email_verified_at === null) {
+        dispatch(toggleToaster({
+          isOpen: true,
+          toasterData: {
+            type: "success",
+            msg: "User Added Successfully! A verification email has been sent to the user's email address."
+          }
+        }));
+      } else {
+        dispatch(toggleToaster({
+          isOpen: true,
+          toasterData: {
+            type: "success",
+            msg: "User Added Successfully"
+          }
+        }));
+      }
 
       setPending(false);
       props.populateList(results?.data?.data);
