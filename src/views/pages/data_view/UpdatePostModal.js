@@ -1,7 +1,7 @@
 import { useState,useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PostAddBasic from '../posts/PostAddBasic';
-import PostAdd from '../posts/PostAdd';
+import PostAddBasicForm from './PostAddBasicForm';
+import PostAddForm from './PostAddForm';
 
 function UpdatePostModal(props) {
   const [show, setShow] = useState(false);
@@ -37,10 +37,10 @@ function UpdatePostModal(props) {
 
               {/* Modal Body */}
               {(props.selectedRecord.survey_name == 'basic') &&
-     <PostAddBasic   record={props.selectedRecord} formType="update" show={props.show} setShow={props.setShow} />
+     <PostAddBasicForm   record={props.selectedRecord} formType="update" show={props.show} setShow={props.setShow} />
 }
 {(props.selectedRecord.survey_name == 'custom') &&
-     <PostAdd   record={props.selectedRecord} formType="update" show={props.show} setShow={props.setShow} />
+     <PostAddForm   record={props.selectedRecord} formType="update" show={props.show} setShow={props.setShow} />
 }
 
               {/* Close Button */}
