@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import swal from "sweetalert";
 // react-bootstrap components
 import {
@@ -45,11 +45,15 @@ function PostAddBasic(props) {
   const [setupComplete, setSetupComplete] = useState(false);
   let navigate = useHistory();
   const [deploymentId, setDeploymentId] = useState(null);
+  const [userId, setUserId] = useState(null);
   const location = useGeoLocation();
+  const [record, _] = useState({ id: 0, survey_name: 'Basic Post' });
+  const [report, setReport] = useState({});
+  const { postId } = useParams();
 
   const [formValue, setFormValue] = useState({
     id: "",
-    deployment: props?.deploymentId,
+    deployment: "",
     title: "",
     description: "",
     latitude: location.latitude,
@@ -58,50 +62,43 @@ function PostAddBasic(props) {
     color: "",
     tags: "",
     assessment: "",
-    access_level: "",
-    impact_level: "",
-    priority_level: "",
+    access_level: 0,
+    impact_level: 0,
+    priority_level: 0,
     post_status: "",
     full_address: "",
     formatted_address: "",
-    deployment_survey: props?.record.id,
+    deployment_survey: 0,
     deployment_sub_category: "",
-    user_type: props?.userId == null ? "anonymous" : "member",
-    deployment_user: props?.userId,
+    user_type: userId == null ? "anonymous" : "member",
+    deployment_user: "",
   });
 
   useEffect(() => {
-    if (props.record && props.formType == "update") {
-      setFormValue(props.record);
-      // alert(props.record.tags);
-      // setFormValue({
-      //   ...formValue,
-      //   tags: props.record.tags
-      // });
-    } else {
-      setFormValue({
-        id: "",
-        deployment: props?.deploymentId,
-        title: "",
-        latitude: location.latitude,
-        longitude: location.longitude,
-        icon: "",
-        color: "",
-        tags: "",
-        assessment: "",
-        access_level: "",
-        impact_level: "",
-        priority_level: "",
-        post_status: "",
-        full_address: "",
-        formatted_address: "",
-        deployment_survey: props?.record.id,
-        deployment_sub_category: "",
-        user_type: props?.userId == null ? "anonymous" : "member",
-        deployment_user: props?.userId,
-      });
+    if (postId && report) {
+      setFormValue(prev => ({ ...prev, ...report }));
     }
-  }, [props.record, props.formType, props.deploymentId, props.userId]);
+
+    let deployment = localStorage.getItem('deployment');
+    if (deployment && deployment !== undefined) {
+      setDeploymentId(JSON.parse(deployment).id);
+      setFormValue(prev => ({ ...prev, deployment: JSON.parse(deployment).id }));
+    } else {
+      window.location.replace('/pages/login');
+    }
+
+    let user = localStorage.getItem('currentUser');
+    if (user && user !== undefined) {
+      setUserId(JSON.parse(user).id);
+      setFormValue(prev => ({ ...prev, deployment_user: JSON.parse(user).id }));
+    }
+  }, [postId, report]);
+
+  useEffect(() => {
+    if (deploymentId) {
+      getLookupData(deploymentId);
+    }
+  }, [deploymentId]);
 
   const handleIconSelection = ({ iconClass, color }) => {
     setFormValue({
@@ -155,6 +152,32 @@ function PostAddBasic(props) {
     }
   };
 
+  const getPostData = async (post_id) => {
+    setPending(true);
+    try {
+      const response = await axiosInstance.get('getPost/' + post_id,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${localStorage.getItem('access')}`
+          },
+        }
+      );
+      setPending(false);
+      if (response?.data) {
+        let postData = response?.data?.post;
+
+        // Set the record with post data
+        setReport(postData);
+
+      }
+    } catch (err) {
+      setPending(false);
+      console.error("Error fetching post data:", err);
+    }
+  }
+
+
   const [invalidFields, setInvalidFields] = useState("");
   function validateformData(formData, setInvalidFields) {
     const invalidFields = []; // Array to store invalid field messages
@@ -179,10 +202,10 @@ function PostAddBasic(props) {
     if (!formData.access_level) {
       invalidFields.push("Access Level");
     }
-    if (props.record?.priority_enabled && !formData.priority_level) {
+    if (record?.priority_enabled && !formData.priority_level) {
       invalidFields.push("Priority Level");
     }
-    if (props.record?.impact_enabled && !formData.impact_level) {
+    if (record?.impact_enabled && !formData.impact_level) {
       invalidFields.push("Impact Level");
     }
 
@@ -229,7 +252,6 @@ function PostAddBasic(props) {
       );
 
       setPending(false);
-      props.populateList(results?.data?.data);
       navigate.push("/deployment/data_view");
     }
   };
@@ -256,8 +278,7 @@ function PostAddBasic(props) {
       );
 
       setPending(false);
-      props.setShow(false);
-      window.location.replace("/deployment/data_view");
+      navigate.push("/deployment/data_view");
       // props.updateListRecord(results?.data?.data);
     }
   };
@@ -299,24 +320,11 @@ function PostAddBasic(props) {
       );
 
       setPending(false);
-      props?.updateListRecordDelete(idD);
+      navigate.push("/deployment/post");
     } else {
       //  alert("not deleted");
     }
   };
-
-  useEffect(() => {
-    let deployment = localStorage.getItem("deployment");
-
-    if (deployment && deployment !== undefined) {
-    } else {
-      window.location.replace("/pages/login");
-    }
-    if (deployment && deployment !== undefined) {
-      getLookupData(JSON.parse(deployment).id);
-      setDeploymentId(JSON.parse(deployment).id);
-    }
-  }, []);
 
   const getLookupData = async (deployment_id) => {
     setPending(true);
@@ -344,9 +352,9 @@ function PostAddBasic(props) {
         // console.log(dData);
         if (
           dData?.categories?.length == 0 ||
-          (props.record?.priority_enabled && dData?.priority_levels?.length == 0) ||
+          (record?.priority_enabled && dData?.priority_levels?.length == 0) ||
           dData?.access_levels?.length == 0 ||
-          (props.record?.impact_enabled && dData?.impact_levels?.length == 0) ||
+          (record?.impact_enabled && dData?.impact_levels?.length == 0) ||
           dData?.tags?.length == 0 ||
           dData?.statuses?.length == 0
         ) {
@@ -374,6 +382,13 @@ function PostAddBasic(props) {
     }
   }, [location]);
 
+
+  useEffect(() => {
+    if (postId) {
+      getPostData(postId);
+    }
+  }, [postId]);
+
   return (
     <>
       <div className="min-h-lvh flex items-start justify-center">
@@ -392,10 +407,10 @@ function PostAddBasic(props) {
                     Post :{" "}
                     <span className="text-[0.6em] capitalize">
                       {" "}
-                      {props?.formType}{" "}
+                      {postId ? "Update " : "Add "}
                     </span>{" "}
                     <span className="text-[0.6em] capitalize font-bold">
-                      {props?.record.survey_name}
+                      {record.survey_name}
                     </span>
                   </span>
                   {/* <Button variant="default" onClick={() => props?.setCurrentPage('list')}>Cancel</Button> */}
@@ -634,7 +649,7 @@ function PostAddBasic(props) {
                           ))}
                         </select>
                       </div>
-                      {props.record?.impact_enabled && (
+                      {record?.impact_enabled && (
                         <div className="mb-6">
                           <label
                             htmlFor="impact_level"
@@ -660,7 +675,7 @@ function PostAddBasic(props) {
                           </select>
                         </div>
                       )}
-                      {props.record?.priority_enabled && (
+                      {record?.priority_enabled && (
                         <div className="mb-6">
                           <label
                             htmlFor="priority_level"
@@ -735,46 +750,21 @@ function PostAddBasic(props) {
                           <div className="flex items-start justify-between">
                             <span>.</span>
                             <div className="flex items-end gap-2">
-                              {props.formType == "add" && (
-                                <>
-                                  <button
-                                    type="submit"
-                                    onClick={() =>
-                                      props?.setCurrentPage("list")
-                                    }
-                                    className="text-black bg-gray-200 hover:bg-gray-100  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center "
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    type="submit"
-                                    onClick={handleSubmit}
-                                    className="text-white bg-yellow-500 hover:bg-yellow-600  font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center "
-                                    disabled={pending}
-                                  >
-                                    {pending ? "Submitting..." : "Submit"}
-                                  </button>
-                                </>
-                              )}
-                              {props.formType == "update" && (
-                                <>
-                                  <button
-                                    type="submit"
-                                    onClick={() => props.setShow(false)}
-                                    className="text-black bg-gray-200 hover:bg-gray-100  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center "
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    type="submit"
-                                    onClick={handleUpdate}
-                                    className="text-white bg-green-500 hover:bg-green-600  font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center "
-                                    disabled={pending}
-                                  >
-                                    {pending ? "Saving..." : "Save Changes"}
-                                  </button>
-                                </>
-                              )}
+                              <button
+                                type="submit"
+                                onClick={() => navigate.push("/deployment/post")}
+                                className="text-black bg-gray-200 hover:bg-gray-100  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center "
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="submit"
+                                onClick={handleSubmit}
+                                className="text-white bg-yellow-500 hover:bg-yellow-600  font-medium text-sm w-full sm:w-auto px-5 py-2.5 text-center "
+                                disabled={pending}
+                              >
+                                {pending ? "Submitting..." : "Submit"}
+                              </button>
                             </div>
                           </div>
                         </div>

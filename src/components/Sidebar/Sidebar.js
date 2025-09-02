@@ -74,7 +74,7 @@ function Sidebar({isOpen, toggleSidebar, color, image, routes,deployment,user,is
 
         <NavLink
           key=''
-          to='post'
+          to='/deployment/post'
           className={`
             ${activeRoute('deployment/post')}
           group mt-3 hidden md:flex items-start border-gray-700 px-3 py-2 text-gray-200 hover:my-red-bg hover:no-underline"`}

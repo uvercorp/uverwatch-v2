@@ -36,7 +36,9 @@ import WelcomePage from "views/pages_client/welcome/WelcomePage";
 import CreateDeploymentPage from "views/pages_client/create_deployment/CreateDeploymentPage";
 import LoginPage from "views/pages_client/login/LoginPage";
 import MapTest from "views/Maptest";
-import PostPage from "views/pages/posts/PostPage";
+import SurveySelect from "views/pages/posts/SurveySelect";
+import PostAdd from "views/pages/posts/PostAdd";
+import PostAddBasic from "views/pages/posts/PostAddBasic";
 import MapLocationDetection from "views/pages/settings/general/MapLocationDetection";
 import EntityPage from "views/pages/entities/EntityPage";
 import DetailedSingleData from "views/pages/data_view/options/DetailedSingleData";
@@ -54,18 +56,26 @@ const dashboardRoutes = [
     mobileRestricted: true,
   },
   {
-    path: "/post",
-    name: "Reports",
+    path: "/post/add/basic",
+    name: "Add Basic Report",
     icon: "nc-icon nc-pin-3",
-    component: PostPage,
+    component: PostAddBasic,
     layout: "/deployment",
     mobileRestricted: false,
   },
   {
-    path: "/post/add",
+    path: "/post/add/:surveyId",
     name: "Add New Report",
     icon: "nc-icon nc-pin-3",
-    component: PostPage,
+    component: PostAdd,
+    layout: "/deployment",
+    mobileRestricted: false,
+  },
+  {
+    path: "/post",
+    name: "Reports",
+    icon: "nc-icon nc-pin-3",
+    component: SurveySelect,
     layout: "/deployment",
     mobileRestricted: false,
   },

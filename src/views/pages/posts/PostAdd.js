@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import swal from "sweetalert";
 import {
   Card,
@@ -30,11 +30,18 @@ function PostAdd(props) {
   const dispatch = useDispatch();
   const [pending, setPending] = useState(false);
   const history = useHistory();
+  const { surveyId, postId } = useParams();
+  const location = useLocation();
   const [deploymentId, setDeploymentId] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [customFiledsForUpdate, setCustomFieldForUpdate] = useState(null);
+  const [record, setRecord] = useState({});
+  const [report, setReport] = useState({});
+  const [formType, setFormType] = useState(location.pathname.includes('/edit/') ? 'update' : 'add');
+
   const [formValue, setFormValue] = useState({
     id: "",
-    deployment: props?.deploymentId,
+    deployment: "",
     title: "",
     description: "",
     latitude: '',
@@ -49,50 +56,49 @@ function PostAdd(props) {
     post_status: "",
     full_address: '',
       formatted_address: '',
-    deployment_survey: props?.record?.id || "",
-    survey_fields: props?.record?.custom_fields || [], // Ensure survey_fields is always an array
+    deployment_survey: surveyId || "",
+    survey_fields: report?.custom_fields || record?.custom_fields || [], // Ensure survey_fields is always an array
     deployment_sub_category: null,
-    user_type: props?.userId == null ? "anonymous" : "member",
-    deployment_user: props?.userId || "",
+    user_type: userId ?? "member",
+    deployment_user: userId ?? "",
   });
 
   const [customFieldValues, setCustomFieldValues] = useState({});
 
   useEffect(() => {
-    if (props.record && props.formType === "update") {
-      setFormValue({
-        ...props.record,
-        survey_fields: customFiledsForUpdate || [], // Ensure survey_fields is defined
-      });
-
-      getSurvey(props?.record?.deployment_survey);
-
+    let deployment = localStorage.getItem('deployment');
+    if (deployment && deployment !== undefined) {
+      setDeploymentId(JSON.parse(deployment).id);
+      setFormValue(prev => ({ ...prev, deployment: JSON.parse(deployment).id }));
     } else {
-      setFormValue({
-        id: "",
-        deployment: props?.deploymentId || "",
-        title: "",
-        description: "",
-        latitude: '',
-        longitude: '',
-        icon: "",
-        color: "",
-        tags: "",
-        assessment: "",
-        access_level: "",
-        impact_level: "",
-        priority_level: "",
-        post_status: "",
-        full_address: '',
-      formatted_address: '',
-        deployment_survey: props?.record?.id || "",
-        survey_fields: props?.record?.custom_fields || [], // Ensure survey_fields is defined
-        deployment_sub_category: null,
-        user_type: props?.userId == null ? "anonymous" : "member",
-        deployment_user: props?.userId || "",
-      });
+      window.location.replace('/pages/login');
     }
-  }, [props.record, props.formType, props.deploymentId, props.userId]);
+
+    let user = localStorage.getItem('currentUser');
+    if (user && user !== undefined) {
+      setUserId(JSON.parse(user).id);
+      setFormValue(prev => ({ ...prev, deployment_user: JSON.parse(user).id }));
+    }
+
+    getSurvey(surveyId);
+    if (formType === 'add' && surveyId) {
+    } else if (formType === 'update' && postId) {
+      getPostData(postId);
+    }
+  }, [surveyId, postId, formType]);
+
+  // Update formValue when userId changes
+  useEffect(() => {
+    if (userId) {
+      setFormValue(prev => ({ ...prev, deployment_user: userId }));
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (deploymentId) {
+      getCategoryData(deploymentId);
+    }
+  }, [deploymentId]);
 
   const handleIconSelection = ({ iconClass, color }) => {
 
@@ -151,6 +157,11 @@ function PostAdd(props) {
     Object.entries(formValue).forEach(([key, value]) => {
       formData.append(key, value);
     });
+    // Ensure deployment id is always included
+    if (deploymentId) {
+      formData.set('deployment', deploymentId);
+      formData.set('deployment_user', userId);
+    }
 
     // Append custom field values
     Object.entries(customFieldValues).forEach(([fieldName, fieldValue]) => {
@@ -186,6 +197,10 @@ function PostAdd(props) {
     Object.entries(formValue).forEach(([key, value]) => {
       formData.append(key, value);
     });
+    // Ensure deployment id is always included
+    if (deploymentId) {
+      formData.set('deployment', deploymentId);
+    }
 
     // Append custom field values
     Object.entries(customFieldValues).forEach(([fieldName, fieldValue]) => {
@@ -238,10 +253,10 @@ function PostAdd(props) {
     if (!formData.access_level) {
       invalidFields.push("Access Level");
     }
-    if (props.record?.priority_enabled && !formData.priority_level) {
+    if (record?.priority_enabled && !formData.priority_level) {
       invalidFields.push("Priority Level");
     }
-    if (props.record?.impact_enabled && !formData.impact_level) {
+    if (record?.impact_enabled && !formData.impact_level) {
       invalidFields.push("Impact Level");
     }
 
@@ -282,7 +297,6 @@ function PostAdd(props) {
           })
         );
         setPending(false);
-        props.populateList(results?.data?.data);
         history.push("/deployment/data_view");
       }
     } catch (error) {
@@ -312,8 +326,7 @@ function PostAdd(props) {
           })
         );
         setPending(false);
-        props.setShow(false);
-        window.location.replace("/deployment/data_view");
+        history.push("/deployment/data_view");
       }
     } catch (error) {
       console.error("Error updating post:", error);
@@ -358,7 +371,7 @@ function PostAdd(props) {
                  setStatus(dData?.statuses);
                  setTagsList(dData?.tags || []); // Add this line
 
-                 if ((dData?.categories?.length == 0) || (props.record?.priority_enabled && dData?.priority_levels?.length == 0) || (dData?.access_levels?.length == 0) || (props.record?.impact_enabled && dData?.impact_levels?.length == 0) || dData?.tags?.length == 0 || (dData?.statuses?.length == 0)) {
+                 if ((dData?.categories?.length == 0) || (record?.priority_enabled && dData?.priority_levels?.length == 0) || (dData?.access_levels?.length == 0) || (record?.impact_enabled && dData?.impact_levels?.length == 0) || dData?.tags?.length == 0 || (dData?.statuses?.length == 0)) {
                   // alert('not completed')
                   setSetupComplete(false)
               } else {
@@ -400,17 +413,22 @@ function PostAdd(props) {
         // setSurveys(dData);
         console.log('survey id' + survey_id + ": data retrieved");
         console.log(dData[0]);
+
+        // Set the record with survey data
+        setRecord(dData[0]);
+
         let CustFields = dData[0].custom_fields;
         setCustomFieldForUpdate(CustFields);
-        setFormValue({
-          ...props.record,
+        setFormValue(prev => ({
+          ...prev,
           survey_fields: CustFields || [], // Ensure survey_fields is defined
-        });
+          deployment_survey: survey_id,
+        }));
         // Initialize custom field values if updating
         const initialValues = {};
         // console.log('props.record?.post_values');
         // console.log(props.record?.post_values);
-        props.record?.post_values?.forEach((field) => {
+        dData[0]?.post_values?.forEach((field) => {
           initialValues[field.field_name] = field.field_value || "";
         });
         setCustomFieldValues(initialValues);
@@ -421,6 +439,52 @@ function PostAdd(props) {
 
     }
 
+  }
+
+  const getPostData = async (post_id) => {
+    setPending(true);
+    try {
+      const response = await axiosInstance.get('getPost/' + post_id,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${localStorage.getItem('access')}`
+          },
+        }
+      );
+      setPending(false);
+      if (response?.data) {
+        let postData = response?.data?.post;
+        console.log('post id' + post_id + ": data retrieved");
+        console.log(postData);
+
+        // Set the record with post data
+        setReport(postData);
+
+        // Set form values with existing post data
+        if(postData?.custom_fields?.length) {
+          setFormValue({
+            ...postData,
+            survey_fields: postData.custom_fields || [],
+          });
+        }
+
+        // Get survey data for this post
+        if (postData.deployment_survey) {
+          getSurvey(postData.deployment_survey);
+        }
+
+        // Initialize custom field values with existing data
+        const initialValues = {};
+        postData?.post_values?.forEach((field) => {
+          initialValues[field.field_name] = field.field_value || "";
+        });
+        setCustomFieldValues(initialValues);
+      }
+    } catch (err) {
+      setPending(false);
+      console.error("Error fetching post data:", err);
+    }
   }
 
   const renderCustomFields = () => {
@@ -539,14 +603,14 @@ function PostAdd(props) {
 
   return (
     <div className="min-h-lvh flex items-start justify-center">
-      <div className={props?.formType === "add" ? "md:min-w-[80%] md:min-h-[80%]" : "md:min-w-[100%]"}>
+      <div className={formType === "add" ? "md:min-w-[80%] md:min-h-[80%]" : "md:min-w-[100%]"}>
         <Card className="my-gradient-bg">
           <Card.Header>
             <Card.Title as="h4">
               <div className="flex items-start justify-between my-sidebar-link">
                 <span className="my-font-family-overpass-mono font-semibold text-[#dbdbde]">
-                  Post : <span className="text-[0.6em] capitalize"> {props?.formType} </span>{" "}
-                  <span className="text-[0.6em] capitalize font-bold">{props?.record?.survey_name}</span>
+                  Post : <span className="text-[0.6em] capitalize"> {formType} </span>{" "}
+                  <span className="text-[0.6em] capitalize font-bold">{record?.survey_name}</span>
                 </span>
               </div>
             </Card.Title>
@@ -701,7 +765,7 @@ function PostAdd(props) {
 
                                                 </select>
                                             </div>
-                                            {props.record?.impact_enabled && (
+                                            {record?.impact_enabled && (
                                               <div className="mb-6">
                                                 <label htmlFor="impact_level" className="block mb-2 text-sm font-medium my-label">Impact Level</label>
 
@@ -714,7 +778,7 @@ function PostAdd(props) {
                                                 </select>
                                               </div>
                                             )}
-                                            {props.record?.priority_enabled && (
+                                            {record?.priority_enabled && (
                                               <div className="mb-6">
                                                 <label htmlFor="priority_level" className="block mb-2 text-sm font-medium my-label">Priority Level</label>
 
@@ -751,7 +815,7 @@ function PostAdd(props) {
                     <div className="flex items-start justify-between">
                       <span>.</span>
                       <div className="flex items-end gap-2">
-                        {props.formType === "add" && (
+                        {!postId ? (
                           <>
                             <button
                               type="submit"
@@ -770,8 +834,7 @@ function PostAdd(props) {
                               {pending ? "Submitting..." : "Submit"}
                             </button>
                           </>
-                        )}
-                        {props.formType === "update" && (
+                        ) : (
                           <>
                             <button
                               type="submit"
