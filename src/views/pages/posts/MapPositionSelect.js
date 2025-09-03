@@ -19,6 +19,7 @@ const tileLayers = {
 };
 
 export default function MapPositionSelect(props) {
+  const containerRef = useRef(null);
   const mapRef = useRef(null);
   const tileLayerRef = useRef(null);
   const userMarkerRef = useRef(null);
@@ -236,8 +237,8 @@ export default function MapPositionSelect(props) {
 
   // Map initialization
   useEffect(() => {
-    if (!mapRef.current) {
-      mapRef.current = leaflet.map("map").setView(
+    if (!mapRef.current && containerRef.current) {
+      mapRef.current = leaflet.map(containerRef.current).setView(
         [userPosition.latitude, userPosition.longitude],
         13
       );
@@ -313,7 +314,7 @@ export default function MapPositionSelect(props) {
 
   return (
     <div style={{ position: 'relative', height: props?.mapHeight || "500px" }}>
-      <div id="map" style={{ height: '100%', width: '100%', borderRadius: '0' }}></div>
+      <div ref={containerRef} style={{ height: '100%', width: '100%', borderRadius: '0' }}></div>
       
       {/* Search Bar */}
       <div

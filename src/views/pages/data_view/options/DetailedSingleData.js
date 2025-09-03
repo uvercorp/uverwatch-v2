@@ -33,6 +33,7 @@ import MapTest from "views/Maptest";
 import { IconPicker } from "others/icons/IconPicker";
 import { Icon } from "@iconify/react";
 import MapPositionSelect from "views/pages/posts/MapPositionSelect";
+import UpdatePostModal from "../UpdatePostModal";
 
 function DetailedSingleData(props) {
   let urlLocation = useLocation();
@@ -54,6 +55,9 @@ function DetailedSingleData(props) {
   });
   // console.warn('post:')
   // console.log(post?.record);
+  const [show, setShow] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [modalType, setModalType] = useState("list");
@@ -480,11 +484,18 @@ function DetailedSingleData(props) {
         <div className="md:min-w-[80%] md:min-h-[70%]">
           <div
             className="p-2  my-gradient-bg shadow-md"
-            // style={{border: "1px solid #2e2c2b"}}
+          // style={{border: "1px solid #2e2c2b"}}
           >
             <Card.Header>
               <div className="my-label flex items-start justify-between my-0 py-0">
                 <span className="text-black">.</span>
+                <div className="flex items-end">
+                <div className="flex items-start gap-2 cursor-pointer mr-2" 
+                                   onClick={() => { setSelectedRecord(post?.record); setShow(true); }}
+                                   >
+                            <i className="fas fa-edit"></i>
+                            <span>Edit</span>
+                  </div>
                 <span
                   className="cursor-pointer hover:underline text-red-500"
                   onClick={() => {
@@ -494,13 +505,13 @@ function DetailedSingleData(props) {
                   Close
                 </span>
               </div>
+              </div>
               <div className="flex justify-between items-center text-white">
                 <div>
                   <Card.Title as="h4" className="mb-0">
                     <i
-                      className={`${
-                        post?.record?.icon || "fas fa-question-circle"
-                      } text-${post?.record?.color || "muted"}`}
+                      className={`${post?.record?.icon || "fas fa-question-circle"
+                        } text-${post?.record?.color || "muted"}`}
                       style={{
                         color: isValidColor(post?.record?.color)
                           ? post?.record?.color
@@ -566,7 +577,7 @@ function DetailedSingleData(props) {
                           longitude={post?.record?.longitude}
                           readOnly={true}
                           onLocationChange={handleLocationChange}
-                          // map_theme='dark'
+                        // map_theme='dark'
                         />
                       </div>
                       <div className="mt-3 my-label">
@@ -674,11 +685,10 @@ function DetailedSingleData(props) {
                               setShowFlagModal(true), setModalType("form");
                             }}
                             disabled={isFlagged}
-                            className={`px-4 py-2  transition duration-200 ${
-                              isFlagged
+                            className={`px-4 py-2  transition duration-200 ${isFlagged
                                 ? "bg-red-500 text-white cursor-not-allowed"
                                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                            }`}
+                              }`}
                           >
                             <Icon icon="mdi:flag" className="me-2" />
                             {isFlagged ? "Flagged" : "Flag Post"} ({flags})
@@ -748,11 +758,10 @@ function DetailedSingleData(props) {
                                     setFlagReason(e.target.value);
                                     if (flagError) setFlagError("");
                                   }}
-                                  className={`w-full my-input p-3  ${
-                                    flagError
+                                  className={`w-full my-input p-3  ${flagError
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  }`}
+                                    }`}
                                   rows={4}
                                   placeholder="Please specify the reason for flagging this post..."
                                 />
@@ -860,12 +869,13 @@ function DetailedSingleData(props) {
 
                               {/* Action Buttons */}
                               <div className="flex justify-end space-x-3 mt-6">
+                                  
                                 <button
                                   onClick={() => setShowFlagModal(false)}
                                   className="bg-red-500 px-2 text-white hover:bg-red-600 transition duration-200"
                                 >
-                                  Close
-                                </button>
+                                  Close 
+                                </button> 
                               </div>
                             </div>
                           </div>
@@ -878,7 +888,9 @@ function DetailedSingleData(props) {
             </Card.Body>
           </div>
         </div>
+
       </div>
+      <UpdatePostModal show={show} setShow={setShow} selectedRecord={selectedRecord} />
     </>
   );
 }
