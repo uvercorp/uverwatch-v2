@@ -477,7 +477,25 @@ function DetailedSingleData(props) {
     //   setFlagError("Failed to submit flag. Please try again.");
     // }
   };
+ // Helper function to check if a string is a URL
+  const isUrl = (string) => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
 
+  // Helper function to check if URL points to an image
+  const isImageUrl = (url) => {
+    return /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(url);
+  };
+
+  // Helper function to check if URL points to a video
+  const isVideoUrl = (url) => {
+    return /\.(mp4|webm|ogg|mov|avi|wmv)$/i.test(url);
+  };
   return (
     <>
       <div className="min-h-lvh flex items-start justify-center">
@@ -594,7 +612,7 @@ function DetailedSingleData(props) {
                       <p className="my-label">{post?.record?.description}</p>
                     </div>
                     {/* New custom fields display */}
-                    {post?.record?.post_values && (
+                    {/* {post?.record?.post_values && (
                       <div className="mb-4">
                         <hr />
                         <h5 className="mb-3 text-gray-300">More Details</h5>
@@ -611,7 +629,50 @@ function DetailedSingleData(props) {
                           ))}
                         </Row>
                       </div>
-                    )}
+                    )} */}
+                    {post?.record?.post_values && (
+          <div className="mb-4">
+            <hr />
+            <h5 className="mb-3 text-gray-300">More Details</h5>
+            <Row>
+              {post.record.post_values.map((field, index) => {
+                const fieldValue = field.field_value;
+                const isUrlValue = isUrl(fieldValue);
+                const isImage = isUrlValue && isImageUrl(fieldValue);
+                const isVideo = isUrlValue && isVideoUrl(fieldValue);
+                
+                return (
+                  <Col md={6} key={index} className="mb-3">
+                    <div className="bg-gray-800 p-3 my-label">
+                      <strong>{field.field_name}:</strong>
+                      <div className="text-muted my-label mt-2">
+                        {isImage ? (
+                          <img 
+                            src={fieldValue} 
+                            alt={field.field_name}
+                            className="max-w-full h-auto rounded"
+                            style={{ maxHeight: '200px' }}
+                          />
+                        ) : isVideo ? (
+                          <video 
+                            controls 
+                            className="max-w-full rounded"
+                            style={{ maxHeight: '200px' }}
+                          >
+                            <source src={fieldValue} type={`video/${fieldValue.split('.').pop()}`} />
+                            Your browser does not support the video tag.
+                          </video>
+                        ) : (
+                          fieldValue
+                        )}
+                      </div>
+                    </div>
+                  </Col>
+                );
+              })}
+            </Row>
+          </div>
+        )}
 
                     {/* New comments section */}
                     {/* <div className="mb-4">
