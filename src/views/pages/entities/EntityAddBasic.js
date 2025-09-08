@@ -24,6 +24,7 @@ import MapTest from "views/Maptest";
 import LocationSelectMap from "../settings/general/LocationSelectMap";
 import MapPositionSelectEntity from "./MapPositionSelectEntity";
 import { IconPicker } from "others/icons/IconPicker";
+import useGeoLocation from "hooks/useGeoLocation";
 
 function EntityAddBasic(props) {
     const [surveys, setPosts] = useState([]);
@@ -37,14 +38,15 @@ function EntityAddBasic(props) {
     const [pending, setPending] = useState(false);
     let navigate = useHistory();
     const [deploymentId, setDeploymentId] = useState(null);
+    const location = useGeoLocation();
     const [formValue, setFormValue] = useState(
         {
             id: '',
             deployment: props?.deploymentId,
             title: '',
             description: '',
-            latitude: '',
-            longitude: '',
+            latitude: location.latitude,
+            longitude: location.longitude,
             deployment_survey: props?.record.id,
             entity_type: '',
             icon: "",
@@ -71,8 +73,8 @@ function EntityAddBasic(props) {
                 id: '',
                 deployment: props?.deploymentId,
                 title: '',
-                latitude: '',
-                longitude: '',
+                latitude: location.latitude,
+                longitude: location.longitude,
                 deployment_survey: props?.record.id,
                 entity_type: '',
                 icon: "",
@@ -88,7 +90,7 @@ function EntityAddBasic(props) {
                 deployment_user: props?.userId,
             })
         }
-    }, [props.record, props.formType]);
+    }, [props.record, props.formType, location]);
 
     const handleChange = (event) => {
         setFormValue({
