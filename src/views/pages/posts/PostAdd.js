@@ -16,6 +16,7 @@ import Spinner from "react-bootstrap/Spinner";
 import MapPositionSelect from "./MapPositionSelect";
 import { IconPicker } from "others/icons/IconPicker";
 import TagInput from "./TagInput";
+import useGeoLocation from "hooks/useGeoLocation";
 
 
 function PostAdd(props) {
@@ -35,6 +36,7 @@ function PostAdd(props) {
   const [deploymentId, setDeploymentId] = useState(null);
   const [userId, setUserId] = useState(null);
   const [customFiledsForUpdate, setCustomFieldForUpdate] = useState(null);
+  const geoLocation = useGeoLocation();
   const [record, setRecord] = useState({});
   const [report, setReport] = useState({});
   const [formType, setFormType] = useState(location.pathname.includes('/edit/') ? 'update' : 'add');
@@ -44,8 +46,8 @@ function PostAdd(props) {
     deployment: "",
     title: "",
     description: "",
-    latitude: '',
-    longitude: '',
+    latitude: geoLocation.latitude,
+    longitude: geoLocation.longitude,
     icon: "",
     color: "",
     tags: "",
@@ -99,6 +101,17 @@ function PostAdd(props) {
       getCategoryData(deploymentId);
     }
   }, [deploymentId]);
+
+  // Update form values when geolocation changes
+  useEffect(() => {
+    if (geoLocation.latitude !== 0 && geoLocation.longitude !== 0) {
+      setFormValue(prev => ({
+        ...prev,
+        latitude: geoLocation.latitude,
+        longitude: geoLocation.longitude,
+      }));
+    }
+  }, [geoLocation]);
 
   const handleIconSelection = ({ iconClass, color }) => {
 
