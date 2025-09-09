@@ -61,7 +61,7 @@ const FilterSection = ({ title, items, selectedItems, toggleItem }) => {
         {/* <FilterSection title="Entities" items={entities} selectedItems={selected} toggleItem={toggleItem} /> */}
 
         <div className="mb-6">
-        <h3 className="my-sidebar-link font-bold tracking-wide uppercase text-sm mb-2">Layers({props?.selectedSurveys.length})</h3>
+        <h3 className="my-sidebar-link font-bold tracking-wide uppercase text-sm mb-2">Reports ({props?.selectedSurveys.length})</h3>
         <div className="space-y-2 max-h-40 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
 
           {props?.uniqueSurveys.map((item) => {
