@@ -324,18 +324,27 @@ function DataViewPage() {
  function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
-  const uniqueTags = [
-    ...new Set(
-      posts.flatMap(post =>
-        post.tags
-          ? post.tags
-              .split(',')
-              .map(tag => tag.trim().toLowerCase()) // Normalize to lowercase
-              .filter(tag => tag)
-          : []
-      )
-    )
-  ].map(tag => capitalizeFirstLetter(tag)); // Optional: restore capitalization
+
+  // Helper function to count occurrences and sort by population
+  const getSortedItemsByCount = (items, getItemCount) => {
+    const itemCounts = {};
+    items.forEach(item => {
+      itemCounts[item] = (itemCounts[item] || 0) + getItemCount(item);
+    });
+
+    return Object.keys(itemCounts)
+      .sort((a, b) => itemCounts[b] - itemCounts[a])
+      .filter(item => item); // Remove empty/null items
+  };
+
+  // Get all tags and count their occurrences
+  const allTags = posts.flatMap(post =>
+    post.tags
+      ? post.tags.split(',').map(tag => tag.trim().toLowerCase()).filter(tag => tag)
+      : []
+  );
+  const uniqueTags = getSortedItemsByCount(allTags, (tag) => 1)
+    .map(tag => capitalizeFirstLetter(tag)); // Optional: restore capitalization
 
 
 
@@ -874,10 +883,10 @@ function DataViewPage() {
         .map((post) => post.name_of_survey)
     ),
   ];
-  const uniqueCategories = [...new Set(
-    posts.flatMap(post => [post.category_name, post.entity_type_name])
-        .filter(value => value) // Keeps only truthy (non-empty) values
-)];
+  // Get all categories and count their occurrences
+  const allCategories = posts.flatMap(post => [post.category_name, post.entity_type_name])
+    .filter(value => value); // Keeps only truthy (non-empty) values
+  const uniqueCategories = getSortedItemsByCount(allCategories, (category) => 1);
   // const uniqueStatuses = [...new Set(posts.map((post) => post.status))];
   const uniqueStatuses = [...new Set(
     posts.flatMap(post => [post.status, post.post_status_name])

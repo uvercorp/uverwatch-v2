@@ -204,11 +204,25 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
   });
 
 
+  // Helper function to count occurrences and sort by population
+  const getSortedItemsByCount = (items, getItemCount) => {
+    const itemCounts = {};
+    items.forEach(item => {
+      itemCounts[item] = (itemCounts[item] || 0) + getItemCount(item);
+    });
+
+    return Object.keys(itemCounts)
+      .sort((a, b) => itemCounts[b] - itemCounts[a])
+      .filter(item => item); // Remove empty/null items
+  };
+
   const uniquePosters = [...new Set(posts.map(post => post.created_by_name))];
   const uniquePriorityLevels = [...new Set(posts.map(post => post.priority_level))];
   const uniqueAccessLevels = [...new Set(posts.map(post => post.access_level))];
   const uniqueSubcategories = [...new Set(posts.map(post => post.sub_category_name))];
-  const uniqueTags = [
+
+  // Get all tags and count their occurrences
+  const allTags = [
     ...new Set(
       posts.flatMap(post =>
         post.tags
@@ -217,6 +231,8 @@ const [selectedDays, setSelectedDays] = useState([]); // e.g., ['MON', 'TUE']
       )
     )
   ];
+  const uniqueTags = getSortedItemsByCount(allTags, (tag) => 1);
+
   const uniqueSubtags = [...new Set(posts.map(post => post.sub_tag))];
 
   // State for filtered posts
@@ -531,11 +547,10 @@ const dayMatch =
         .map((post) => post.name_of_survey)
     ),
   ];
-  // const uniqueCategories = [...new Set(posts.map((post) => post.category_name))];
-  const uniqueCategories = [...new Set(
-    posts.flatMap(post => [post.category_name, post.entity_type_name])
-        .filter(value => value) // Keeps only truthy (non-empty) values
-)];
+  // Get all categories and count their occurrences
+  const allCategories = posts.flatMap(post => [post.category_name, post.entity_type_name])
+    .filter(value => value); // Keeps only truthy (non-empty) values
+  const uniqueCategories = getSortedItemsByCount(allCategories, (category) => 1);
 
   const uniqueStatuses = [...new Set(
     posts.flatMap(post => [post.status, post.post_status_name])
